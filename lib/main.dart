@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pulse/core/widgets/app_button_widget.dart';
 import 'package:pulse/core/widgets/showcase_widget.dart'; // путь к вашему классу AppButtonWidget
 
 void main() {
@@ -30,6 +31,12 @@ class MyHomePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: Text(title)),
       body: const ButtonsShowcase(),
+      // body: AppButtonWidget.rightIcon(
+      //   label: "Button",
+      //   onPressed: () {},
+      //   rightIcon: Icons.access_time_filled,
+      //   tone: AppButtonWidgetTone.subtle
+      // ),
     );
   }
 }

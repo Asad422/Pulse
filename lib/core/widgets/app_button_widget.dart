@@ -13,12 +13,14 @@ class AppButtonWidget extends StatefulWidget {
     this.borderRadius,
     this.padding,
     this.iconSize,
-    this.customIcon,
+    this.customIcon,   // для iconOnly
+    this.leftIcon,     // 👈 кастом иконка слева (по умолчанию стандартная стрелка)
+    this.rightIcon,    // 👈 кастом иконка справа (по умолчанию стандартная стрелка)
     this.elevation = 0,
   });
 
   // factories
-  factory AppButtonWidget.rightArrow({
+  factory AppButtonWidget.rightIcon({
     Key? key,
     required String label,
     required VoidCallback? onPressed,
@@ -26,6 +28,7 @@ class AppButtonWidget extends StatefulWidget {
     AppButtonWidgetIntent intent = AppButtonWidgetIntent.primary,
     AppButtonWidgetTone tone = AppButtonWidgetTone.solid,
     bool enabled = true,
+    IconData? rightIcon, // кастом справа
   }) =>
       AppButtonWidget(
         key: key,
@@ -35,10 +38,11 @@ class AppButtonWidget extends StatefulWidget {
         intent: intent,
         tone: tone,
         enabled: enabled,
-        variant: AppButtonWidgetVariant.rightArrow,
+        rightIcon: rightIcon,
+        variant: AppButtonWidgetVariant.rightIcon,
       );
 
-  factory AppButtonWidget.leftArrow({
+  factory AppButtonWidget.leftIcon({
     Key? key,
     required String label,
     required VoidCallback? onPressed,
@@ -46,6 +50,7 @@ class AppButtonWidget extends StatefulWidget {
     AppButtonWidgetIntent intent = AppButtonWidgetIntent.primary,
     AppButtonWidgetTone tone = AppButtonWidgetTone.solid,
     bool enabled = true,
+    IconData? leftIcon, // кастом слева
   }) =>
       AppButtonWidget(
         key: key,
@@ -55,10 +60,11 @@ class AppButtonWidget extends StatefulWidget {
         intent: intent,
         tone: tone,
         enabled: enabled,
-        variant: AppButtonWidgetVariant.leftArrow,
+        leftIcon: leftIcon,
+        variant: AppButtonWidgetVariant.leftIcon,
       );
 
-  factory AppButtonWidget.doubleArrows({
+  factory AppButtonWidget.doubleIcons({
     Key? key,
     required String label,
     required VoidCallback? onPressed,
@@ -66,6 +72,8 @@ class AppButtonWidget extends StatefulWidget {
     AppButtonWidgetIntent intent = AppButtonWidgetIntent.primary,
     AppButtonWidgetTone tone = AppButtonWidgetTone.solid,
     bool enabled = true,
+    IconData? leftIcon,
+    IconData? rightIcon,
   }) =>
       AppButtonWidget(
         key: key,
@@ -75,7 +83,9 @@ class AppButtonWidget extends StatefulWidget {
         intent: intent,
         tone: tone,
         enabled: enabled,
-        variant: AppButtonWidgetVariant.doubleArrows,
+        leftIcon: leftIcon,
+        rightIcon: rightIcon,
+        variant: AppButtonWidgetVariant.doubleIcons,
       );
 
   factory AppButtonWidget.trailingSeparated({
@@ -86,6 +96,7 @@ class AppButtonWidget extends StatefulWidget {
     AppButtonWidgetIntent intent = AppButtonWidgetIntent.primary,
     AppButtonWidgetTone tone = AppButtonWidgetTone.solid,
     bool enabled = true,
+    IconData? rightIcon,
   }) =>
       AppButtonWidget(
         key: key,
@@ -95,6 +106,7 @@ class AppButtonWidget extends StatefulWidget {
         intent: intent,
         tone: tone,
         enabled: enabled,
+        rightIcon: rightIcon,
         variant: AppButtonWidgetVariant.trailingSeparated,
       );
 
@@ -120,7 +132,7 @@ class AppButtonWidget extends StatefulWidget {
       );
 
   /// ← | Button | →
-  factory AppButtonWidget.doubleArrowsSeparated({
+  factory AppButtonWidget.doubleIconsSeparated({
     Key? key,
     required String label,
     required VoidCallback? onPressed,
@@ -128,6 +140,8 @@ class AppButtonWidget extends StatefulWidget {
     AppButtonWidgetIntent intent = AppButtonWidgetIntent.primary,
     AppButtonWidgetTone tone = AppButtonWidgetTone.solid,
     bool enabled = true,
+    IconData? leftIcon,
+    IconData? rightIcon,
   }) =>
       AppButtonWidget(
         key: key,
@@ -137,7 +151,9 @@ class AppButtonWidget extends StatefulWidget {
         intent: intent,
         tone: tone,
         enabled: enabled,
-        variant: AppButtonWidgetVariant.doubleArrowsSeparated,
+        leftIcon: leftIcon,
+        rightIcon: rightIcon,
+        variant: AppButtonWidgetVariant.doubleIconsSeparated,
       );
 
   final String label;
@@ -153,7 +169,14 @@ class AppButtonWidget extends StatefulWidget {
   final double? borderRadius;
   final EdgeInsetsGeometry? padding;
   final double? iconSize;
+
+  /// Иконка для варианта `iconOnly`
   final IconData? customIcon;
+
+  /// Кастомные иконки для левой/правой стороны (по умолчанию — стандартные стрелки)
+  final IconData? leftIcon;
+  final IconData? rightIcon;
+
   final double elevation;
 
   @override
@@ -181,10 +204,12 @@ class _AppButtonWidgetState extends State<AppButtonWidget> {
             EdgeInsets.symmetric(horizontal: m.hPadding, vertical: m.vPadding);
     final double iSize = widget.iconSize ?? m.icon;
 
-    final arrowLeft =
-        Icon(Icons.arrow_back_rounded, size: iSize, color: style.fg);
-    final arrowRight =
-        Icon(Icons.arrow_forward_rounded, size: iSize, color: style.fg);
+    // берем кастомные иконки, иначе дефолтные стрелки
+    final IconData leftIconData  = widget.leftIcon  ?? Icons.arrow_back_rounded;
+    final IconData rightIconData = widget.rightIcon ?? Icons.arrow_forward_rounded;
+
+    final iconLeft  = Icon(leftIconData,  size: iSize, color: style.fg);
+    final iconRight = Icon(rightIconData, size: iSize, color: style.fg);
 
     // icon-only
     if (widget.variant == AppButtonWidgetVariant.iconOnly) {
@@ -199,7 +224,7 @@ class _AppButtonWidgetState extends State<AppButtonWidget> {
     }
 
     // ← | Button | →
-    if (widget.variant == AppButtonWidgetVariant.doubleArrowsSeparated) {
+    if (widget.variant == AppButtonWidgetVariant.doubleIconsSeparated) {
       return _buildBase(
         m: m,
         radius: radius,
@@ -209,7 +234,7 @@ class _AppButtonWidgetState extends State<AppButtonWidget> {
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            arrowLeft,
+            iconLeft,
             SizedBox(width: m.gap),
             _divider(m, style),
             SizedBox(width: m.gap),
@@ -229,7 +254,7 @@ class _AppButtonWidgetState extends State<AppButtonWidget> {
             SizedBox(width: m.gap),
             _divider(m, style),
             SizedBox(width: m.gap),
-            arrowRight,
+            iconRight,
           ],
         ),
       );
@@ -238,9 +263,9 @@ class _AppButtonWidgetState extends State<AppButtonWidget> {
     // остальные варианты
     final children = <Widget>[];
 
-    if (widget.variant == AppButtonWidgetVariant.leftArrow ||
-        widget.variant == AppButtonWidgetVariant.doubleArrows) {
-      children.add(arrowLeft);
+    if (widget.variant == AppButtonWidgetVariant.leftIcon ||
+        widget.variant == AppButtonWidgetVariant.doubleIcons) {
+      children.add(iconLeft);
       children.add(SizedBox(width: m.gap));
     }
 
@@ -258,8 +283,8 @@ class _AppButtonWidgetState extends State<AppButtonWidget> {
       ),
     ));
 
-    if (widget.variant == AppButtonWidgetVariant.rightArrow ||
-        widget.variant == AppButtonWidgetVariant.doubleArrows ||
+    if (widget.variant == AppButtonWidgetVariant.rightIcon ||
+        widget.variant == AppButtonWidgetVariant.doubleIcons ||
         widget.variant == AppButtonWidgetVariant.trailingSeparated) {
       children.add(SizedBox(width: m.gap));
 
@@ -268,7 +293,7 @@ class _AppButtonWidgetState extends State<AppButtonWidget> {
         children.add(SizedBox(width: m.gap));
       }
 
-      children.add(arrowRight);
+      children.add(iconRight);
     }
 
     return _buildBase(
@@ -330,12 +355,12 @@ class _AppButtonWidgetState extends State<AppButtonWidget> {
 
 enum AppButtonWidgetVariant {
   standard,
-  leftArrow,
-  rightArrow,
-  doubleArrows,
+  leftIcon,
+  rightIcon,
+  doubleIcons,
   trailingSeparated,
   iconOnly,
-  doubleArrowsSeparated,
+  doubleIconsSeparated,
 }
 
 enum AppButtonWidgetSize { small, medium, large }

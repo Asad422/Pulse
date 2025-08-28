@@ -77,14 +77,14 @@ class ButtonsShowcase extends StatelessWidget {
       runSpacing: gap,
       crossAxisAlignment: WrapCrossAlignment.center,
       children: [
-        AppButtonWidget(label: label, onPressed: () {}, size: size),
-        AppButtonWidget.rightArrow(label: label, onPressed: () {}, size: size),
-        AppButtonWidget.leftArrow(label: label, onPressed: () {}, size: size),
-        AppButtonWidget.doubleArrows(label: label, onPressed: () {}, size: size),
+        AppButtonWidget(label: label, onPressed: () {}, size: size,),
+        AppButtonWidget.rightIcon(label: label, onPressed: () {}, size: size,),
+        AppButtonWidget.leftIcon(label: label, onPressed: () {}, size: size),
+        AppButtonWidget.doubleIcons(label: label, onPressed: () {}, size: size),
         AppButtonWidget.trailingSeparated(label: label, onPressed: () {}, size: size),
 
         // 👇 новый вариант с двумя разделителями
-        AppButtonWidget.doubleArrowsSeparated(label: label, onPressed: () {}, size: size),
+        AppButtonWidget.doubleIconsSeparated(label: label, onPressed: () {}, size: size),
 
         AppButtonWidget.iconOnly(onPressed: () {}, size: size),
       ],
@@ -124,13 +124,13 @@ class ButtonsShowcase extends StatelessWidget {
               runSpacing: gap,
               children: [
                 AppButtonWidget(label: label, onPressed: () {}, intent: intent, tone: tone),
-                AppButtonWidget.rightArrow(label: label, onPressed: () {}, intent: intent, tone: tone),
-                AppButtonWidget.leftArrow(label: label, onPressed: () {}, intent: intent, tone: tone),
-                AppButtonWidget.doubleArrows(label: label, onPressed: () {}, intent: intent, tone: tone),
+                AppButtonWidget.rightIcon(label: label, onPressed: () {}, intent: intent, tone: tone),
+                AppButtonWidget.leftIcon(label: label, onPressed: () {}, intent: intent, tone: tone),
+                AppButtonWidget.doubleIcons(label: label, onPressed: () {}, intent: intent, tone: tone),
                 AppButtonWidget.trailingSeparated(label: label, onPressed: () {}, intent: intent, tone: tone),
 
                 // 👇 новый вариант «← | Button | →»
-                AppButtonWidget.doubleArrowsSeparated(label: label, onPressed: () {}, intent: intent, tone: tone),
+                AppButtonWidget.doubleIconsSeparated(label: label, onPressed: () {}, intent: intent, tone: tone),
 
                 AppButtonWidget.iconOnly(onPressed: () {}, intent: intent, tone: tone),
               ],
@@ -142,13 +142,13 @@ class ButtonsShowcase extends StatelessWidget {
               runSpacing: gap,
               children: [
                 AppButtonWidget(label: label, onPressed: null, intent: intent, tone: tone, enabled: false),
-                AppButtonWidget.rightArrow(label: label, onPressed: null, intent: intent, tone: tone, enabled: false),
-                AppButtonWidget.leftArrow(label: label, onPressed: null, intent: intent, tone: tone, enabled: false),
-                AppButtonWidget.doubleArrows(label: label, onPressed: null, intent: intent, tone: tone, enabled: false),
+                AppButtonWidget.rightIcon(label: label, onPressed: null, intent: intent, tone: tone, enabled: false),
+                AppButtonWidget.leftIcon(label: label, onPressed: null, intent: intent, tone: tone, enabled: false),
+                AppButtonWidget.doubleIcons(label: label, onPressed: null, intent: intent, tone: tone, enabled: false),
                 AppButtonWidget.trailingSeparated(label: label, onPressed: null, intent: intent, tone: tone, enabled: false),
 
                 // 👇 disabled для «двух разделителей»
-                AppButtonWidget.doubleArrowsSeparated(label: label, onPressed: null, intent: intent, tone: tone, enabled: false),
+                AppButtonWidget.doubleIconsSeparated(label: label, onPressed: null, intent: intent, tone: tone, enabled: false),
 
                 AppButtonWidget.iconOnly(onPressed: null, intent: intent, tone: tone, enabled: false),
               ],
