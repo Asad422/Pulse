@@ -24,15 +24,13 @@ class RasterAsset {
     );
   }
 
-  /// Удобно для DecorationImage, ImageProvider и т.п.
   AssetImage provider() => AssetImage(path);
 }
 
 class AppImages {
   AppImages._();
-  // static const String _img = 'assets/images';
-  // static const String _ill = 'assets/illustrations';
+  static const String _img = 'assets/images';
+  static const String _scr = 'assets/screenshots';
 
-// Добавляй дальше по проекту:
 // static const RasterAsset banner = RasterAsset('$_img/banner.webp');
 }

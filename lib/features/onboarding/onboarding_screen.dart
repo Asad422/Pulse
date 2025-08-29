@@ -17,6 +17,7 @@ class OnboardingScreen extends StatelessWidget {
     final l10n = S.of(context)!;
 
     return Scaffold(
+      backgroundColor: AppColors.background,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -48,7 +49,7 @@ class OnboardingScreen extends StatelessWidget {
                 width: double.infinity,
                 child: AppButtonWidget(
                   label: l10n.onbCtaGetStarted,
-                  onPressed: () => context.go(AppPaths.register),
+                  onPressed: () => context.go(AppPaths.login),
                   size: AppButtonWidgetSize.large,
                   intent: AppButtonWidgetIntent.primary,
                   tone: AppButtonWidgetTone.solid,
@@ -79,7 +80,7 @@ class OnboardingScreen extends StatelessWidget {
                         color: AppColors.primary,
                       ),
                       recognizer: TapGestureRecognizer()
-                        ..onTap = () => context.push(AppPaths.policySafety),
+                        ..onTap = () => context.push(AppPaths.userRights),
                     ),
                     const TextSpan(text: '\n'),
                     TextSpan(text: l10n.onbTermsAnd),
@@ -90,7 +91,7 @@ class OnboardingScreen extends StatelessWidget {
                         color: AppColors.primary,
                       ),
                       recognizer: TapGestureRecognizer()
-                        ..onTap = () => context.push(AppPaths.userRights),
+                        ..onTap = () => context.push(AppPaths.policySafety),
                     ),
                   ],
                 ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/localization/generated/l10n.dart';
+import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/text_styles.dart';
 
 
@@ -11,6 +12,7 @@ class UserRightsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = S.of(context)!;
     return Scaffold(
+      backgroundColor: AppColors.background,
       appBar: AppBar(title: Text("l10n.legalUserRightsTitle")),
       body: Center(
         child: Padding(
