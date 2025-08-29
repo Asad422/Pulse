@@ -2,5 +2,16 @@
   "@@locale": "en",
   "appTitle": "Pulse",
   "splashGreeting": "Welcome!",
-  "homeTitle": "Home"
+  "homeTitle": "Home",
+
+  "onbHeader": "We the People",
+  "onbSubtitle": "Rate politicians and their policies\nHolding power to account",
+  "onbSectionTitle": "Vote on policies that affect you",
+  "onbSectionBody": "Express your support or opposition on legislation that matters to your community.",
+  "onbCtaGetStarted": "Get Started",
+  "onbCtaContinueGuest": "Continue as Guest",
+  "onbTermsPrefix": "By continuing, you agree to our ",
+  "onbTermsTerms": "Terms of Service",
+  "onbTermsAnd": " and ",
+  "onbTermsPrivacy": "Privacy Policy"
 }

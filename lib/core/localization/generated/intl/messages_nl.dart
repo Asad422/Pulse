@@ -22,8 +22,25 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
-        "appTitle": MessageLookupByLibrary.simpleMessage("Pols"),
-        "homeTitle": MessageLookupByLibrary.simpleMessage("Startpagina"),
+        "appTitle": MessageLookupByLibrary.simpleMessage("Pulse"),
+        "homeTitle": MessageLookupByLibrary.simpleMessage("Home"),
+        "onbCtaContinueGuest":
+            MessageLookupByLibrary.simpleMessage("Doorgaan als gast"),
+        "onbCtaGetStarted": MessageLookupByLibrary.simpleMessage("Aan de slag"),
+        "onbHeader": MessageLookupByLibrary.simpleMessage("Wij, het volk"),
+        "onbSectionBody": MessageLookupByLibrary.simpleMessage(
+            "Geef je steun of bezwaar aan bij wetgeving die belangrijk is voor jouw gemeenschap."),
+        "onbSectionTitle": MessageLookupByLibrary.simpleMessage(
+            "Stem over beleid dat jou raakt"),
+        "onbSubtitle": MessageLookupByLibrary.simpleMessage(
+            "Beoordeel politici en hun beleid\nHoud machthebbers verantwoordelijk"),
+        "onbTermsAnd": MessageLookupByLibrary.simpleMessage(" en "),
+        "onbTermsPrefix": MessageLookupByLibrary.simpleMessage(
+            "Door door te gaan ga je akkoord met onze "),
+        "onbTermsPrivacy":
+            MessageLookupByLibrary.simpleMessage("Privacyverklaring"),
+        "onbTermsTerms":
+            MessageLookupByLibrary.simpleMessage("Servicevoorwaarden"),
         "splashGreeting": MessageLookupByLibrary.simpleMessage("Welkom!")
       };
 }

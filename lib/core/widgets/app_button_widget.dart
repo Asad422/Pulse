@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../theme/text_styles.dart';
 
 class AppButtonWidget extends StatefulWidget {
   const AppButtonWidget({
@@ -13,13 +14,12 @@ class AppButtonWidget extends StatefulWidget {
     this.borderRadius,
     this.padding,
     this.iconSize,
-    this.customIcon,   // для iconOnly
-    this.leftIcon,     // 👈 кастом иконка слева (по умолчанию стандартная стрелка)
-    this.rightIcon,    // 👈 кастом иконка справа (по умолчанию стандартная стрелка)
+    this.customIcon,
+    this.leftIcon,
+    this.rightIcon,
     this.elevation = 0,
   });
 
-  // factories
   factory AppButtonWidget.rightIcon({
     Key? key,
     required String label,
@@ -28,7 +28,7 @@ class AppButtonWidget extends StatefulWidget {
     AppButtonWidgetIntent intent = AppButtonWidgetIntent.primary,
     AppButtonWidgetTone tone = AppButtonWidgetTone.solid,
     bool enabled = true,
-    IconData? rightIcon, // кастом справа
+    IconData? rightIcon,
   }) =>
       AppButtonWidget(
         key: key,
@@ -50,7 +50,7 @@ class AppButtonWidget extends StatefulWidget {
     AppButtonWidgetIntent intent = AppButtonWidgetIntent.primary,
     AppButtonWidgetTone tone = AppButtonWidgetTone.solid,
     bool enabled = true,
-    IconData? leftIcon, // кастом слева
+    IconData? leftIcon,
   }) =>
       AppButtonWidget(
         key: key,
@@ -131,7 +131,6 @@ class AppButtonWidget extends StatefulWidget {
         customIcon: icon,
       );
 
-  /// ← | Button | →
   factory AppButtonWidget.doubleIconsSeparated({
     Key? key,
     required String label,
@@ -170,10 +169,7 @@ class AppButtonWidget extends StatefulWidget {
   final EdgeInsetsGeometry? padding;
   final double? iconSize;
 
-  /// Иконка для варианта `iconOnly`
   final IconData? customIcon;
-
-  /// Кастомные иконки для левой/правой стороны (по умолчанию — стандартные стрелки)
   final IconData? leftIcon;
   final IconData? rightIcon;
 
@@ -200,30 +196,25 @@ class _AppButtonWidgetState extends State<AppButtonWidget> {
 
     final double radius = widget.borderRadius ?? 12;
     final EdgeInsetsGeometry contentPadding =
-        widget.padding ??
-            EdgeInsets.symmetric(horizontal: m.hPadding, vertical: m.vPadding);
+        widget.padding ?? EdgeInsets.symmetric(horizontal: m.hPadding, vertical: m.vPadding);
     final double iSize = widget.iconSize ?? m.icon;
 
-    // берем кастомные иконки, иначе дефолтные стрелки
-    final IconData leftIconData  = widget.leftIcon  ?? Icons.arrow_back_rounded;
+    final IconData leftIconData = widget.leftIcon ?? Icons.arrow_back_rounded;
     final IconData rightIconData = widget.rightIcon ?? Icons.arrow_forward_rounded;
 
-    final iconLeft  = Icon(leftIconData,  size: iSize, color: style.fg);
+    final iconLeft = Icon(leftIconData, size: iSize, color: style.fg);
     final iconRight = Icon(rightIconData, size: iSize, color: style.fg);
 
-    // icon-only
+    final TextStyle labelStyle = _labelTextStyle(widget.size).copyWith(
+      color: style.fg,
+      height: 1.0,
+    );
+
     if (widget.variant == AppButtonWidgetVariant.iconOnly) {
-      final icon = Icon(widget.customIcon ?? Icons.arrow_forward_rounded,
-          size: iSize, color: style.fg);
-      return _buildBase(
-        m: m,
-        radius: radius,
-        style: style,
-        child: Center(child: icon),
-      );
+      final icon = Icon(widget.customIcon ?? Icons.arrow_forward_rounded, size: iSize, color: style.fg);
+      return _buildBase(m: m, radius: radius, style: style, child: Center(child: icon));
     }
 
-    // ← | Button | →
     if (widget.variant == AppButtonWidgetVariant.doubleIconsSeparated) {
       return _buildBase(
         m: m,
@@ -244,11 +235,7 @@ class _AppButtonWidgetState extends State<AppButtonWidget> {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                      color: style.fg,
-                      fontWeight: FontWeight.w600,
-                      height: 1.0,
-                    ),
+                style: labelStyle,
               ),
             ),
             SizedBox(width: m.gap),
@@ -260,7 +247,6 @@ class _AppButtonWidgetState extends State<AppButtonWidget> {
       );
     }
 
-    // остальные варианты
     final children = <Widget>[];
 
     if (widget.variant == AppButtonWidgetVariant.leftIcon ||
@@ -275,11 +261,7 @@ class _AppButtonWidgetState extends State<AppButtonWidget> {
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
         textAlign: TextAlign.center,
-        style: Theme.of(context).textTheme.labelLarge?.copyWith(
-              color: style.fg,
-              fontWeight: FontWeight.w600,
-              height: 1.0,
-            ),
+        style: labelStyle,
       ),
     ));
 
@@ -287,12 +269,10 @@ class _AppButtonWidgetState extends State<AppButtonWidget> {
         widget.variant == AppButtonWidgetVariant.doubleIcons ||
         widget.variant == AppButtonWidgetVariant.trailingSeparated) {
       children.add(SizedBox(width: m.gap));
-
       if (widget.variant == AppButtonWidgetVariant.trailingSeparated) {
         children.add(_divider(m, style));
         children.add(SizedBox(width: m.gap));
       }
-
       children.add(iconRight);
     }
 
@@ -309,13 +289,22 @@ class _AppButtonWidgetState extends State<AppButtonWidget> {
     );
   }
 
-  // ---------- helpers ----------
+  TextStyle _labelTextStyle(AppButtonWidgetSize s) {
+    switch (s) {
+      case AppButtonWidgetSize.small:
+        return AppTextStyles.buttonSmall;
+      case AppButtonWidgetSize.medium:
+        return AppTextStyles.buttonMedium;
+      case AppButtonWidgetSize.large:
+        return AppTextStyles.buttonLarge;
+    }
+  }
 
   Widget _divider(_Metrics m, _ToneStyle style) => Container(
-        width: 1,
-        height: m.dividerHeight,
-        color: style.fg.withValues(alpha: 0.45),
-      );
+    width: 1,
+    height: m.dividerHeight,
+    color: style.fg.withValues(alpha: 0.45),
+  );
 
   Widget _buildBase({
     required _Metrics m,
@@ -325,7 +314,6 @@ class _AppButtonWidgetState extends State<AppButtonWidget> {
     required Widget child,
   }) {
     final bool enabled = widget.enabled && widget.onPressed != null;
-
     return ConstrainedBox(
       constraints: BoxConstraints(minHeight: m.minHeight, minWidth: m.minWidth),
       child: Material(
@@ -426,7 +414,6 @@ _Metrics _metricsFor(AppButtonWidgetSize s) {
 
 class _Palette {
   const _Palette(this.base, this.fgOnBase, this.tint);
-
   final Color base;
   final Color fgOnBase;
   final Color tint;
@@ -470,11 +457,9 @@ class _ToneStyle {
     const double kDisabledOpacity = 0.45;
 
     switch (tone) {
-      case AppButtonWidgetTone.solid: {
+      case AppButtonWidgetTone.solid:
         final base = palette.base;
-        final bg = enabled
-            ? (pressed ? _darken(base, 0.06) : base)
-            : base.withValues(alpha: kDisabledOpacity);
+        final bg = enabled ? (pressed ? _darken(base, 0.06) : base) : base.withValues(alpha: kDisabledOpacity);
         final fg = enabled ? palette.fgOnBase : palette.fgOnBase.withValues(alpha: 0.7);
         return _ToneStyle(
           bg: bg,
@@ -482,12 +467,9 @@ class _ToneStyle {
           highlight: Colors.black.withValues(alpha: kPressedOverlay),
           splash: Colors.white.withValues(alpha: 0.10),
         );
-      }
-      case AppButtonWidgetTone.subtle: {
+      case AppButtonWidgetTone.subtle:
         final base = palette.tint;
-        final bg = enabled
-            ? (pressed ? _darken(base, 0.06) : base)
-            : base.withValues(alpha: 0.6);
+        final bg = enabled ? (pressed ? _darken(base, 0.06) : base) : base.withValues(alpha: 0.6);
         final fg = enabled ? palette.base : palette.base.withValues(alpha: 0.45);
         return _ToneStyle(
           bg: bg,
@@ -495,11 +477,8 @@ class _ToneStyle {
           highlight: Colors.black.withValues(alpha: kPressedOverlay),
           splash: Colors.black.withValues(alpha: 0.06),
         );
-      }
-      case AppButtonWidgetTone.ghost: {
-        final bg = enabled
-            ? (pressed ? palette.base.withValues(alpha: 0.08) : Colors.transparent)
-            : Colors.transparent;
+      case AppButtonWidgetTone.ghost:
+        final bg = enabled ? (pressed ? palette.base.withValues(alpha: 0.08) : Colors.transparent) : Colors.transparent;
         final fg = enabled ? palette.base : palette.base.withValues(alpha: 0.40);
         return _ToneStyle(
           bg: bg,
@@ -507,15 +486,9 @@ class _ToneStyle {
           highlight: palette.base.withValues(alpha: 0.10),
           splash: palette.base.withValues(alpha: 0.10),
         );
-      }
-      case AppButtonWidgetTone.outline: {
-        final border = BorderSide(
-          color: enabled ? palette.base : palette.base.withValues(alpha: 0.40),
-          width: 1,
-        );
-        final bg = enabled
-            ? (pressed ? palette.base.withValues(alpha: 0.08) : Colors.transparent)
-            : Colors.transparent;
+      case AppButtonWidgetTone.outline:
+        final border = BorderSide(color: enabled ? palette.base : palette.base.withValues(alpha: 0.40), width: 1);
+        final bg = enabled ? (pressed ? palette.base.withValues(alpha: 0.08) : Colors.transparent) : Colors.transparent;
         final fg = enabled ? palette.base : palette.base.withValues(alpha: 0.40);
         return _ToneStyle(
           bg: bg,
@@ -524,7 +497,6 @@ class _ToneStyle {
           splash: palette.base.withValues(alpha: 0.10),
           border: border,
         );
-      }
     }
   }
 }
@@ -532,7 +504,6 @@ class _ToneStyle {
 /* ============================ helpers ================================ */
 
 Color _darken(Color c, double amount) {
-  assert(amount >= 0 && amount <= 1);
   final f = 1 - amount;
   return Color.fromARGB(
     ((c.a * 255.0).round() & 0xff),

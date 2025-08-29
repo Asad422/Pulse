@@ -22,8 +22,25 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
-        "appTitle": MessageLookupByLibrary.simpleMessage("Polso"),
+        "appTitle": MessageLookupByLibrary.simpleMessage("Pulse"),
         "homeTitle": MessageLookupByLibrary.simpleMessage("Home"),
+        "onbCtaContinueGuest":
+            MessageLookupByLibrary.simpleMessage("Continua come ospite"),
+        "onbCtaGetStarted": MessageLookupByLibrary.simpleMessage("Inizia"),
+        "onbHeader": MessageLookupByLibrary.simpleMessage("Noi, il Popolo"),
+        "onbSectionBody": MessageLookupByLibrary.simpleMessage(
+            "Esprimi il tuo supporto o la tua opposizione alle proposte di legge importanti per la tua comunità."),
+        "onbSectionTitle": MessageLookupByLibrary.simpleMessage(
+            "Vota le politiche che ti riguardano"),
+        "onbSubtitle": MessageLookupByLibrary.simpleMessage(
+            "Valuta i politici e le loro politiche\nResponsabilizza chi detiene il potere"),
+        "onbTermsAnd": MessageLookupByLibrary.simpleMessage(" e "),
+        "onbTermsPrefix": MessageLookupByLibrary.simpleMessage(
+            "Continuando, accetti i nostri "),
+        "onbTermsPrivacy":
+            MessageLookupByLibrary.simpleMessage("Informativa sulla privacy"),
+        "onbTermsTerms":
+            MessageLookupByLibrary.simpleMessage("Termini di servizio"),
         "splashGreeting": MessageLookupByLibrary.simpleMessage("Benvenuto!")
       };
 }

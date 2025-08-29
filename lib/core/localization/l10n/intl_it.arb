@@ -1,6 +1,16 @@
 {
   "@@locale": "it",
-  "appTitle": "Polso",
+  "appTitle": "Pulse",
   "splashGreeting": "Benvenuto!",
-  "homeTitle": "Home"
+  "homeTitle": "Home",
+  "onbHeader": "Noi, il Popolo",
+  "onbSubtitle": "Valuta i politici e le loro politiche\nResponsabilizza chi detiene il potere",
+  "onbSectionTitle": "Vota le politiche che ti riguardano",
+  "onbSectionBody": "Esprimi il tuo supporto o la tua opposizione alle proposte di legge importanti per la tua comunità.",
+  "onbCtaGetStarted": "Inizia",
+  "onbCtaContinueGuest": "Continua come ospite",
+  "onbTermsPrefix": "Continuando, accetti i nostri ",
+  "onbTermsTerms": "Termini di servizio",
+  "onbTermsAnd": " e ",
+  "onbTermsPrivacy": "Informativa sulla privacy"
 }

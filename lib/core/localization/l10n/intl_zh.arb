@@ -1,6 +1,16 @@
 {
-  "@@locale": "nl",
-  "appTitle": "Pols",
-  "splashGreeting": "Welkom!",
-  "homeTitle": "Startpagina"
+  "@@locale": "zh",
+  "appTitle": "Pulse",
+  "splashGreeting": "欢迎！",
+  "homeTitle": "首页",
+  "onbHeader": "我们，人民",
+  "onbSubtitle": "评价政客及其政策\n让掌权者承担责任",
+  "onbSectionTitle": "为影响你的政策投票",
+  "onbSectionBody": "就与你的社区息息相关的立法表达支持或反对。",
+  "onbCtaGetStarted": "开始使用",
+  "onbCtaContinueGuest": "以访客身份继续",
+  "onbTermsPrefix": "继续即表示你同意我们的 ",
+  "onbTermsTerms": "服务条款",
+  "onbTermsAnd": " 和 ",
+  "onbTermsPrivacy": "隐私政策"
 }
