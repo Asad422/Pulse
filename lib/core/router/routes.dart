@@ -8,6 +8,9 @@ class AppRoutes {
   static const home = 'home';
   static const search = 'search';
   static const profile = 'profile';
+
+  static const policySafety = 'policySafety';
+  static const userRights   = 'userRights';
 }
 
 class AppPaths {
@@ -18,4 +21,7 @@ class AppPaths {
   static const home = '/app/home';
   static const search = '/app/search';
   static const profile = '/app/profile';
+
+  static const policySafety = '/legal/policy-safety';
+  static const userRights   = '/legal/user-rights';
 }
