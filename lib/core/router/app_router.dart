@@ -39,7 +39,7 @@ class AppRouter {
         GoRoute(
           path: AppPaths.policySafety,
           name: AppRoutes.policySafety,
-          builder: (c, s) => const PolicySafetyScreen(),
+          builder: (c, s) => const PrivacyPolicyScreen(),
         ),
         GoRoute(
           path: AppPaths.userRights,
