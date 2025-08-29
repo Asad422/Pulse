@@ -78,7 +78,8 @@ class OnboardingScreen extends StatelessWidget {
                         decoration: TextDecoration.underline,
                         color: AppColors.primary,
                       ),
-                      recognizer: TapGestureRecognizer()..onTap = () {},
+                      recognizer: TapGestureRecognizer()
+                        ..onTap = () => context.push(AppPaths.policySafety),
                     ),
                     const TextSpan(text: '\n'),
                     TextSpan(text: l10n.onbTermsAnd),
@@ -88,7 +89,8 @@ class OnboardingScreen extends StatelessWidget {
                         decoration: TextDecoration.underline,
                         color: AppColors.primary,
                       ),
-                      recognizer: TapGestureRecognizer()..onTap = () {},
+                      recognizer: TapGestureRecognizer()
+                        ..onTap = () => context.push(AppPaths.userRights),
                     ),
                   ],
                 ),

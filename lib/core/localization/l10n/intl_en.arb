@@ -13,5 +13,6 @@
   "onbTermsPrefix": "By continuing, you agree to our ",
   "onbTermsTerms": "Terms of Service",
   "onbTermsAnd": " and ",
-  "onbTermsPrivacy": "Privacy Policy"
+  "onbTermsPrivacy": "Privacy Policy",
+  "legalPolicySafetyTitle": "legalPolicySafetyTitle"
 }

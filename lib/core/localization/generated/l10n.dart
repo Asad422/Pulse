@@ -179,6 +179,16 @@ class S {
       args: [],
     );
   }
+
+  /// `legalPolicySafetyTitle`
+  String get legalPolicySafetyTitle {
+    return Intl.message(
+      'legalPolicySafetyTitle',
+      name: 'legalPolicySafetyTitle',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {
