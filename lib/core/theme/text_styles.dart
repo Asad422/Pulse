@@ -240,6 +240,22 @@ class AppTextStyles {
     "Paragraph/p3-bold": paragraphP3Bold,
     "Paragraph/p3-high": paragraphP3High,
     "Paragraph/p3-high-bold": paragraphP3HighBold,
+
+    "Body/p1": paragraphP1,
+    "Body/p1-bold": paragraphP1Bold,
+    "Body/p1-high": paragraphP1High,
+    "Body/p1-high-bold": paragraphP1HighBold,
+
+    "Body/p2": paragraphP2,
+    "Body/p2-bold": paragraphP2Bold,
+    "Body/p2-high": paragraphP2High,
+    "Body/p2-high-bold": paragraphP2HighBold,
+
+    "Body/p3": paragraphP3,
+    "Body/p3-bold": paragraphP3Bold,
+    "Body/p3-high": paragraphP3High,
+    "Body/p3-high-bold": paragraphP3HighBold,
+
   };
 
   static TextStyle? get(String name) => _map[name];

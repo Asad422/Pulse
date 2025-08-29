@@ -79,6 +79,106 @@ class S {
       args: [],
     );
   }
+
+  /// `We the People`
+  String get onbHeader {
+    return Intl.message(
+      'We the People',
+      name: 'onbHeader',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Rate politicians and their policies\nHolding power to account`
+  String get onbSubtitle {
+    return Intl.message(
+      'Rate politicians and their policies\nHolding power to account',
+      name: 'onbSubtitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Vote on policies that affect you`
+  String get onbSectionTitle {
+    return Intl.message(
+      'Vote on policies that affect you',
+      name: 'onbSectionTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Express your support or opposition on legislation that matters to your community.`
+  String get onbSectionBody {
+    return Intl.message(
+      'Express your support or opposition on legislation that matters to your community.',
+      name: 'onbSectionBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Get Started`
+  String get onbCtaGetStarted {
+    return Intl.message(
+      'Get Started',
+      name: 'onbCtaGetStarted',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Continue as Guest`
+  String get onbCtaContinueGuest {
+    return Intl.message(
+      'Continue as Guest',
+      name: 'onbCtaContinueGuest',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `By continuing, you agree to our `
+  String get onbTermsPrefix {
+    return Intl.message(
+      'By continuing, you agree to our ',
+      name: 'onbTermsPrefix',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Terms of Service`
+  String get onbTermsTerms {
+    return Intl.message(
+      'Terms of Service',
+      name: 'onbTermsTerms',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// ` and `
+  String get onbTermsAnd {
+    return Intl.message(
+      ' and ',
+      name: 'onbTermsAnd',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Privacy Policy`
+  String get onbTermsPrivacy {
+    return Intl.message(
+      'Privacy Policy',
+      name: 'onbTermsPrivacy',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {
