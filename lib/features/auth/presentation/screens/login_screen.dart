@@ -5,7 +5,9 @@ import '../../../../core/resources/app_icons.dart';
 import '../../../../core/router/routes.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/text_styles.dart';
+import '../../../../core/validators/validators.dart';
 import '../../../../core/widgets/app_button_widget.dart';
+import '../../../../core/widgets/login_auth_widgets/app_input.dart';
 import '../../../../core/widgets/login_auth_widgets/apple_google_widget.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -20,6 +22,10 @@ class _LoginScreenState extends State<LoginScreen> {
   final _passwordCtrl = TextEditingController();
   bool _obscure = true;
 
+  // ошибки
+  String? _emailErr, _pwdErr;
+  bool _triedSubmit = false;
+
   @override
   void dispose() {
     _emailCtrl.dispose();
@@ -27,35 +33,28 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
+  void _validate() {
+    _emailErr = AppValidators.emailError(_emailCtrl.text);
+    _pwdErr = _passwordCtrl.text.isEmpty ? 'Enter your password' : null;
+  }
+
+  bool get _isFormValid {
+    _validate();
+    return _emailErr == null && _pwdErr == null;
+  }
+
+  void _submit() {
+    setState(() {
+      _triedSubmit = true;
+      _validate();
+    });
+    if (!_isFormValid) return;
+    // TODO: вызвать реальный login use-case
+    context.go(AppPaths.home);
+  }
+
   @override
   Widget build(BuildContext context) {
-    final borderColor = AppColors.textSecondary.withOpacity(0.25);
-
-    InputDecoration deco(String label, {Widget? suffix}) => InputDecoration(
-          labelText: label,
-          labelStyle: AppTextStyles.inputLabel,
-          floatingLabelBehavior: FloatingLabelBehavior.always,
-          floatingLabelAlignment: FloatingLabelAlignment.start,
-
-          filled: true,
-          fillColor: Colors.white,
-
-          // больше места сверху под лейбл
-          contentPadding: const EdgeInsets.fromLTRB(16, 20, 16, 14),
-
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: AppColors.textSecondary.withOpacity(0.25)),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
-          ),
-
-          suffixIcon: suffix,
-        );
-
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SafeArea(
@@ -66,52 +65,57 @@ class _LoginScreenState extends State<LoginScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const SizedBox(height: 16),
-              Align(alignment: Alignment.center, child: AppIcons.icLogo.svg(height: 40, width: 80)),
+              Align(
+                alignment: Alignment.center,
+                child: AppIcons.icLogo.svg(height: 40, width: 80),
+              ),
               const SizedBox(height: 24),
               Text('Log in', style: AppTextStyles.get("Title/t2")),
               const SizedBox(height: 12),
-              TextField(
+
+              // Email
+              AppTextField(
                 controller: _emailCtrl,
+                label: 'Email',
                 keyboardType: TextInputType.emailAddress,
                 textInputAction: TextInputAction.next,
-                style: AppTextStyles.get("Input/Text"),
-                decoration: deco('Email'),
+                errorText: _triedSubmit ? _emailErr : null,
               ),
               const SizedBox(height: 12),
-              TextField(
+
+              // Password
+              AppTextField(
                 controller: _passwordCtrl,
+                label: 'Password',
                 obscureText: _obscure,
                 textInputAction: TextInputAction.done,
-                style: AppTextStyles.get("Input/Text"),
-                decoration: deco(
-                  'Password',
-                  suffix: IconButton(
-                    onPressed: () => setState(() => _obscure = !_obscure),
-                    icon: (_obscure ? AppIcons.icEyeOff : AppIcons.icEye)
-                        .svg(width: 20, height: 20, color: AppColors.textSecondary),
-                    splashRadius: 20,
-                    padding: EdgeInsets.zero,
-
-                    // выключаем хайлайт/риппл
-                    splashColor: Colors.transparent,
-                    highlightColor: Colors.transparent,
-                    hoverColor: Colors.transparent,
-                    focusColor: Colors.transparent,
-                  ),
+                errorText: _triedSubmit ? _pwdErr : null,
+                suffix: IconButton(
+                  onPressed: () => setState(() => _obscure = !_obscure),
+                  icon: (_obscure ? AppIcons.icEyeOff : AppIcons.icEye)
+                      .svg(width: 20, height: 20, color: AppColors.textSecondary),
+                  splashRadius: 20,
+                  padding: EdgeInsets.zero,
+                  splashColor: Colors.transparent,
+                  highlightColor: Colors.transparent,
+                  hoverColor: Colors.transparent,
+                  focusColor: Colors.transparent,
                 ),
               ),
+
               const SizedBox(height: 16),
               SizedBox(
                 width: double.infinity,
                 child: AppButtonWidget(
                   label: 'Log in',
-                  onPressed: () => context.go(AppPaths.home),
+                  onPressed: _submit,
                   size: AppButtonWidgetSize.large,
                   intent: AppButtonWidgetIntent.primary,
                   tone: AppButtonWidgetTone.solid,
                 ),
               ),
               const SizedBox(height: 16),
+
               SocialProviders(
                 title: 'or continue with',
                 onGooglePressed: () => debugPrint('Google pressed'),
@@ -122,15 +126,15 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: Divider(),
               ),
               Row(
-                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text("Don’t have an account? ", style: AppTextStyles.get("Body/p1")),
-                  Spacer(),
+                  const Spacer(),
                   TextButton(
                     onPressed: () => context.go(AppPaths.register),
                     child: Text(
                       'Sign Up',
-                      style: AppTextStyles.get("Button/Medium")?.copyWith(color: AppColors.primary),
+                      style: AppTextStyles.get("Button/Medium")
+                          ?.copyWith(color: AppColors.primary),
                     ),
                   ),
                 ],
@@ -144,34 +148,23 @@ class _LoginScreenState extends State<LoginScreen> {
                   onPressed: () => context.go(AppPaths.home),
                   child: Text(
                     'Continue as guest',
-                    style: AppTextStyles.get("Button/Medium")?.copyWith(color: AppColors.primary),
+                    style: AppTextStyles.get("Button/Medium")
+                        ?.copyWith(color: AppColors.primary),
                   ),
                 ),
               ),
-              Center(child: Text('Limited features, no voting', style: AppTextStyles.get("Body/p2"))),
+              Center(
+                child: Text(
+                  'Limited features, no voting',
+                  style: AppTextStyles.get("Body/p2")
+                      ?.copyWith(color: AppColors.textSecondary),
+                ),
+              ),
               const SizedBox(height: 24),
             ],
           ),
         ),
       ),
-    );
-  }
-}
-
-class _LinedText extends StatelessWidget {
-  final String text;
-
-  const _LinedText(this.text);
-
-  @override
-  Widget build(BuildContext context) {
-    final style = AppTextStyles.get("Body/p3-high");
-    return Row(
-      children: [
-        const Expanded(child: Divider()),
-        Padding(padding: const EdgeInsets.symmetric(horizontal: 12), child: Text(text, style: style)),
-        const Expanded(child: Divider()),
-      ],
     );
   }
 }

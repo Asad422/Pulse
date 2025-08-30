@@ -42,6 +42,7 @@ class AppIcons {
   static const SvgAsset icGoogle = SvgAsset('$_dir/ic_google.svg');
   static const SvgAsset icEye = SvgAsset('$_dir/ic_eye.svg');
   static const SvgAsset icEyeOff = SvgAsset('$_dir/ic_eye_off.svg');
+  static const SvgAsset icLocation = SvgAsset('$_dir/ic_location.svg');
 
 // static const SvgAsset settings = SvgAsset('$_dir/settings.svg');
 }
