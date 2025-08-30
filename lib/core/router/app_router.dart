@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../app/ui/shell/app_shell.dart';
 import '../../features/auth/presentation/screens/location_select_screen.dart';
@@ -15,7 +14,7 @@ import 'routes.dart';
 class AppRouter {
   static GoRouter create() {
     return GoRouter(
-      initialLocation: AppPaths.home,
+      initialLocation: AppPaths.onboarding,
       routes: [
         // Standalone
         GoRoute(
