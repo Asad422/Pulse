@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../app/ui/shell/app_shell.dart';
+import '../../features/auth/presentation/screens/location_select_screen.dart';
 import '../../features/auth/presentation/screens/login_screen.dart';
 import '../../features/auth/presentation/screens/register_screen.dart';
 import '../../features/home/presentation/screens/home_screen.dart';
@@ -10,8 +11,6 @@ import '../../features/privacy_policy/presentation/screens/user_rights_screen.da
 import '../../features/profile/presentation/screens/profile_screen.dart';
 import '../../features/search/presentation/screens/search_screen.dart';
 import 'routes.dart';
-
-
 
 class AppRouter {
   static GoRouter create() {
@@ -34,6 +33,14 @@ class AppRouter {
           name: AppRoutes.register,
           builder: (c, s) => const RegisterScreen(),
         ),
+        GoRoute(
+          path: AppPaths.location,
+          name: AppRoutes.location,
+          builder: (c, s) => LocationSelectScreen(
+            initialSelected: s.extra as String?,
+          ),
+        ),
+
 
         // Legal
         GoRoute(
