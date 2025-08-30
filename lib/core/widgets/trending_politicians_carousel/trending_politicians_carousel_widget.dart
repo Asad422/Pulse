@@ -1,45 +1,57 @@
 import 'package:flutter/material.dart';
 import 'package:pulse/core/theme/app_colors.dart';
 import 'package:pulse/core/theme/text_styles.dart';
-import 'package:pulse/core/widgets/app_button_widget.dart';
-import 'package:pulse/core/widgets/trending_politicians_carousel/politician_card_widget.dart';
+import 'package:pulse/core/widgets/politicians_profile_card/politician_dto.dart';
+import 'package:pulse/core/widgets/trending_politicians_carousel/politician_carousel_card_widget.dart';
 
 class TrendingPoliticiansCarousel extends StatelessWidget {
   const TrendingPoliticiansCarousel({super.key});
 
   // демо-данные
-  List<_Politician> get _items => const [
-        _Politician(
+  List<Politician> get _items => const [
+        Politician(
           name: 'Sen. John Constantinopolsky',
           party: 'D',
+          partyFull: 'Democrat',
+          inOfficeSinceText: 'In office since: January 20, 2021',
+          country: 'USA',
           state: 'California',
           rating: 100,
           imageUrl:
-              'https://images.unsplash.com/photo-1607746882042-944635dfe10e?w=400',
+              'https://images.unsplash.com/photo-1607746882042-944635dfe10e?w=400', policies: [],
         ),
-        _Politician(
+        Politician(
           name: 'Rep. Sarah Johnson',
           party: 'R',
+          partyFull: 'Democrat',
+          inOfficeSinceText: 'In office since: January 20, 2021',
+          country: 'USA',
           state: 'Texas',
           rating: 48,
           imageUrl:
-              'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400',
+              'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400', policies: [],
         ),
-        _Politician(
+        Politician(
           name: 'Sen. Marcus Lee',
           party: 'D',
+          partyFull: 'Democrat',
+          inOfficeSinceText: 'In office since: January 20, 2021',
+          country: 'USA',
           state: 'New York',
           rating: 29,
           imageUrl:
-              'https://images.unsplash.com/photo-1547425260-76bcadfb4f2c?w=400',
+              'https://images.unsplash.com/photo-1547425260-76bcadfb4f2c?w=400', policies: [],
         ),
-        _Politician(
+        Politician(
           name: 'Rep. Emily Carter',
           party: 'R',
+          partyFull: 'Democrat',
+          inOfficeSinceText: 'In office since: January 20, 2021',
+          country: 'USA',
           state: 'Florida',
           rating: 66,
           imageUrl:
-              'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=400',
+              'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=400', policies: [],
         ),
       ];
 
@@ -90,7 +102,7 @@ class TrendingPoliticiansCarousel extends StatelessWidget {
             separatorBuilder: (_, __) => const SizedBox(width: 12),
             itemBuilder: (context, index) {
               final p = items[index];
-              return PoliticianCardWidget(
+              return PoliticianCarouselCardWidget(
                 name: p.name,
                 party: p.party,
                 state: p.state,
@@ -109,20 +121,4 @@ class TrendingPoliticiansCarousel extends StatelessWidget {
       ],
     );
   }
-}
-
-class _Politician {
-  const _Politician({
-    required this.name,
-    required this.party,
-    required this.state,
-    required this.rating,
-    required this.imageUrl,
-  });
-
-  final String name;
-  final String party;
-  final String state;
-  final int rating;
-  final String imageUrl;
 }

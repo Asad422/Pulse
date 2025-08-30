@@ -49,5 +49,9 @@ class AppIcons {
   static const SvgAsset icPoliticans = SvgAsset('$_dir/nav_bar/ic_politicans.svg');
   static const SvgAsset icProfile = SvgAsset('$_dir/nav_bar/ic_profile.svg');
 
+  static const SvgAsset icShare = SvgAsset('$_dir/ic_share.svg');
+  static const SvgAsset icLike = SvgAsset('$_dir/ic_like.svg');
+  static const SvgAsset icDislike = SvgAsset('$_dir/ic_dislike.svg');
+
 // static const SvgAsset settings = SvgAsset('$_dir/settings.svg');
 }
