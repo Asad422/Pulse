@@ -1,14 +1,14 @@
 import 'package:go_router/go_router.dart';
+import 'package:pulse/features/legislation/presentation/screens/legislation_screen.dart';
+import 'package:pulse/features/politicans/presentation/screens/politicans_screen.dart';
 import '../../app/ui/shell/app_shell.dart';
 import '../../features/auth/presentation/screens/location_select_screen.dart';
 import '../../features/auth/presentation/screens/login_screen.dart';
 import '../../features/auth/presentation/screens/register_screen.dart';
-import '../../features/home/presentation/screens/home_screen.dart';
 import '../../features/onboarding/onboarding_screen.dart';
 import '../../features/privacy_policy/presentation/screens/policy_safety_screen.dart';
 import '../../features/privacy_policy/presentation/screens/user_rights_screen.dart';
 import '../../features/profile/presentation/screens/profile_screen.dart';
-import '../../features/search/presentation/screens/search_screen.dart';
 import 'routes.dart';
 
 class AppRouter {
@@ -60,12 +60,12 @@ class AppRouter {
             GoRoute(
               path: AppPaths.home,
               name: AppRoutes.home,
-              pageBuilder: (c, s) => const NoTransitionPage(child: HomeScreen()),
+              pageBuilder: (c, s) => const NoTransitionPage(child: LegislationScreen()),
             ),
             GoRoute(
               path: AppPaths.search,
               name: AppRoutes.search,
-              pageBuilder: (c, s) => const NoTransitionPage(child: SearchScreen()),
+              pageBuilder: (c, s) => const NoTransitionPage(child: PoliticansScreen()),
             ),
             GoRoute(
               path: AppPaths.profile,
