@@ -50,7 +50,7 @@ class TrendingPoliticiansCarousel extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // заголовок + action
+        // заголовок + кнопка "See All"
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Row(
@@ -79,9 +79,9 @@ class TrendingPoliticiansCarousel extends StatelessWidget {
         ),
         const SizedBox(height: 12),
 
-        // сама карусель
+        // карусель с карточками политиков
         SizedBox(
-          height: 230, // высота под карточку
+          height: 230, // высота под карусель с карточками
           child: ListView.separated(
             primary: false,
             padding: const EdgeInsets.symmetric(horizontal: 16),

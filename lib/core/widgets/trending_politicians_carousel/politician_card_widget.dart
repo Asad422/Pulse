@@ -43,12 +43,12 @@ class PoliticianCardWidget extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Аватар + бейдж
+          // Аватар + прогресс индикатор
           SizedBox(
             child: Stack(
               clipBehavior: Clip.none,
               children: [
-                // фон-диск под аватаром (оранжеватый акцент)
+                // фон-диск под аватаром
                 Align(
                   alignment: Alignment.center,
                   child: ClipOval(
@@ -60,14 +60,14 @@ class PoliticianCardWidget extends StatelessWidget {
                     ),
                   ),
                 ),
-                // бейдж процента в правом нижнем углу аватара
+                // прогресс индикатор в правом нижнем углу аватара
                 Positioned(
-                  right: 10,
+                  right: 14,
                   bottom: 0,
                   child: CircularProgressBarWidget(
                     percent: rating / 100.0,
-                    size: 36, // подгоните при необходимости
-                    fillColor: badgeColor, // ваш зелёный/жёлтый/красный
+                    size: 36,
+                    fillColor: badgeColor, //_ratingColor отвечает за цвет
                   ),
                 ),
               ],
@@ -101,7 +101,7 @@ class PoliticianCardWidget extends StatelessWidget {
               onPressed: onRate,
               tone: AppButtonWidgetTone.subtle,
               size: AppButtonWidgetSize.small,
-              borderRadius: 12,
+              borderRadius: 8,
             ),
           ),
         ],
