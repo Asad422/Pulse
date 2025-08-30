@@ -52,8 +52,8 @@ flutter:
   uses-material-design: true
   assets:
     - assets/icons/
-    - assets/images/
-    - assets/screenshots/
+    # - assets/images/
+    # - assets/screenshots/
     # - assets/illustrations/      # добавь, если будет нужно
 
 # --- flutter_native_splash configuration ---
