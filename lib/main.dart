@@ -10,7 +10,8 @@ import 'core/router/app_router.dart';
 void main() {
   runApp(
     DevicePreview(
-      enabled: !kReleaseMode,
+      // enabled: !kReleaseMode,
+      enabled: false,
       builder: (context) => const App(),
     ),
   );
