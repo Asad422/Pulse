@@ -6,8 +6,37 @@ class LegislationScreen extends StatelessWidget {
   const LegislationScreen({super.key});
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar.new(),
+        appBar: AppBar.new(),
         backgroundColor: AppColors.background,
-        body: const LegislationVoteCard(featured: true, status: LegislationStatus.passedSenate, subtitle: 'Allocates 1.2T for roads, bridges, public transit, and broadband internet',),
+        body: ListView(children: [
+          Column(
+            children: [
+              const LegislationVoteCard(
+                featured: true,
+                status: LegislationStatus.passedSenate,
+                subtitle:
+                    'Allocates 1.2T for roads, bridges, public transit, and broadband internet',
+              ),
+              const LegislationVoteCard(
+                featured: true,
+                status: LegislationStatus.passedSenate,
+                subtitle:
+                    'Allocates 1.2T for roads, bridges, public transit, and broadband internet',
+              ),
+              const LegislationVoteCard(
+                featured: true,
+                status: LegislationStatus.passedSenate,
+                subtitle:
+                    'Allocates 1.2T for roads, bridges, public transit, and broadband internet',
+              ),
+              const LegislationVoteCard(
+                featured: true,
+                status: LegislationStatus.passedSenate,
+                subtitle:
+                    'Allocates 1.2T for roads, bridges, public transit, and broadband internet',
+              ),
+            ],
+          ),
+        ]),
       );
 }
