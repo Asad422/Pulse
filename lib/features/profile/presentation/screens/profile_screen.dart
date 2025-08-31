@@ -33,7 +33,6 @@ class ProfileScreen extends StatelessWidget {
                 PromiseCard(
                   title: 'Clean Energy Act H.R. 3456',
                   dateText: 'June 28, 2023',
-                  body: '',
                   status: PromiseStatus.kept,
                   statusText: 'Supported',
                 ),
@@ -41,7 +40,6 @@ class ProfileScreen extends StatelessWidget {
                 PromiseCard(
                   title: 'Minimum Wage Increase Act H.R. 603',
                   dateText: 'June 25, 2023',
-                  body: '',
                   status: PromiseStatus.broken,
                   statusText: 'Opposed',
                 ),
@@ -49,7 +47,6 @@ class ProfileScreen extends StatelessWidget {
                 PromiseCard(
                   title: 'Sen. Lisa Chen',
                   dateText: 'June 28, 2023',
-                  body: '',
                   status: PromiseStatus.kept,
                   statusText: 'Approved',
                 ),

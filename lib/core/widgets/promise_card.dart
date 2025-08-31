@@ -9,7 +9,7 @@ class PromiseCard extends StatelessWidget {
     super.key,
     required this.title,
     required this.dateText,
-    required this.body,
+    this.body,
     required this.status,
     this.statusText,
     this.subtitle,
@@ -19,7 +19,7 @@ class PromiseCard extends StatelessWidget {
   final String title;
   final String? subtitle;
   final String dateText;
-  final String body;
+  final String? body;
   final PromiseStatus status;
   final String? statusText;
   final VoidCallback? onTap;
@@ -64,8 +64,11 @@ class PromiseCard extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 8),
-              Text(body, style: AppTextStyles.paragraphP2),
+              if (body != null )...[
+              Text(body!, style: AppTextStyles.paragraphP2),
               const SizedBox(height: 12),
+              ],
+
               _StatusChip(
                 text: statusText ?? defaultLabel,
                 fg: fg,
