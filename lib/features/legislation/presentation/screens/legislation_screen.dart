@@ -8,28 +8,28 @@ class LegislationScreen extends StatelessWidget {
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar.new(),
         backgroundColor: AppColors.background,
-        body: ListView(children: [
+        body: ListView(children: const [
           Column(
             children: [
-              const LegislationVoteCard(
+              LegislationVoteCard(
                 featured: true,
                 status: LegislationStatus.passedSenate,
                 subtitle:
                     'Allocates 1.2T for roads, bridges, public transit, and broadband internet',
               ),
-              const LegislationVoteCard(
+              LegislationVoteCard(
                 featured: true,
                 status: LegislationStatus.passedSenate,
                 subtitle:
                     'Allocates 1.2T for roads, bridges, public transit, and broadband internet',
               ),
-              const LegislationVoteCard(
+              LegislationVoteCard(
                 featured: true,
                 status: LegislationStatus.passedSenate,
                 subtitle:
                     'Allocates 1.2T for roads, bridges, public transit, and broadband internet',
               ),
-              const LegislationVoteCard(
+              LegislationVoteCard(
                 featured: true,
                 status: LegislationStatus.passedSenate,
                 subtitle:
