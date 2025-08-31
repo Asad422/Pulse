@@ -15,6 +15,7 @@ class AppRouter {
   static GoRouter create() {
     return GoRouter(
       initialLocation: AppPaths.profile,
+
       routes: [
         // Standalone
         GoRoute(
