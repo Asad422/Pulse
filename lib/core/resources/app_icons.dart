@@ -53,5 +53,13 @@ class AppIcons {
   static const SvgAsset icLike = SvgAsset('$_dir/ic_like.svg');
   static const SvgAsset icDislike = SvgAsset('$_dir/ic_dislike.svg');
 
+  // Profile
+  static const SvgAsset icLanguage = SvgAsset('$_dir/profile/ic_language.svg');
+  static const SvgAsset icLogout = SvgAsset('$_dir/profile/ic_logout.svg');
+  static const SvgAsset icNotifications = SvgAsset('$_dir/profile/ic_notifications.svg');
+  static const SvgAsset icTrash = SvgAsset('$_dir/profile/ic_trash.svg');
+  static const SvgAsset icPen = SvgAsset('$_dir/profile/ic_pen.svg');
+  static const SvgAsset icArrowRight = SvgAsset('$_dir/profile/ic_arrow_right.svg');
+
 // static const SvgAsset settings = SvgAsset('$_dir/settings.svg');
 }
