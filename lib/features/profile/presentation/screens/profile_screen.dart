@@ -3,10 +3,12 @@ import 'package:go_router/go_router.dart';
 import 'package:pulse/features/profile/presentation/widgets/custom_tile.dart';
 import 'package:pulse/features/profile/presentation/widgets/profile_app_bar.dart';
 
+import '../../../../core/resources/app_icons.dart'; // 👈 добавили
 import '../../../../core/router/routes.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/text_styles.dart';
 import '../../../../core/widgets/promise_card.dart';
+import '../../../../core/widgets/alerts/app_alert.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -27,7 +29,7 @@ class ProfileScreen extends StatelessWidget {
             ),
           ),
           SliverPadding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 20),
             sliver: SliverList.list(
               children: const [
                 PromiseCard(
@@ -56,40 +58,61 @@ class ProfileScreen extends StatelessWidget {
           SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-              child: Center(
-                child: TextButton.icon(
+              child: SizedBox(
+                width: double.infinity, // 👈 на всю ширину
+                height: 56,             // 👈 фиксированная высота
+                child: TextButton(
                   onPressed: () {},
-                  icon: const Icon(Icons.arrow_forward, size: 16, color: AppColors.primary),
-                  label: Text(
-                    'View All Activity',
-                    style: AppTextStyles.labelL2.copyWith(color: AppColors.primary),
+                  style: TextButton.styleFrom(
+                    backgroundColor: Colors.transparent, // оставил как дефолт
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'View All Activity',
+                        style: AppTextStyles.buttonLarge.copyWith(color: AppColors.primary),
+                      ),
+                      const SizedBox(width: 12),
+                      AppIcons.icArrowRight.svg(
+                        width: 24,
+                        height: 24,
+                        color: AppColors.primary,
+                      ),
+                    ],
                   ),
                 ),
               ),
             ),
           ),
+
           const SliverToBoxAdapter(child: Divider(height: 1)),
           const SliverToBoxAdapter(
             child: Padding(
-              padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
+              padding: EdgeInsets.only(left: 20, right: 20, top: 24),
               child: Text('Preferences', style: AppTextStyles.titleT2),
             ),
           ),
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12),
+              padding: const EdgeInsets.only(left: 20, right: 20, top: 16, bottom: 24),
               child: Column(
                 children: [
                   CustomTile(
                     title: 'Language',
-                    subtitle: 'English',
-                    leading: const Icon(Icons.language, color: AppColors.textSecondary),
+                    leading: AppIcons.icLanguage.svg(width: 22, height: 22, color: AppColors.textSecondary),
                     trailing: const Icon(Icons.chevron_right, color: AppColors.textSecondary),
                     onTap: () {},
                   ),
+                  const SizedBox(
+                    height: 20,
+                  ),
                   CustomTile(
                     title: 'Notification Settings',
-                    leading: const Icon(Icons.notifications_none, color: AppColors.textSecondary),
+                    leading: AppIcons.icNotifications.svg(width: 22, height: 22, color: AppColors.textSecondary),
                     trailing: const Icon(Icons.chevron_right, color: AppColors.textSecondary),
                     onTap: () {},
                   ),
@@ -100,19 +123,49 @@ class ProfileScreen extends StatelessWidget {
           const SliverToBoxAdapter(child: Divider(height: 1)),
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12),
+              padding: const EdgeInsets.only(left: 20, right: 20, top: 24),
               child: Column(
                 children: [
+                  // Delete account (destructive)
                   CustomTile(
                     title: 'Delete Account',
-                    leading: const Icon(Icons.delete_outline, color: AppColors.error),
-                    destructive: true,
-                    onTap: () {},
+                    leading: AppIcons.icTrash.svg(width: 22, height: 22),
+                    // destructive: true,
+                    onTap: () async {
+                      final ok = await AppAlerts.destructive(
+                        context,
+                        title: 'Delete account',
+                        message:
+                            'Are you sure you want to delete your account? This will permanently erase your account.',
+                        confirmText: 'Delete',
+                        cancelText: 'Cancel',
+                      );
+                      if (ok && context.mounted) {
+                        // TODO: удалить аккаунт, очистить сессию
+                        GoRouter.of(context).go(AppPaths.login);
+                      }
+                    },
                   ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  // Log out (confirm)
                   CustomTile(
                     title: 'Log Out',
-                    leading: const Icon(Icons.logout, color: AppColors.textSecondary),
-                    onTap: () => GoRouter.of(context).go(AppPaths.login),
+                    leading: AppIcons.icLogout.svg(width: 22, height: 22, color: AppColors.textSecondary),
+                    onTap: () async {
+                      final ok = await AppAlerts.confirm(
+                        context,
+                        title: 'Log out',
+                        message: 'Are you sure you want to log out?',
+                        confirmText: 'Log Out',
+                        cancelText: 'Cancel',
+                      );
+                      if (ok && context.mounted) {
+                        // TODO: очистить токены/сессию
+                        GoRouter.of(context).go(AppPaths.login);
+                      }
+                    },
                   ),
                 ],
               ),
@@ -150,18 +203,21 @@ class _Header extends StatelessWidget {
             width: double.infinity,
             child: TextButton.icon(
               onPressed: () {},
-              icon: const Icon(Icons.edit, size: 16, color: AppColors.primary),
+              icon: AppIcons.icPen.svg(
+                width: 16,
+                height: 16,
+              ),
               label: Text(
                 'Edit Profile',
-                style: AppTextStyles.buttonMedium.copyWith(color: AppColors.primary),
+                style: AppTextStyles.buttonLarge.copyWith(color: AppColors.onPrimaryContainer),
               ),
               style: TextButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 14),
+                minimumSize: const Size.fromHeight(56), // 👈 фиксируем высоту
                 backgroundColor: AppColors.primaryContainer,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               ),
             ),
-          ),
+          )
         ],
       ),
     );

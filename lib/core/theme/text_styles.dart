@@ -6,9 +6,9 @@ class AppTextStyles {
   // ===== Label ===== // NEW
   static const TextStyle labelL1 = TextStyle(
     fontFamily: 'Inter',
-    fontSize: 16,
+    fontSize: 14,
     height: 20 / 14,
-    fontWeight: FontWeight.w600,
+    fontWeight: FontWeight.w500,
     color: AppColors.textPrimary,
   );
 
@@ -16,7 +16,7 @@ class AppTextStyles {
     fontFamily: 'Inter',
     fontSize: 14,
     height: 16 / 12,
-    fontWeight: FontWeight.w600,
+    fontWeight: FontWeight.w500,
     color: AppColors.textPrimary,
   );
 

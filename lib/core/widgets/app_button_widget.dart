@@ -292,13 +292,14 @@ class _AppButtonWidgetState extends State<AppButtonWidget> {
   TextStyle _labelTextStyle(AppButtonWidgetSize s) {
     switch (s) {
       case AppButtonWidgetSize.small:
-        return AppTextStyles.buttonSmall;
+        return AppTextStyles.get("Button/Small") ?? AppTextStyles.buttonSmall;
       case AppButtonWidgetSize.medium:
-        return AppTextStyles.buttonMedium;
+        return AppTextStyles.get("Button/Medium") ?? AppTextStyles.buttonMedium;
       case AppButtonWidgetSize.large:
-        return AppTextStyles.buttonLarge;
+        return AppTextStyles.get("Button/Large") ?? AppTextStyles.buttonLarge;
     }
   }
+
 
   Widget _divider(_Metrics m, _ToneStyle style) => Container(
     width: 1,

@@ -1,13 +1,23 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:device_preview/device_preview.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'core/localization/generated/l10n.dart';
 import 'core/router/app_router.dart';
+import 'app/di/di.dart';
+import 'features/auth/domain/usecases/login_usecase.dart';
+import 'core/network/token_storage.dart';
+import 'features/auth/presentation/bloc/login_bloc/login_bloc.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // инициализируем DI
+  await configureDependencies();
+
   runApp(
     DevicePreview(
       // enabled: !kReleaseMode,
@@ -24,21 +34,32 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     final GoRouter router = AppRouter.create();
 
-    return MaterialApp.router(
-      title: 'Pulse',
-      debugShowCheckedModeBanner: false,
-      routerConfig: router,
-      theme: ThemeData(useMaterial3: true),
-      useInheritedMediaQuery: true,
-      locale: DevicePreview.locale(context),
-      builder: DevicePreview.appBuilder,
-      localizationsDelegates: const [
-        S.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<LoginBloc>(
+          create: (_) => LoginBloc(
+            loginUseCase: sl<LoginUseCase>(),
+            tokenStorage: sl<TokenStorage>(),
+          ),
+        ),
+        // сюда добавляй остальные блоки, когда появятся
       ],
-      supportedLocales: S.delegate.supportedLocales,
+      child: MaterialApp.router(
+        title: 'Pulse',
+        debugShowCheckedModeBanner: false,
+        routerConfig: router,
+        theme: ThemeData(useMaterial3: true),
+        useInheritedMediaQuery: true,
+        locale: DevicePreview.locale(context),
+        builder: DevicePreview.appBuilder,
+        localizationsDelegates: const [
+          S.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: S.delegate.supportedLocales,
+      ),
     );
   }
 }

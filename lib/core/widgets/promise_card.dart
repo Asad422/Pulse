@@ -84,11 +84,11 @@ class PromiseCard extends StatelessWidget {
   (Color fg, Color bg, String label) _statusColors(PromiseStatus s) {
     switch (s) {
       case PromiseStatus.kept:
-        return (AppColors.green, AppColors.greenContainer, 'Kept');
+        return (AppColors.onGreenContainer, AppColors.greenContainer, 'Kept');
       case PromiseStatus.broken:
-        return (AppColors.error, AppColors.errorContainer, 'Broken');
+        return (AppColors.onErrorContainer, AppColors.errorContainer, 'Broken');
       case PromiseStatus.pending:
-        return (AppColors.yellow, AppColors.yellowContainer, 'Pending');
+        return (AppColors.onYellowContainer, AppColors.yellowContainer, 'Pending');
     }
   }
 }
