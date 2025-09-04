@@ -14,7 +14,7 @@ import 'routes.dart';
 class AppRouter {
   static GoRouter create() {
     return GoRouter(
-      initialLocation: AppPaths.profile,
+      initialLocation: AppPaths.onboarding,
       routes: [
         // Standalone
         GoRoute(
