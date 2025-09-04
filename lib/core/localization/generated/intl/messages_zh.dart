@@ -22,8 +22,20 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
-        "appTitle": MessageLookupByLibrary.simpleMessage("脉搏"),
+        "appTitle": MessageLookupByLibrary.simpleMessage("Pulse"),
         "homeTitle": MessageLookupByLibrary.simpleMessage("首页"),
+        "onbCtaContinueGuest": MessageLookupByLibrary.simpleMessage("以访客身份继续"),
+        "onbCtaGetStarted": MessageLookupByLibrary.simpleMessage("开始使用"),
+        "onbHeader": MessageLookupByLibrary.simpleMessage("我们，人民"),
+        "onbSectionBody":
+            MessageLookupByLibrary.simpleMessage("就与你的社区息息相关的立法表达支持或反对。"),
+        "onbSectionTitle": MessageLookupByLibrary.simpleMessage("为影响你的政策投票"),
+        "onbSubtitle":
+            MessageLookupByLibrary.simpleMessage("评价政客及其政策\n让掌权者承担责任"),
+        "onbTermsAnd": MessageLookupByLibrary.simpleMessage(" 和 "),
+        "onbTermsPrefix": MessageLookupByLibrary.simpleMessage("继续即表示你同意我们的 "),
+        "onbTermsPrivacy": MessageLookupByLibrary.simpleMessage("隐私政策"),
+        "onbTermsTerms": MessageLookupByLibrary.simpleMessage("服务条款"),
         "splashGreeting": MessageLookupByLibrary.simpleMessage("欢迎！")
       };
 }

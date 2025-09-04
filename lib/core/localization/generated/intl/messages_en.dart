@@ -24,6 +24,25 @@ class MessageLookup extends MessageLookupByLibrary {
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
         "appTitle": MessageLookupByLibrary.simpleMessage("Pulse"),
         "homeTitle": MessageLookupByLibrary.simpleMessage("Home"),
+        "legalPolicySafetyTitle":
+            MessageLookupByLibrary.simpleMessage("legalPolicySafetyTitle"),
+        "onbCtaContinueGuest":
+            MessageLookupByLibrary.simpleMessage("Continue as Guest"),
+        "onbCtaGetStarted": MessageLookupByLibrary.simpleMessage("Get Started"),
+        "onbHeader": MessageLookupByLibrary.simpleMessage("We the People"),
+        "onbSectionBody": MessageLookupByLibrary.simpleMessage(
+            "Express your support or opposition on legislation that matters to your community."),
+        "onbSectionTitle": MessageLookupByLibrary.simpleMessage(
+            "Vote on policies that affect you"),
+        "onbSubtitle": MessageLookupByLibrary.simpleMessage(
+            "Rate politicians and their policies\nHolding power to account"),
+        "onbTermsAnd": MessageLookupByLibrary.simpleMessage(" and "),
+        "onbTermsPrefix": MessageLookupByLibrary.simpleMessage(
+            "By continuing, you agree to our "),
+        "onbTermsPrivacy":
+            MessageLookupByLibrary.simpleMessage("Privacy Policy"),
+        "onbTermsTerms":
+            MessageLookupByLibrary.simpleMessage("Terms of Service"),
         "splashGreeting": MessageLookupByLibrary.simpleMessage("Welcome!")
       };
 }

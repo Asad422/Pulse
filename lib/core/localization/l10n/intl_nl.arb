@@ -1,6 +1,16 @@
 {
-  "@@locale": "zh",
-  "appTitle": "脉搏",
-  "splashGreeting": "欢迎！",
-  "homeTitle": "首页"
+  "@@locale": "nl",
+  "appTitle": "Pulse",
+  "splashGreeting": "Welkom!",
+  "homeTitle": "Home",
+  "onbHeader": "Wij, het volk",
+  "onbSubtitle": "Beoordeel politici en hun beleid\nHoud machthebbers verantwoordelijk",
+  "onbSectionTitle": "Stem over beleid dat jou raakt",
+  "onbSectionBody": "Geef je steun of bezwaar aan bij wetgeving die belangrijk is voor jouw gemeenschap.",
+  "onbCtaGetStarted": "Aan de slag",
+  "onbCtaContinueGuest": "Doorgaan als gast",
+  "onbTermsPrefix": "Door door te gaan ga je akkoord met onze ",
+  "onbTermsTerms": "Servicevoorwaarden",
+  "onbTermsAnd": " en ",
+  "onbTermsPrivacy": "Privacyverklaring"
 }
