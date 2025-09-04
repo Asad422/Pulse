@@ -7,6 +7,7 @@ import '../../../../core/router/routes.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/text_styles.dart';
 import '../../../../core/widgets/promise_card.dart';
+import '../../../../core/widgets/alerts/app_alert.dart'; // 👈 алерты
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -103,16 +104,49 @@ class ProfileScreen extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 12),
               child: Column(
                 children: [
+                  // Delete account (destructive)
                   CustomTile(
                     title: 'Delete Account',
                     leading: const Icon(Icons.delete_outline, color: AppColors.error),
                     destructive: true,
-                    onTap: () {},
+                    onTap: () async {
+                      final ok = await AppAlerts.destructive(
+                        context,
+                        title: 'Delete account',
+                        message:
+                        'Are you sure you want to delete your account? This will permanently erase your account.',
+                        confirmText: 'Delete',
+                        cancelText: 'Cancel',
+                      );
+                      if (ok) {
+                        // TODO: вызвать use-case удаления, очистить токены и т.п.
+                        // Пример: await sl<TokenStorage>().clear();
+                        if (context.mounted) {
+                          GoRouter.of(context).go(AppPaths.login);
+                        }
+                      }
+                    },
                   ),
+
+                  // Log out (confirm)
                   CustomTile(
                     title: 'Log Out',
                     leading: const Icon(Icons.logout, color: AppColors.textSecondary),
-                    onTap: () => GoRouter.of(context).go(AppPaths.login),
+                    onTap: () async {
+                      final ok = await AppAlerts.confirm(
+                        context,
+                        title: 'Log out',
+                        message: 'Are you sure you want to log out?',
+                        confirmText: 'Log Out',
+                        cancelText: 'Cancel',
+                      );
+                      if (ok) {
+                        // TODO: очистить токены/сессию, обнулить стейт пользователя
+                        if (context.mounted) {
+                          GoRouter.of(context).go(AppPaths.login);
+                        }
+                      }
+                    },
                   ),
                 ],
               ),
