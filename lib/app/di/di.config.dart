@@ -22,6 +22,16 @@ import '../../features/auth/data/repositories/auth_repository_impl.dart'
     as _i153;
 import '../../features/auth/domain/repositories/auth_repository.dart' as _i787;
 import '../../features/auth/domain/usecases/login_usecase.dart' as _i188;
+import '../../features/politicans/data/datasources/politicians_remote_ds.dart'
+    as _i153;
+import '../../features/politicans/data/repositories/politicians_repository_impl.dart'
+    as _i132;
+import '../../features/politicans/domain/repositories/politicians_repository.dart'
+    as _i460;
+import '../../features/politicans/domain/usecases/get_politician_usecase.dart'
+    as _i696;
+import '../../features/politicans/domain/usecases/get_politicians_usecase.dart'
+    as _i953;
 import 'external_module.dart' as _i489;
 import 'interceptor_module.dart' as _i1019;
 import 'network_module.dart' as _i567;
@@ -71,6 +81,14 @@ _i174.GetIt $initGetIt(
         gh<_i361.Dio>(instanceName: 'plainMainDio'),
         gh<_i388.AuthInterceptor>(),
       ));
+  gh.lazySingleton<_i153.PoliticiansRemoteDataSource>(
+      () => _i153.PoliticiansRemoteDataSource(gh<_i361.Dio>()));
+  gh.lazySingleton<_i460.PoliticiansRepository>(() =>
+      _i132.PoliticiansRepositoryImpl(gh<_i153.PoliticiansRemoteDataSource>()));
+  gh.lazySingleton<_i953.GetPoliticiansUseCase>(
+      () => _i953.GetPoliticiansUseCase(gh<_i460.PoliticiansRepository>()));
+  gh.lazySingleton<_i696.GetPoliticianUseCase>(
+      () => _i696.GetPoliticianUseCase(gh<_i460.PoliticiansRepository>()));
   return getIt;
 }
 
