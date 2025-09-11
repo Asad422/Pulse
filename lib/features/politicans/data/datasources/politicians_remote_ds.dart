@@ -6,7 +6,6 @@ import '../models/politician_model.dart';
 
 @lazySingleton
 class PoliticiansRemoteDataSource {
-  // Используем основной configured Dio с интерсептором (без @Named)
   PoliticiansRemoteDataSource(this._dio);
   final Dio _dio;
 

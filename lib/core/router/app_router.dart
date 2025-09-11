@@ -6,6 +6,7 @@ import '../../features/auth/presentation/screens/location_select_screen.dart';
 import '../../features/auth/presentation/screens/login_screen.dart';
 import '../../features/auth/presentation/screens/register_screen.dart';
 import '../../features/onboarding/onboarding_screen.dart';
+import '../../features/politicans/presentation/screens/politician_detail_screen.dart';
 import '../../features/privacy_policy/presentation/screens/policy_safety_screen.dart';
 import '../../features/privacy_policy/presentation/screens/user_rights_screen.dart';
 import '../../features/profile/presentation/screens/profile_screen.dart';
@@ -64,14 +65,22 @@ class AppRouter {
               pageBuilder: (c, s) => const NoTransitionPage(child: LegislationScreen()),
             ),
             GoRoute(
-              path: AppPaths.search,
-              name: AppRoutes.search,
+              path: AppPaths.politicians,
+              name: AppRoutes.politicians,
               pageBuilder: (c, s) => const NoTransitionPage(child: PoliticansScreen()),
             ),
             GoRoute(
               path: AppPaths.profile,
               name: AppRoutes.profile,
               pageBuilder: (c, s) => const NoTransitionPage(child: ProfileScreen()),
+            ),
+            GoRoute(
+              path: AppPaths.politician,
+              name: AppRoutes.politician,
+              builder: (c, s) {
+                final id = s.pathParameters['id']!;
+                return PoliticianDetailScreen(bioguideId: id);
+              },
             ),
           ],
         ),

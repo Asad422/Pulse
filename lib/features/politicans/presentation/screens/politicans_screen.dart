@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/politicians_profile_card/policies_dto.dart';
@@ -10,7 +11,7 @@ import '../../../../core/widgets/trending_politicians_carousel/trending_politici
 import '../../../../app/di/di.dart';
 import '../../domain/repositories/politicians_repository.dart';
 import '../../domain/usecases/get_politicians_usecase.dart';
-import '../bloc/politicians_bloc.dart';
+import '../bloc/politicians_bloc/politicians_bloc.dart';
 
 class PoliticansScreen extends StatefulWidget {
   const PoliticansScreen({super.key});
@@ -60,7 +61,31 @@ class _PoliticansScreenState extends State<PoliticansScreen> {
                     );
                   }
                   if (state.items.isEmpty) {
-                    return const Center(child: Text('No politicians found'));
+                    // TODO: remove this stub politician when backend starts returning data
+                    return ListView(
+                      padding: const EdgeInsets.all(20),
+                      children: [
+                        GestureDetector(
+                          onTap: () => context.push('/app/politicians/${1}'),
+                          child: PoliticianProfileCard(
+                            politician: Politician(
+                              name: 'Sen. John Placeholder',
+                              party: 'I',
+                              partyFull: 'Independent',
+                              state: 'Test State',
+                              country: 'USA',
+                              rating: 50,
+                              imageUrl: '',
+                              inOfficeSinceText: 'January 1, 2020',
+                              policies: [
+                                PolicyTag.green('Environment'),
+                                PolicyTag.red('Budget'),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    );
                   }
 
                   return ListView.separated(
@@ -69,22 +94,20 @@ class _PoliticansScreenState extends State<PoliticansScreen> {
                     separatorBuilder: (_, __) => const SizedBox(height: 16),
                     itemBuilder: (ctx, i) {
                       final p = state.items[i];
-                      return PoliticianProfileCard(
-                        politician: Politician(
-                          name: '${p.firstName} ${p.lastName}',
-                          party: p.party,
-                          partyFull: p.party, // можно сделать маппер party→fullName
-                          state: p.state,
-                          country: 'USA',
-                          rating: 100, // TODO: подставить реальный рейтинг, если будет в API
-                          imageUrl: p.photoUrl ??
-                              'https://via.placeholder.com/150',
-                          inOfficeSinceText: 'Member since ${p.birthYear ?? '-'}',
-                          policies: [
-                            // TODO: подставить реальные policies, если будут в API
-                            PolicyTag.green('Climate Action Plan'),
-                            PolicyTag.blue('Healthcare Reform'),
-                          ],
+                      return GestureDetector(
+                        onTap: () => context.push('/app/politicians/${p.bigguideId}'),
+                        child: PoliticianProfileCard(
+                          politician: Politician(
+                            name: '${p.firstName} ${p.lastName}',
+                            party: p.party,
+                            partyFull: p.party,
+                            state: p.state,
+                            country: 'USA',
+                            rating: 100,
+                            imageUrl: p.photoUrl ?? '',
+                            inOfficeSinceText: '${p.birthYear ?? ''}',
+                            policies: const [],
+                          ),
                         ),
                       );
                     },

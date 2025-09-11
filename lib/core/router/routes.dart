@@ -4,10 +4,12 @@ class AppRoutes {
   static const login = 'login';
   static const register = 'register';
   static const location = 'location';           // NEW
+  static const politician = 'politician';           // 👈 NEW
+
 
   // Shell tabs
   static const home = 'home';
-  static const search = 'search';
+  static const politicians = 'politicians';
   static const profile = 'profile';
 
   // Legal
@@ -20,9 +22,11 @@ class AppPaths {
   static const login = '/auth/login';
   static const register = '/auth/register';
   static const location = '/auth/location';     // NEW
+  static const politician = '/app/politicians/:id'; // 👈 NEW
+
 
   static const home = '/app/home';
-  static const search = '/app/search';
+  static const politicians = '/app/politicians';
   static const profile = '/app/profile';
 
   static const policySafety = '/legal/policy-safety';

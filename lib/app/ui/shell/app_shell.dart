@@ -14,7 +14,7 @@ class AppShell extends StatelessWidget {
 
   static final _tabs = [
     (label: 'Legislations', icon: AppIcons.icLegislations, path: AppPaths.home),
-    (label: 'Politicians',  icon: AppIcons.icPoliticans,   path: AppPaths.search),
+    (label: 'Politicians',  icon: AppIcons.icPoliticans,   path: AppPaths.politicians),
     (label: 'Profile',      icon: AppIcons.icProfile,      path: AppPaths.profile),
   ];
 
