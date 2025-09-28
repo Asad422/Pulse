@@ -1,7 +1,7 @@
 import 'package:injectable/injectable.dart';
 
 import '../../domain/entities/bill.dart';
-import '../../domain/repositories/bill_repository.dart';
+import '../../domain/repositories/bills_repository.dart';
 import '../datasources/bills_remote_ds.dart';
 
 @LazySingleton(as: BillsRepository)

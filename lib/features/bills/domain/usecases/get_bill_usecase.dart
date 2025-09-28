@@ -1,6 +1,6 @@
 import 'package:injectable/injectable.dart';
 import '../entities/bill.dart';
-import '../repositories/bill_repository.dart';
+import '../repositories/bills_repository.dart';
 
 @lazySingleton
 class GetBillUseCase {

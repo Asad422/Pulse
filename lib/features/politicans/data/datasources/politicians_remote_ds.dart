@@ -6,7 +6,7 @@ import '../models/politician_model.dart';
 
 @lazySingleton
 class PoliticiansRemoteDataSource {
-  PoliticiansRemoteDataSource(this._dio);
+  PoliticiansRemoteDataSource(@Named('authDio') this._dio);
   final Dio _dio;
 
   Future<List<PoliticianModel>> getPoliticians(PoliticiansQuery q) async {
@@ -20,15 +20,12 @@ class PoliticiansRemoteDataSource {
         if (q.party != null) 'party': q.party,
       },
       options: Options(
-        // Accept контролируется сервером; Dio уже ставит JSON
         responseType: ResponseType.json,
       ),
     );
 
     final data = resp.data as List<dynamic>;
-    return data
-        .map((e) => PoliticianModel.fromJson(e as Map<String, dynamic>))
-        .toList();
+    return data.map((e) => PoliticianModel.fromJson(e as Map<String, dynamic>)).toList();
   }
 
   Future<PoliticianModel> getPoliticianById(String bioguideId) async {

@@ -4,7 +4,7 @@ class Bill {
   final String billNumber;
   final String title;
   final String summary;
-  final String introducedDate;
+  final DateTime introducedDate;
   final String status;
   final String level;
   final bool isFeatured;
@@ -17,7 +17,7 @@ class Bill {
   final String jurisdictionCode;
   final String externalUrl;
   final int id;
-  final String lastUpdated;
+  final DateTime lastUpdated;
 
   const Bill({
     required this.congressBillId,

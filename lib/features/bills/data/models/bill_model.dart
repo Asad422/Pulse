@@ -30,7 +30,7 @@ class BillModel extends Bill {
       billNumber: json['bill_number'] as String? ?? '',
       title: json['title'] as String? ?? '',
       summary: json['summary'] as String? ?? '',
-      introducedDate: json['introduced_date'] as String? ?? '',
+      introducedDate: DateTime.tryParse(json['introduced_date'] ?? '') ?? DateTime(1970),
       status: json['status'] as String? ?? '',
       level: json['level'] as String? ?? '',
       isFeatured: json['is_featured'] as bool? ?? false,
@@ -43,7 +43,7 @@ class BillModel extends Bill {
       jurisdictionCode: json['jurisdiction_code'] as String? ?? '',
       externalUrl: json['external_url'] as String? ?? '',
       id: json['id'] as int? ?? 0,
-      lastUpdated: json['last_updated'] as String? ?? '',
+      lastUpdated: DateTime.tryParse(json['last_updated'] ?? '') ?? DateTime(1970),
     );
   }
 

@@ -4,8 +4,7 @@ import '../models/bill_model.dart';
 
 @lazySingleton
 class BillsRemoteDataSource {
-  BillsRemoteDataSource(this._dio);
-
+  BillsRemoteDataSource(@Named('authDio') this._dio);
   final Dio _dio;
 
   Future<List<BillModel>> getBills({
