@@ -7,6 +7,7 @@ import 'token_storage.dart';
 
 typedef LogoutCallback = Future<void> Function();
 
+/// Интерцептор для добавления заголовков и автообновления токенов
 @lazySingleton
 class AuthInterceptor extends Interceptor {
   AuthInterceptor(
@@ -16,8 +17,8 @@ class AuthInterceptor extends Interceptor {
       this._authRepository,
       );
 
-  final Dio _mainDio;        // основной Dio без интерсепторов
-  final Dio _refreshDio;     // отдельный Dio для refresh-запросов
+  final Dio _mainDio; // основной Dio для повторных запросов
+  final Dio _refreshDio; // отдельный Dio без интерсепторов
   final TokenStorage _tokenStorage;
   final AuthRepository _authRepository;
 
@@ -27,10 +28,7 @@ class AuthInterceptor extends Interceptor {
       options.path.contains('/auth/refresh');
 
   @override
-  void onRequest(
-      RequestOptions options,
-      RequestInterceptorHandler handler,
-      ) async {
+  void onRequest(RequestOptions options, RequestInterceptorHandler handler) async {
     options.headers.putIfAbsent('Accept', () => 'application/json');
     options.headers.putIfAbsent('Content-Type', () => 'application/json');
 
@@ -48,7 +46,7 @@ class AuthInterceptor extends Interceptor {
   void onError(DioException err, ErrorInterceptorHandler handler) async {
     final is401 = err.response?.statusCode == 401;
 
-    // если это не 401 или это вызов самого refresh -> пропускаем
+    // если это не 401 или это сам refresh — пропускаем дальше
     if (!is401 || _isRefreshCall(err.requestOptions)) {
       return handler.next(err);
     }
@@ -92,7 +90,7 @@ class AuthInterceptor extends Interceptor {
   }
 
   Future<void> _refreshIfNeeded() async {
-    // если уже есть процесс refresh → ждём его
+    // если refresh уже в процессе — ждём
     if (_refreshCompleter != null) {
       return _refreshCompleter!.future;
     }
@@ -104,6 +102,7 @@ class AuthInterceptor extends Interceptor {
         throw StateError('No refresh token');
       }
 
+      // вызываем новый эндпоинт /auth/refresh
       final tokens = await _authRepository.refresh(refreshToken);
       await _tokenStorage.writeTokens(tokens);
 

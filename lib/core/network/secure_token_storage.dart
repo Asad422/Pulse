@@ -1,9 +1,10 @@
-// lib/core/network/secure_token_storage.dart
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:injectable/injectable.dart';
+
 import '../../../features/auth/domain/entities/auth_tokens.dart';
 import 'token_storage.dart';
 
+/// Реализация [TokenStorage] через FlutterSecureStorage
 @LazySingleton(as: TokenStorage)
 class SecureTokenStorage implements TokenStorage {
   final FlutterSecureStorage _s;

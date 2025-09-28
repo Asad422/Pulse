@@ -15,9 +15,10 @@ class AuthTokensModel extends AuthTokens {
       refreshToken: json['refresh_token'] as String,
       tokenType: json['token_type'] as String,
       expiresIn: json['expires_in'] as int,
-      userId: json['user_id'] as String?,
+      userId: json['user_id']?.toString(), // <-- привели к строке
     );
   }
+
 
   Map<String, dynamic> toJson() => {
     'access_token': accessToken,

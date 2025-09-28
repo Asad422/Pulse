@@ -5,7 +5,7 @@ import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 @module
 abstract class NetworkModule {
   @Named('baseUrl')
-  String get baseUrl => 'http://80.76.33.218/api/v1';
+  String get baseUrl => 'http://144.217.165.214/api/v1';
 
   @Named('authDio')
   @lazySingleton

@@ -21,7 +21,18 @@ import '../../features/auth/data/datasourses/auth_remote_ds.dart' as _i626;
 import '../../features/auth/data/repositories/auth_repository_impl.dart'
     as _i153;
 import '../../features/auth/domain/repositories/auth_repository.dart' as _i787;
-import '../../features/auth/domain/usecases/login_usecase.dart' as _i188;
+import '../../features/auth/domain/usecases/refresh_token_usecase.dart'
+    as _i157;
+import '../../features/auth/domain/usecases/request_otp_usecase.dart' as _i29;
+import '../../features/auth/domain/usecases/verify_otp_usecase.dart' as _i503;
+import '../../features/auth/presentation/bloc/login_bloc/login_bloc.dart'
+    as _i450;
+import '../../features/bills/data/datasources/bills_remote_ds.dart' as _i826;
+import '../../features/bills/data/repositories/bills_repository_impl.dart'
+    as _i480;
+import '../../features/bills/domain/repositories/bill_repository.dart' as _i700;
+import '../../features/bills/domain/usecases/get_bill_usecase.dart' as _i535;
+import '../../features/bills/domain/usecases/get_bills_usecase.dart' as _i264;
 import '../../features/politicans/data/datasources/politicians_remote_ds.dart'
     as _i153;
 import '../../features/politicans/data/repositories/politicians_repository_impl.dart'
@@ -75,20 +86,37 @@ _i174.GetIt $initGetIt(
         gh<_i356.TokenStorage>(),
         gh<_i787.AuthRepository>(),
       ));
-  gh.lazySingleton<_i188.LoginUseCase>(
-      () => _i188.LoginUseCase(gh<_i787.AuthRepository>()));
+  gh.lazySingleton<_i157.RefreshTokenUseCase>(
+      () => _i157.RefreshTokenUseCase(gh<_i787.AuthRepository>()));
+  gh.lazySingleton<_i29.RequestOtpUseCase>(
+      () => _i29.RequestOtpUseCase(gh<_i787.AuthRepository>()));
+  gh.lazySingleton<_i503.VerifyOtpUseCase>(
+      () => _i503.VerifyOtpUseCase(gh<_i787.AuthRepository>()));
   gh.lazySingleton<_i361.Dio>(() => interceptorModule.configuredMainDio(
         gh<_i361.Dio>(instanceName: 'plainMainDio'),
         gh<_i388.AuthInterceptor>(),
       ));
+  gh.factory<_i450.LoginBloc>(() => _i450.LoginBloc(
+        requestOtpUseCase: gh<_i29.RequestOtpUseCase>(),
+        verifyOtpUseCase: gh<_i503.VerifyOtpUseCase>(),
+        tokenStorage: gh<_i356.TokenStorage>(),
+      ));
   gh.lazySingleton<_i153.PoliticiansRemoteDataSource>(
       () => _i153.PoliticiansRemoteDataSource(gh<_i361.Dio>()));
+  gh.lazySingleton<_i826.BillsRemoteDataSource>(
+      () => _i826.BillsRemoteDataSource(gh<_i361.Dio>()));
   gh.lazySingleton<_i460.PoliticiansRepository>(() =>
       _i132.PoliticiansRepositoryImpl(gh<_i153.PoliticiansRemoteDataSource>()));
-  gh.lazySingleton<_i953.GetPoliticiansUseCase>(
-      () => _i953.GetPoliticiansUseCase(gh<_i460.PoliticiansRepository>()));
+  gh.lazySingleton<_i700.BillsRepository>(
+      () => _i480.BillsRepositoryImpl(gh<_i826.BillsRemoteDataSource>()));
+  gh.lazySingleton<_i535.GetBillUseCase>(
+      () => _i535.GetBillUseCase(gh<_i700.BillsRepository>()));
+  gh.lazySingleton<_i264.GetBillsUseCase>(
+      () => _i264.GetBillsUseCase(gh<_i700.BillsRepository>()));
   gh.lazySingleton<_i696.GetPoliticianUseCase>(
       () => _i696.GetPoliticianUseCase(gh<_i460.PoliticiansRepository>()));
+  gh.lazySingleton<_i953.GetPoliticiansUseCase>(
+      () => _i953.GetPoliticiansUseCase(gh<_i460.PoliticiansRepository>()));
   return getIt;
 }
 

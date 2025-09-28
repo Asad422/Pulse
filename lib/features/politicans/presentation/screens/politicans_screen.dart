@@ -42,10 +42,10 @@ class _PoliticansScreenState extends State<PoliticansScreen> {
       value: _bloc,
       child: Scaffold(
         backgroundColor: AppColors.background,
-        appBar: AppBar(title: const Text('Politicians')),
+        appBar: AppBar(title: const Text('Politicians'),backgroundColor: AppColors.background,),
         body: Column(
           children: [
-            const TrendingPoliticiansCarousel(),
+            // const TrendingPoliticiansCarousel(),
             Expanded(
               child: BlocBuilder<PoliticiansBloc, PoliticiansState>(
                 builder: (context, state) {
@@ -75,7 +75,7 @@ class _PoliticansScreenState extends State<PoliticansScreen> {
                               state: 'Test State',
                               country: 'USA',
                               rating: 50,
-                              imageUrl: '',
+                              imageUrl: 'https://s3.stroi-news.ru/img/klassnie-kartinki-dlya-devochek-4.jpg',
                               inOfficeSinceText: 'January 1, 2020',
                               policies: [
                                 PolicyTag.green('Environment'),
@@ -95,7 +95,7 @@ class _PoliticansScreenState extends State<PoliticansScreen> {
                     itemBuilder: (ctx, i) {
                       final p = state.items[i];
                       return GestureDetector(
-                        onTap: () => context.push('/app/politicians/${p.bigguideId}'),
+                        onTap: () => context.push('/app/politicians/${p.bioguideId}'),
                         child: PoliticianProfileCard(
                           politician: Politician(
                             name: '${p.firstName} ${p.lastName}',
@@ -105,7 +105,7 @@ class _PoliticansScreenState extends State<PoliticansScreen> {
                             country: 'USA',
                             rating: 100,
                             imageUrl: p.photoUrl ?? '',
-                            inOfficeSinceText: '${p.birthYear ?? ''}',
+                            inOfficeSinceText: p.currentPosition?.period ?? '',
                             policies: const [],
                           ),
                         ),
