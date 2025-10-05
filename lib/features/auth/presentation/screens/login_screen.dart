@@ -76,7 +76,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 SnackBar(content: Text(state.message)),
               );
             } else if (state is LoginSuccess) {
-              context.go(AppPaths.home);
+              context.push(AppPaths.home);
             }
           },
           builder: (context, state) {

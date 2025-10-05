@@ -7,10 +7,10 @@ abstract class LawsEvent extends Equatable {
 }
 
 class LawsRequested extends LawsEvent {
-  final int? congress;
-  final String? lawType;
-  final String? lawNumber;
-  final int? billId;
+  final LawsQuery query; // ✅ теперь используем единый объект LawsQuery
 
-  const LawsRequested({this.congress, this.lawType, this.lawNumber, this.billId});
+  const LawsRequested(this.query);
+
+  @override
+  List<Object?> get props => [query];
 }

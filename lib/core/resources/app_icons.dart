@@ -62,5 +62,9 @@ class AppIcons {
   static const SvgAsset icPen = SvgAsset('$_dir/profile/ic_pen.svg');
   static const SvgAsset icArrowRight = SvgAsset('$_dir/profile/ic_arrow_right.svg');
 
+
+
+  static const SvgAsset icBookMark = SvgAsset('$_dir/profile/ic_bookmark.svg');
+
 // static const SvgAsset settings = SvgAsset('$_dir/settings.svg');
 }

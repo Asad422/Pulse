@@ -1,7 +1,7 @@
 import 'package:injectable/injectable.dart';
-
 import '../../domain/entities/politician.dart';
 import '../../domain/entities/politican_detail.dart';
+import '../../domain/entities/politicians_query.dart';
 import '../../domain/repositories/politicians_repository.dart';
 import '../datasources/politicians_remote_ds.dart';
 
@@ -11,13 +11,10 @@ class PoliticiansRepositoryImpl implements PoliticiansRepository {
   final PoliticiansRemoteDataSource _ds;
 
   @override
-  Future<List<Politician>> getPoliticians(PoliticiansQuery query) {
-    return _ds.getPoliticians(query);
-  }
+  Future<List<Politician>> getPoliticians(PoliticiansQuery query) =>
+      _ds.getPoliticians(query);
 
-  /// ✅ теперь возвращаем PoliticianDetail
   @override
-  Future<PoliticianDetail> getPoliticianById(String bioguideId) {
-    return _ds.getPoliticianById(bioguideId);
-  }
+  Future<PoliticianDetail> getPoliticianById(String bioguideId) =>
+      _ds.getPoliticianById(bioguideId);
 }

@@ -94,6 +94,8 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
           return Scaffold(
             backgroundColor: AppColors.background,
             appBar: AppBar(
+              scrolledUnderElevation: 0, // ✅ отключает тень при скролле
+              surfaceTintColor: Colors.transparent, // ✅ убирает потемнение
               elevation: 0,
               backgroundColor: AppColors.background,
               leading: IconButton(

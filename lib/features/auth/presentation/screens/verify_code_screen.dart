@@ -67,7 +67,7 @@ class _VerifyCodeScreenState extends State<VerifyCodeScreen> {
         child: BlocConsumer<LoginBloc, LoginState>(
           listener: (context, state) {
             if (state is LoginSuccess) {
-              context.go(AppPaths.profileSetup, extra: widget.email);
+              context.push(AppPaths.profileSetup, extra: widget.email);
             } else if (state is LoginFailure) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(content: Text(state.message)),

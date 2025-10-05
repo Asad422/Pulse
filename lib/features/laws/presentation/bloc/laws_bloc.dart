@@ -1,7 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-
 import '../../domain/entities/law.dart';
+import '../../domain/entities/laws_query.dart';
 import '../../domain/usecases/get_laws_usecase.dart';
 
 part 'laws_event.dart';
@@ -20,12 +20,8 @@ class LawsBloc extends Bloc<LawsEvent, LawsState> {
       ) async {
     emit(state.copyWith(status: LawsStatus.loading));
     try {
-      final laws = await _getLaws(
-        congress: event.congress,
-        lawType: event.lawType,
-        lawNumber: event.lawNumber,
-        billId: event.billId,
-      );
+      // ✅ теперь вызываем use case с LawsQuery
+      final laws = await _getLaws(event.query);
       emit(state.copyWith(status: LawsStatus.success, items: laws));
     } catch (e) {
       emit(state.copyWith(status: LawsStatus.failure, error: e.toString()));

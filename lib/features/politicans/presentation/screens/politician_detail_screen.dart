@@ -22,6 +22,8 @@ class PoliticianDetailScreen extends StatelessWidget {
       child: Scaffold(
         backgroundColor: AppColors.background,
         appBar: AppBar(
+          scrolledUnderElevation: 0, // ✅ отключает тень при скролле
+          surfaceTintColor: Colors.transparent, // ✅ убирает потемнение
           title: const Text('Politician'),
           backgroundColor: AppColors.background,
           elevation: 0,

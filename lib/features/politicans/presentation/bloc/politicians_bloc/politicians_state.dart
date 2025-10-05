@@ -7,34 +7,46 @@ class PoliticiansState extends Equatable {
   final List<Politician> items;
   final String? error;
   final bool hasReachedEnd;
+  final PoliticiansQuery? query;
 
   const PoliticiansState({
     required this.status,
     required this.items,
     this.error,
     this.hasReachedEnd = false,
+    this.query,
   });
 
   const PoliticiansState.initial()
       : status = PoliticiansStatus.initial,
         items = const [],
         error = null,
-        hasReachedEnd = false;
+        hasReachedEnd = false,
+        query = null;
 
   PoliticiansState copyWith({
     PoliticiansStatus? status,
     List<Politician>? items,
     String? error,
     bool? hasReachedEnd,
+    PoliticiansQuery? query,
   }) {
     return PoliticiansState(
       status: status ?? this.status,
-      items: items ?? this.items,
+      // ✅ Всегда создаём новую копию списка
+      items: items != null ? List<Politician>.from(items) : List<Politician>.from(this.items),
       error: error,
       hasReachedEnd: hasReachedEnd ?? this.hasReachedEnd,
+      query: query ?? this.query,
     );
   }
 
   @override
-  List<Object?> get props => [status, items, error, hasReachedEnd];
+  List<Object?> get props => [
+    status,
+    items,
+    error,
+    hasReachedEnd,
+    query, // ✅ теперь query участвует в сравнении
+  ];
 }

@@ -1,45 +1,33 @@
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 import '../models/bill_model.dart';
+import '../../domain/entities/bills_query.dart';
 
 @lazySingleton
 class BillsRemoteDataSource {
   BillsRemoteDataSource(@Named('authDio') this._dio);
   final Dio _dio;
 
-  Future<List<BillModel>> getBills({
-    int skip = 0,
-    int limit = 20,
-    String? status,
-    String? level,
-    bool? isFeatured,
-    String? q,
-    String? introducedFrom,
-    String? introducedTo,
-    String? subject,
-    String? committee,
-    String? sponsor,
-    String? sortBy,
-    String? order,
-  }) async {
+  Future<List<BillModel>> getBills(BillsQuery q) async {
     final resp = await _dio.get(
       '/bills/',
       queryParameters: {
-        'skip': skip,
-        'limit': limit,
-        if (status != null) 'status': status,
-        if (level != null) 'level': level,
-        if (isFeatured != null) 'is_featured': isFeatured,
-        if (q != null) 'q': q,
-        if (introducedFrom != null) 'introduced_from': introducedFrom,
-        if (introducedTo != null) 'introduced_to': introducedTo,
-        if (subject != null) 'subject': subject,
-        if (committee != null) 'committee': committee,
-        if (sponsor != null) 'sponsor': sponsor,
-        if (sortBy != null) 'sort_by': sortBy,
-        if (order != null) 'order': order,
+        'skip': q.skip,
+        'limit': q.limit,
+        if (q.status != null) 'status': q.status,
+        if (q.level != null) 'level': q.level,
+        if (q.isFeatured != null) 'is_featured': q.isFeatured,
+        if (q.q != null && q.q!.isNotEmpty) 'q': q.q,
+        if (q.introducedFrom != null) 'introduced_from': q.introducedFrom,
+        if (q.introducedTo != null) 'introduced_to': q.introducedTo,
+        if (q.subject != null) 'subject': q.subject,
+        if (q.committee != null) 'committee': q.committee,
+        if (q.sponsor != null) 'sponsor': q.sponsor,
+        if (q.sortBy != null) 'sort_by': q.sortBy,
+        if (q.order != null) 'order': q.order,
       },
     );
+
     return BillModel.fromJsonList(resp.data as List<dynamic>);
   }
 

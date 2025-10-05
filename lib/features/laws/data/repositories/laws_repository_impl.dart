@@ -1,5 +1,6 @@
 import 'package:injectable/injectable.dart';
 import '../../domain/entities/law.dart';
+import '../../domain/entities/laws_query.dart';
 import '../../domain/repositories/laws_repository.dart';
 import '../datasources/laws_remote_ds.dart';
 
@@ -9,19 +10,7 @@ class LawsRepositoryImpl implements LawsRepository {
   final LawsRemoteDataSource _ds;
 
   @override
-  Future<List<Law>> getLaws({
-    int? congress,
-    String? lawType,
-    String? lawNumber,
-    int? billId,
-  }) {
-    return _ds.getLaws(
-      congress: congress,
-      lawType: lawType,
-      lawNumber: lawNumber,
-      billId: billId,
-    );
-  }
+  Future<List<Law>> getLaws(LawsQuery query) => _ds.getLaws(query);
 
   @override
   Future<Law> getLaw(int lawId) => _ds.getLaw(lawId);

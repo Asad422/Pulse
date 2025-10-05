@@ -31,6 +31,7 @@ class _LocationSelectScreenState extends State<LocationSelectScreen> {
         backgroundColor: Colors.white,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
+        scrolledUnderElevation: 0, // ✅ отключает тень при скролле
       ),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),

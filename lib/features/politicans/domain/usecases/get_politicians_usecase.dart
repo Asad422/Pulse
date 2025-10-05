@@ -1,5 +1,6 @@
 import 'package:injectable/injectable.dart';
 import '../entities/politician.dart';
+import '../entities/politicians_query.dart';
 import '../repositories/politicians_repository.dart';
 
 @lazySingleton

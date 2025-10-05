@@ -7,7 +7,12 @@ abstract class BillsEvent extends Equatable {
 }
 
 class BillsRequested extends BillsEvent {
-  final int skip;
-  final int limit;
-  const BillsRequested({this.skip = 0, this.limit = 20});
+  final BillsQuery query;
+  const BillsRequested({required this.query});
+  @override
+  List<Object?> get props => [query];
+}
+
+class BillsLoadMoreRequested extends BillsEvent {
+  const BillsLoadMoreRequested();
 }

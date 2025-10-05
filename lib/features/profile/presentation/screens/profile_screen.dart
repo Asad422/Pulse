@@ -307,7 +307,7 @@ class _Header extends StatelessWidget {
             child: TextButton.icon(
               onPressed: () {
                 final login = user.login;
-                context.go(AppPaths.profileSetup, extra: login);
+                context.push(AppPaths.profileSetup, extra: login);
               },
               icon: AppIcons.icPen.svg(width: 16, height: 16),
               label: Text(
