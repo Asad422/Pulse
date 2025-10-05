@@ -3,7 +3,7 @@ import 'package:pulse/features/laws/presentation/screens/laws_screen.dart';
 import 'package:pulse/features/politicans/presentation/screens/politicans_screen.dart';
 import 'package:pulse/features/splash_screen/presenatation/splash_screen.dart';
 import '../../app/ui/shell/app_shell.dart';
-import '../../features/auth/presentation/screens/location_select_screen.dart';
+import '../../features/profile/presentation/screens/location_select_screen.dart';
 import '../../features/auth/presentation/screens/login_screen.dart';
 import '../../features/auth/presentation/screens/register_screen.dart';
 import '../../features/auth/presentation/screens/verify_code_screen.dart' show VerifyCodeScreen;
@@ -13,6 +13,7 @@ import '../../features/politicans/presentation/screens/politician_detail_screen.
 import '../../features/privacy_policy/presentation/screens/policy_safety_screen.dart';
 import '../../features/privacy_policy/presentation/screens/user_rights_screen.dart';
 import '../../features/profile/presentation/screens/profile_screen.dart';
+import '../../features/profile/presentation/screens/profile_setup_screen.dart';
 import 'routes.dart';
 
 class AppRouter {
@@ -41,6 +42,14 @@ class AppRouter {
           builder: (ctx, state) {
             final email = (state.extra as Map?)?['email'] as String? ?? '';
             return VerifyCodeScreen(email: email);
+          },
+        ),
+        GoRoute(
+          path: AppPaths.profileSetup,
+          name: AppRoutes.profileSetup,
+          builder: (context, state) {
+            final login = state.extra as String? ?? ''; // ✅ получаем email
+            return ProfileSetupScreen(login: login);
           },
         ),
         GoRoute(

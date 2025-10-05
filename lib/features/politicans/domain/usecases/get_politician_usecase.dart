@@ -1,5 +1,5 @@
 import 'package:injectable/injectable.dart';
-import '../../domain/entities/politician.dart';
+import '../../domain/entities/politican_detail.dart';
 import '../../domain/repositories/politicians_repository.dart';
 
 class GetPoliticianParams {
@@ -12,7 +12,8 @@ class GetPoliticianUseCase {
   final PoliticiansRepository _repo;
   GetPoliticianUseCase(this._repo);
 
-  Future<Politician> call(GetPoliticianParams params) {
+  /// ✅ теперь возвращаем PoliticianDetail
+  Future<PoliticianDetail> call(GetPoliticianParams params) {
     return _repo.getPoliticianById(params.bioguideId);
   }
 }

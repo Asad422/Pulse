@@ -1,13 +1,13 @@
 import 'package:injectable/injectable.dart';
 
 import '../../domain/entities/politician.dart';
+import '../../domain/entities/politican_detail.dart';
 import '../../domain/repositories/politicians_repository.dart';
 import '../datasources/politicians_remote_ds.dart';
 
 @LazySingleton(as: PoliticiansRepository)
 class PoliticiansRepositoryImpl implements PoliticiansRepository {
   PoliticiansRepositoryImpl(this._ds);
-
   final PoliticiansRemoteDataSource _ds;
 
   @override
@@ -15,6 +15,9 @@ class PoliticiansRepositoryImpl implements PoliticiansRepository {
     return _ds.getPoliticians(query);
   }
 
+  /// ✅ теперь возвращаем PoliticianDetail
   @override
-  Future<Politician> getPoliticianById(String bioguideId) => _ds.getPoliticianById(bioguideId);
+  Future<PoliticianDetail> getPoliticianById(String bioguideId) {
+    return _ds.getPoliticianById(bioguideId);
+  }
 }

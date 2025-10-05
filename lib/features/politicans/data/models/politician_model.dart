@@ -21,7 +21,7 @@ class PoliticianModel extends Politician {
 
   factory PoliticianModel.fromJson(Map<String, dynamic> json) {
     return PoliticianModel(
-      politicianId: json['politician_id'] as String,
+      politicianId: json['politician_id']?.toString() ?? '',
       bioguideId: json['bioguide_id'] as String? ?? '',
       firstName: json['first_name'] as String? ?? '',
       lastName: json['last_name'] as String? ?? '',
@@ -33,8 +33,8 @@ class PoliticianModel extends Politician {
       directOrderName: json['direct_order_name'] as String?,
       chamber: json['chamber'] as String?,
       stateName: json['state_name'] as String?,
-      sponsoredBillCount: json['sponsored_bill_count'] as int?,
-      cosponsoredBillCount: json['cosponsored_bill_count'] as int?,
+      sponsoredBillCount: json['sponsored_bill_count'] as int? ?? 0,
+      cosponsoredBillCount: json['cosponsored_bill_count'] as int? ?? 0,
       currentPosition: json['current_position'] != null
           ? CurrentPosition.fromJson(
         json['current_position'] as Map<String, dynamic>,

@@ -69,10 +69,8 @@ class _LoginScreenState extends State<LoginScreen> {
         child: BlocConsumer<LoginBloc, LoginState>(
           listener: (context, state) {
             if (state is LoginOtpRequestSuccess) {
-              context.push(
-                AppPaths.verifyCode,
-                extra: {'email': _emailCtrl.text.trim()},
-              );
+              context.go(AppPaths.verifyCode, extra: {'email': _emailCtrl.text.trim()});
+
             } else if (state is LoginFailure) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(content: Text(state.message)),

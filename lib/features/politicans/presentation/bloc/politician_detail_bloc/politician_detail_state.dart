@@ -4,7 +4,7 @@ enum PoliticianDetailStatus { initial, loading, success, failure }
 
 class PoliticianDetailState extends Equatable {
   final PoliticianDetailStatus status;
-  final dom.Politician? data;
+  final dom.PoliticianDetail? data;
   final String? error;
 
   const PoliticianDetailState({
@@ -20,7 +20,7 @@ class PoliticianDetailState extends Equatable {
 
   PoliticianDetailState copyWith({
     PoliticianDetailStatus? status,
-    dom.Politician? data,
+    dom.PoliticianDetail? data,
     String? error,
   }) {
     return PoliticianDetailState(

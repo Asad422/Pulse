@@ -52,6 +52,17 @@ import '../../features/politicans/domain/usecases/get_politician_usecase.dart'
     as _i696;
 import '../../features/politicans/domain/usecases/get_politicians_usecase.dart'
     as _i953;
+import '../../features/profile/data/datasources/user_remote_ds.dart' as _i800;
+import '../../features/profile/data/repositories/user_repository_impl.dart'
+    as _i938;
+import '../../features/profile/domain/repositories/user_repository.dart'
+    as _i146;
+import '../../features/profile/domain/usecases/delete_user_me_usecase.dart'
+    as _i955;
+import '../../features/profile/domain/usecases/get_user_me_usecase.dart'
+    as _i1003;
+import '../../features/profile/domain/usecases/update_user_me_usecase.dart'
+    as _i220;
 import 'external_module.dart' as _i489;
 import 'network_module.dart' as _i567;
 
@@ -99,6 +110,8 @@ _i174.GetIt $initGetIt(
           gh<_i361.Dio>(instanceName: 'authDio')));
   gh.lazySingleton<_i826.BillsRemoteDataSource>(() =>
       _i826.BillsRemoteDataSource(gh<_i361.Dio>(instanceName: 'authDio')));
+  gh.lazySingleton<_i800.UserRemoteDataSource>(
+      () => _i800.UserRemoteDataSource(gh<_i361.Dio>(instanceName: 'authDio')));
   gh.lazySingleton<_i114.LawsRepository>(
       () => _i80.LawsRepositoryImpl(gh<_i422.LawsRemoteDataSource>()));
   gh.lazySingleton<_i460.PoliticiansRepository>(() =>
@@ -111,6 +124,8 @@ _i174.GetIt $initGetIt(
       () => _i696.GetPoliticianUseCase(gh<_i460.PoliticiansRepository>()));
   gh.lazySingleton<_i953.GetPoliticiansUseCase>(
       () => _i953.GetPoliticiansUseCase(gh<_i460.PoliticiansRepository>()));
+  gh.lazySingleton<_i146.UserRepository>(
+      () => _i938.UserRepositoryImpl(gh<_i800.UserRemoteDataSource>()));
   gh.lazySingleton<_i334.GetLawUseCase>(
       () => _i334.GetLawUseCase(gh<_i114.LawsRepository>()));
   gh.lazySingleton<_i461.GetLawsUseCase>(
@@ -121,6 +136,12 @@ _i174.GetIt $initGetIt(
       () => _i535.GetBillUseCase(gh<_i468.BillsRepository>()));
   gh.lazySingleton<_i264.GetBillsUseCase>(
       () => _i264.GetBillsUseCase(gh<_i468.BillsRepository>()));
+  gh.lazySingleton<_i955.DeleteUserMeUseCase>(
+      () => _i955.DeleteUserMeUseCase(gh<_i146.UserRepository>()));
+  gh.lazySingleton<_i1003.GetUserMeUseCase>(
+      () => _i1003.GetUserMeUseCase(gh<_i146.UserRepository>()));
+  gh.lazySingleton<_i220.UpdateUserMeUseCase>(
+      () => _i220.UpdateUserMeUseCase(gh<_i146.UserRepository>()));
   gh.lazySingleton<_i157.RefreshTokenUseCase>(
       () => _i157.RefreshTokenUseCase(gh<_i787.AuthRepository>()));
   gh.lazySingleton<_i29.RequestOtpUseCase>(

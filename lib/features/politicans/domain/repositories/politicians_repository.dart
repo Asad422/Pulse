@@ -1,4 +1,5 @@
 import '../entities/politician.dart';
+import '../entities/politican_detail.dart';
 
 class PoliticiansQuery {
   final int skip;
@@ -19,6 +20,6 @@ class PoliticiansQuery {
 abstract class PoliticiansRepository {
   Future<List<Politician>> getPoliticians(PoliticiansQuery query);
 
-  Future<Politician> getPoliticianById(String bioguideId);
-
+  /// ✅ теперь тип возвращаемого объекта — PoliticianDetail
+  Future<PoliticianDetail> getPoliticianById(String bioguideId);
 }

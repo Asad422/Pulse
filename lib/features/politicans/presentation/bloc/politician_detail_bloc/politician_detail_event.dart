@@ -2,6 +2,7 @@ part of 'politician_detail_bloc.dart';
 
 abstract class PoliticianDetailEvent extends Equatable {
   const PoliticianDetailEvent();
+
   @override
   List<Object?> get props => [];
 }

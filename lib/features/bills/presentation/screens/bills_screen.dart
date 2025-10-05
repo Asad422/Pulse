@@ -35,7 +35,10 @@ class _BillsScreenState extends State<BillsScreen> {
       value: _bloc,
       child: Scaffold(
         backgroundColor: AppColors.background,
-        appBar: AppBar(title: const Text('Bills')),
+        appBar: AppBar(
+          title: const Text('Bills'),
+          backgroundColor: AppColors.background,
+        ),
         body: BlocBuilder<BillsBloc, BillsState>(
           builder: (context, state) {
             if (state.status == BillsStatus.loading) {

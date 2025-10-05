@@ -9,7 +9,10 @@ abstract class PoliticiansEvent extends Equatable {
 class PoliticiansLoadRequested extends PoliticiansEvent {
   final PoliticiansQuery query;
   const PoliticiansLoadRequested(this.query);
-
   @override
   List<Object?> get props => [query];
+}
+
+class PoliticiansLoadMoreRequested extends PoliticiansEvent {
+  const PoliticiansLoadMoreRequested();
 }

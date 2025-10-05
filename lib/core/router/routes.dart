@@ -7,6 +7,7 @@ class AppRoutes {
   static const location = 'location';           // NEW
   static const politician = 'politician';           // 👈 NEW
   static const splash = 'splash';
+  static const profileSetup = 'profileSetup'; // ✅ добавили
 
 
   // Shell tabs
@@ -31,6 +32,7 @@ class AppPaths {
   static const politician = '/app/politicians/:id'; // 👈 NEW
   static const verifyCode = '/auth/verifyCode';           // 👈 NEW
   static const splash = '/splash';
+  static const profileSetup = '/auth/profile/setup'; // ✅ новый путь
 
 
   static const home = '/app/home';
