@@ -48,6 +48,7 @@ class AppIcons {
   static const SvgAsset icLegislations = SvgAsset('$_dir/nav_bar/ic_legislations.svg');
   static const SvgAsset icPoliticans = SvgAsset('$_dir/nav_bar/ic_politicans.svg');
   static const SvgAsset icProfile = SvgAsset('$_dir/nav_bar/ic_profile.svg');
+  static const SvgAsset icLaws = SvgAsset('$_dir/nav_bar/ic_laws.svg');
 
   static const SvgAsset icShare = SvgAsset('$_dir/ic_share.svg');
   static const SvgAsset icLike = SvgAsset('$_dir/ic_like.svg');
@@ -60,6 +61,10 @@ class AppIcons {
   static const SvgAsset icTrash = SvgAsset('$_dir/profile/ic_trash.svg');
   static const SvgAsset icPen = SvgAsset('$_dir/profile/ic_pen.svg');
   static const SvgAsset icArrowRight = SvgAsset('$_dir/profile/ic_arrow_right.svg');
+
+
+
+  static const SvgAsset icBookMark = SvgAsset('$_dir/profile/ic_bookmark.svg');
 
 // static const SvgAsset settings = SvgAsset('$_dir/settings.svg');
 }

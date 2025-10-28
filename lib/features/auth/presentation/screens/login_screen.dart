@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -20,28 +21,29 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  final _nameCtrl = TextEditingController();
   final _emailCtrl = TextEditingController();
-  final _passwordCtrl = TextEditingController();
-  bool _obscure = true;
 
-  String? _emailErr, _pwdErr;
+  bool _agree = false;
   bool _triedSubmit = false;
+
+  String? _nameErr, _emailErr;
 
   @override
   void dispose() {
+    _nameCtrl.dispose();
     _emailCtrl.dispose();
-    _passwordCtrl.dispose();
     super.dispose();
   }
 
   void _validate() {
-    // _emailErr = AppValidators.emailError(_emailCtrl.text);
-    _pwdErr = _passwordCtrl.text.isEmpty ? 'Enter your password' : null;
+    _nameErr = _nameCtrl.text.trim().isEmpty ? 'Enter your name' : null;
+    _emailErr = AppValidators.emailError(_emailCtrl.text.trim());
   }
 
   bool get _isFormValid {
     _validate();
-    return _emailErr == null && _pwdErr == null;
+    return _nameErr == null && _emailErr == null && _agree;
   }
 
   void _submit(BuildContext context) {
@@ -52,9 +54,9 @@ class _LoginScreenState extends State<LoginScreen> {
     if (!_isFormValid) return;
 
     context.read<LoginBloc>().add(
-      LoginSubmitted(
-        login: _emailCtrl.text.trim(),
-        password: _passwordCtrl.text.trim(),
+      LoginOtpRequested(
+        email: _emailCtrl.text.trim(),
+        login: _nameCtrl.text.trim(),
       ),
     );
   }
@@ -66,12 +68,15 @@ class _LoginScreenState extends State<LoginScreen> {
       body: SafeArea(
         child: BlocConsumer<LoginBloc, LoginState>(
           listener: (context, state) {
-            if (state is LoginSuccess) {
-              context.go(AppPaths.home);
+            if (state is LoginOtpRequestSuccess) {
+              context.go(AppPaths.verifyCode, extra: {'email': _emailCtrl.text.trim()});
+
             } else if (state is LoginFailure) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(content: Text(state.message)),
               );
+            } else if (state is LoginSuccess) {
+              context.push(AppPaths.home);
             }
           },
           builder: (context, state) {
@@ -83,103 +88,105 @@ class _LoginScreenState extends State<LoginScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 24),
                   Align(
                     alignment: Alignment.center,
-                    child: AppIcons.icLogo.svg(height: 40, width: 80),
+                    child: AppIcons.icLogo.svg(height: 44, width: 88),
                   ),
                   const SizedBox(height: 24),
-                  Text('Log in', style: AppTextStyles.get("Title/t2")),
+
+                  Text('Join Pulse', style: AppTextStyles.get("Title/t2")),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Make your voice heard in politics. '
+                        'Register to vote on policies and rate your representatives.',
+                    style: AppTextStyles.get("Body/p1")
+                        ?.copyWith(color: AppColors.textSecondary),
+                  ),
+                  const SizedBox(height: 20),
+
+                  AppTextField(
+                    controller: _nameCtrl,
+                    label: 'Your name',
+                    textInputAction: TextInputAction.next,
+                    errorText: _triedSubmit ? _nameErr : null,
+                  ),
                   const SizedBox(height: 12),
 
-                  // Email
                   AppTextField(
                     controller: _emailCtrl,
                     label: 'Email',
                     keyboardType: TextInputType.emailAddress,
-                    textInputAction: TextInputAction.next,
+                    textInputAction: TextInputAction.done,
                     errorText: _triedSubmit ? _emailErr : null,
                   ),
                   const SizedBox(height: 12),
 
-                  // Password
-                  AppTextField(
-                    controller: _passwordCtrl,
-                    label: 'Password',
-                    obscureText: _obscure,
-                    textInputAction: TextInputAction.done,
-                    errorText: _triedSubmit ? _pwdErr : null,
-                    suffix: IconButton(
-                      onPressed: () => setState(() => _obscure = !_obscure),
-                      icon: (_obscure ? AppIcons.icEyeOff : AppIcons.icEye)
-                          .svg(width: 20, height: 20, color: AppColors.textSecondary),
-                      splashRadius: 20,
-                      padding: EdgeInsets.zero,
-                      splashColor: Colors.transparent,
-                      highlightColor: Colors.transparent,
-                      hoverColor: Colors.transparent,
-                      focusColor: Colors.transparent,
-                    ),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        width: 24,
+                        height: 24,
+                        child: Checkbox(
+                          value: _agree,
+                          onChanged: (v) => setState(() => _agree = v ?? false),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: RichText(
+                          text: TextSpan(
+                            style: AppTextStyles.get("Body/p2"),
+                            children: [
+                              const TextSpan(text: 'I agree to the '),
+                              TextSpan(
+                                text: 'Terms of Service',
+                                style: AppTextStyles.get("Body/p2")
+                                    ?.copyWith(color: AppColors.primary),
+                                recognizer: TapGestureRecognizer()
+                                  ..onTap = () {},
+                              ),
+                              const TextSpan(text: ' and '),
+                              TextSpan(
+                                text: 'Privacy Policy',
+                                style: AppTextStyles.get("Body/p2")
+                                    ?.copyWith(color: AppColors.primary),
+                                recognizer: TapGestureRecognizer()
+                                  ..onTap = () {},
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
+                  if (_triedSubmit && !_agree)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 6),
+                      child: Text(
+                        'You must agree to continue',
+                        style: AppTextStyles.get("Caption/c1")
+                            ?.copyWith(color: AppColors.error),
+                      ),
+                    ),
 
                   const SizedBox(height: 16),
-                  SizedBox(
-                    width: double.infinity,
-                    child: AppButtonWidget(
-                      label: loading ? 'Logging in…' : 'Log in',
-                      onPressed: loading ? null : () => _submit(context),
-                      size: AppButtonWidgetSize.large,
-                      intent: AppButtonWidgetIntent.primary,
-                      tone: AppButtonWidgetTone.solid,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
 
+                  AppButtonWidget(
+                    label: loading ? 'Continuing…' : 'Continue',
+                    onPressed: loading ? null : () => _submit(context),
+                    size: AppButtonWidgetSize.large,
+                    intent: AppButtonWidgetIntent.primary,
+                    tone: AppButtonWidgetTone.solid,
+                  ),
+
+                  const SizedBox(height: 20),
                   SocialProviders(
                     title: 'or continue with',
                     onGooglePressed: () => debugPrint('Google pressed'),
                     onApplePressed: () => debugPrint('Apple pressed'),
                   ),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 12),
-                    child: Divider(),
-                  ),
-                  Row(
-                    children: [
-                      Text("Don’t have an account? ", style: AppTextStyles.get("Body/p1")),
-                      const Spacer(),
-                      TextButton(
-                        onPressed: () => context.go(AppPaths.register),
-                        child: Text(
-                          'Sign Up',
-                          style: AppTextStyles.get("Button/Medium")
-                              ?.copyWith(color: AppColors.primary),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 12),
-                    child: Divider(),
-                  ),
-                  Center(
-                    child: TextButton(
-                      onPressed: () => context.go(AppPaths.home),
-                      child: Text(
-                        'Continue as guest',
-                        style: AppTextStyles.get("Button/Medium")
-                            ?.copyWith(color: AppColors.primary),
-                      ),
-                    ),
-                  ),
-                  Center(
-                    child: Text(
-                      'Limited features, no voting',
-                      style: AppTextStyles.get("Body/p2")
-                          ?.copyWith(color: AppColors.textSecondary),
-                    ),
-                  ),
-                  const SizedBox(height: 24),
                 ],
               ),
             );

@@ -6,7 +6,7 @@ import '../../../../core/theme/text_styles.dart';
 class ProfileAppBar extends StatelessWidget implements PreferredSizeWidget {
   const ProfileAppBar({
     super.key,
-    this.country = 'United States',
+    required this.country,
     this.notifications = 0,
     this.onCountryTap,
     this.onBellTap,

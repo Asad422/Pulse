@@ -1,6 +1,6 @@
-// lib/core/network/token_storage.dart
 import '../../features/auth/domain/entities/auth_tokens.dart';
 
+/// Контракт для работы с токенами (хранилище)
 abstract class TokenStorage {
   Future<String?> readAccessToken();
   Future<String?> readRefreshToken();

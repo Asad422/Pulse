@@ -6,20 +6,19 @@ import '../../../core/resources/app_icons.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/text_styles.dart';
 
-// ... импорты те же
-
 class AppShell extends StatelessWidget {
   const AppShell({super.key, required this.child});
+
   final Widget child;
 
   static final _tabs = [
-    (label: 'Legislations', icon: AppIcons.icLegislations, path: AppPaths.home),
-    (label: 'Politicians',  icon: AppIcons.icPoliticans,   path: AppPaths.search),
-    (label: 'Profile',      icon: AppIcons.icProfile,      path: AppPaths.profile),
+    (label: 'Bills', icon: AppIcons.icLegislations, path: AppPaths.bills), // 👈 NEW
+    (label: 'Laws', icon: AppIcons.icLaws, path: AppPaths.home),
+    (label: 'Politicians', icon: AppIcons.icPoliticans, path: AppPaths.politicians),
+    (label: 'Profile', icon: AppIcons.icProfile, path: AppPaths.profile),
   ];
 
-  int _indexFromLocation(String loc) =>
-      _tabs.indexWhere((t) => loc.startsWith(t.path)).clamp(0, _tabs.length - 1);
+  int _indexFromLocation(String loc) => _tabs.indexWhere((t) => loc.startsWith(t.path)).clamp(0, _tabs.length - 1);
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +36,7 @@ class AppShell extends StatelessWidget {
         ),
         child: NavigationBarTheme(
           data: NavigationBarThemeData(
-            height: 60, // ✅ твоя высота
+            height: 60,
             indicatorColor: Colors.transparent,
             overlayColor: MaterialStateProperty.all(Colors.transparent),
             labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
@@ -49,7 +48,6 @@ class AppShell extends StatelessWidget {
             destinations: [
               for (var i = 0; i < _tabs.length; i++)
                 NavigationDestination(
-                  // ⬇️ ВАЖНО: фиксируем высоту слота и центрируем контент
                   icon: SizedBox(
                     height: 76,
                     child: Center(

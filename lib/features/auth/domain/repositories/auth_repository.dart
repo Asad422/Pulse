@@ -1,9 +1,14 @@
 import '../entities/auth_tokens.dart';
 
 abstract class AuthRepository {
-  Future<AuthTokens> login({
+  Future<void> requestOtp({
+    required String email,
     required String login,
-    required String password,
+  });
+
+  Future<AuthTokens> verifyOtp({
+    required String email,
+    required String code,
   });
 
   Future<AuthTokens> refresh(String refreshToken);

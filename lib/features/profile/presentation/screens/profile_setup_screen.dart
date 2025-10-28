@@ -1,0 +1,306 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import '../../../../app/di/di.dart';
+import '../../../../core/resources/app_icons.dart';
+import '../../../../core/router/routes.dart';
+import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/text_styles.dart';
+import '../../../../core/widgets/app_button_widget.dart';
+import '../../domain/entities/user.dart';
+import '../bloc/user_bloc.dart';
+
+class ProfileSetupScreen extends StatefulWidget {
+  final String login; // 👈 логин (email)
+
+  const ProfileSetupScreen({
+    super.key,
+    required this.login,
+  });
+
+  @override
+  State<ProfileSetupScreen> createState() => _ProfileSetupScreenState();
+}
+
+class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
+  final _locationCtrl = TextEditingController();
+  int? _ageIndex;
+  int? _genderIndex;
+  final Set<String> _interests = {};
+
+  final _ages = const ['18–25', '26–35', '36–50', '51+'];
+  final _genders = const ['Man', 'Woman', 'Non-binary', 'Transgender','Prefer not to say'];
+  final _interestOptions = const ['Education', 'Economy', 'Healthcare', 'Environment'];
+
+  bool get _isValid =>
+      _ageIndex != null &&
+          _genderIndex != null &&
+          _locationCtrl.text.trim().isNotEmpty &&
+          _interests.isNotEmpty;
+
+  /// выбор локации
+  Future<void> _openLocationPicker() async {
+    final result = await context.push<String>(
+      AppPaths.location,
+      extra: _locationCtrl.text.isEmpty ? null : _locationCtrl.text,
+    );
+    if (result != null && result.isNotEmpty && mounted) {
+      setState(() => _locationCtrl.text = result);
+    }
+  }
+
+  /// отправка данных
+  void _submit(BuildContext context) {
+    if (!_isValid) return;
+
+    final profile = Profile(
+      ageCategory: _ages[_ageIndex!],
+      interestLevel: _interests.join(', '),
+      addressCity: _locationCtrl.text.trim(),
+      sex: _genders[_genderIndex!],
+      // name: _genders[_genderIndex!],
+    );
+
+    context.read<UserBloc>().add(
+      UserUpdated(
+        login: widget.login, // 👈 email
+        profile: profile,
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _locationCtrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (_) => UserBloc(sl(), sl(), sl()),
+      child: BlocConsumer<UserBloc, UserState>(
+        listener: (context, state) {
+          if (state.status == UserStatus.success) {
+            context.go(AppPaths.profile, extra: widget.login);
+          } else if (state.status == UserStatus.failure) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(state.error ?? 'Failed to update profile')),
+            );
+          }
+        },
+        builder: (context, state) {
+          final isLoading = state.status == UserStatus.loading;
+
+          return Scaffold(
+            backgroundColor: AppColors.background,
+            appBar: AppBar(
+              scrolledUnderElevation: 0, // ✅ отключает тень при скролле
+              surfaceTintColor: Colors.transparent, // ✅ убирает потемнение
+              elevation: 0,
+              backgroundColor: AppColors.background,
+              leading: IconButton(
+                icon: const Icon(
+                  Icons.arrow_back_ios_new_rounded,
+                  color: AppColors.textPrimary,
+                  size: 20.0,
+                ),
+                onPressed: () => context.pop(),
+              ),
+            ),
+            body: SafeArea(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // ===== Title =====
+                    Text('Tell us about yourself', style: AppTextStyles.titleT2),
+                    const SizedBox(height: 6),
+                    Text(
+                      'This helps us personalize your content and connect you with relevant issues.',
+                      style: AppTextStyles.paragraphP2High
+                          .copyWith(color: AppColors.textSecondary),
+                    ),
+                    const SizedBox(height: 24),
+
+                    // ===== Age Range =====
+                    _SectionHeader(title: 'Age Range'),
+                    const SizedBox(height: 12),
+                    Wrap(
+                      spacing: 12,
+                      runSpacing: 8,
+                      children: List.generate(_ages.length, (i) {
+                        final selected = _ageIndex == i;
+                        return ChoiceChip(
+                          showCheckmark: false,
+                          label: Text(_ages[i]),
+                          selected: selected,
+                          onSelected: (_) => setState(() => _ageIndex = i),
+                          labelStyle: AppTextStyles.paragraphP2.copyWith(
+                            color:
+                            selected ? Colors.white : AppColors.textPrimary,
+                            fontWeight: FontWeight.w600,
+                          ),
+                          selectedColor: AppColors.primary,
+                          backgroundColor: AppColors.surfaceContainerLow,
+                          shape: const StadiumBorder(),
+                          materialTapTargetSize:
+                          MaterialTapTargetSize.shrinkWrap,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 14.0, vertical: 10.0),
+                        );
+                      }),
+                    ),
+                    const SizedBox(height: 24),
+                    const _DividerSection(),
+
+                    // ===== Location =====
+                    _SectionHeader(title: 'Location'),
+                    const SizedBox(height: 12),
+                    TextField(
+                      controller: _locationCtrl,
+                      readOnly: true,
+                      onTap: _openLocationPicker, // ✅ выбор города
+                      style: AppTextStyles.paragraphP2,
+                      decoration: InputDecoration(
+                        hintText: 'Select your city',
+                        hintStyle: AppTextStyles.paragraphP2High
+                            .copyWith(color: AppColors.textSecondary),
+                        contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 16.0, vertical: 16.0),
+                        suffixIcon: IconButton(
+                          onPressed: _openLocationPicker,
+                          icon: AppIcons.icLocation.svg(
+                            width: 20.0,
+                            height: 20.0,
+                            color: AppColors.textSecondary,
+                          ),
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12.0),
+                          borderSide: const BorderSide(
+                              color: AppColors.surfaceContainerLow),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    const _DividerSection(),
+
+                    // ===== Gender =====
+                    _SectionHeader(title: 'Gender'),
+                    const SizedBox(height: 12),
+                    Wrap(
+                      spacing: 12,
+                      runSpacing: 8,
+                      children: List.generate(_genders.length, (i) {
+                        final selected = _genderIndex == i;
+                        return ChoiceChip(
+                          showCheckmark: false,
+                          label: Text(_genders[i]),
+                          selected: selected,
+                          onSelected: (_) => setState(() => _genderIndex = i),
+                          labelStyle: AppTextStyles.paragraphP2.copyWith(
+                            color:
+                            selected ? Colors.white : AppColors.textPrimary,
+                            fontWeight: FontWeight.w600,
+                          ),
+                          selectedColor: AppColors.primary,
+                          backgroundColor: AppColors.surfaceContainerLow,
+                          shape: const StadiumBorder(),
+                          materialTapTargetSize:
+                          MaterialTapTargetSize.shrinkWrap,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 14.0, vertical: 10.0),
+                        );
+                      }),
+                    ),
+                    const SizedBox(height: 24),
+                    const _DividerSection(),
+
+                    // ===== Interests =====
+                    _SectionHeader(title: 'Key interests'),
+                    const SizedBox(height: 4),
+                    Text(
+                      'Select the issues that matter most to you',
+                      style: AppTextStyles.paragraphP2High
+                          .copyWith(color: AppColors.textSecondary),
+                    ),
+                    const SizedBox(height: 12),
+                    Wrap(
+                      spacing: 10,
+                      runSpacing: 10,
+                      children: _interestOptions.map((option) {
+                        final selected = _interests.contains(option);
+                        return FilterChip(
+                          showCheckmark: false,
+                          label: Text(option),
+                          selected: selected,
+                          onSelected: (v) {
+                            setState(() {
+                              if (v) {
+                                _interests.add(option);
+                              } else {
+                                _interests.remove(option);
+                              }
+                            });
+                          },
+                          labelStyle: AppTextStyles.paragraphP2.copyWith(
+                            color:
+                            selected ? Colors.white : AppColors.textPrimary,
+                            fontWeight: FontWeight.w600,
+                          ),
+                          selectedColor: AppColors.primary,
+                          backgroundColor: AppColors.surfaceContainerLow,
+                          shape: const StadiumBorder(),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 14.0, vertical: 10.0),
+                        );
+                      }).toList(),
+                    ),
+
+                    const SizedBox(height: 40.0),
+                    SizedBox(
+                      width: double.infinity,
+                      child: AppButtonWidget(
+                        label: isLoading ? 'Saving...' : "Let's get started",
+                        onPressed: _isValid && !isLoading
+                            ? () => _submit(context)
+                            : null,
+                        size: AppButtonWidgetSize.large,
+                        intent: AppButtonWidgetIntent.primary,
+                        tone: AppButtonWidgetTone.solid,
+                      ),
+                    ),
+                    const SizedBox(height: 24.0),
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+// ===== Helper Widgets =====
+class _SectionHeader extends StatelessWidget {
+  const _SectionHeader({required this.title});
+  final String title;
+
+  @override
+  Widget build(BuildContext context) =>
+      Text(title, style: AppTextStyles.labelL1);
+}
+
+class _DividerSection extends StatelessWidget {
+  const _DividerSection();
+
+  @override
+  Widget build(BuildContext context) => Divider(
+    height: 32.0,
+    thickness: 1.0,
+    color: AppColors.surfaceContainerLow,
+  );
+}

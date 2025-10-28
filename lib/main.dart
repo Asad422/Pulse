@@ -7,21 +7,18 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'core/localization/generated/l10n.dart';
 import 'core/router/app_router.dart';
-import 'app/di/di.dart';
-import 'features/auth/domain/usecases/login_usecase.dart';
-import 'core/network/token_storage.dart';
+import 'app/di/di.dart'; // тут лежит sl и configureDependencies
 import 'features/auth/presentation/bloc/login_bloc/login_bloc.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // инициализируем DI
+  // инициализируем DI (injectable)
   await configureDependencies();
 
   runApp(
     DevicePreview(
-      // enabled: !kReleaseMode,
-      enabled: false,
+      enabled: !kReleaseMode, // включай превью только не в релизе
       builder: (context) => const App(),
     ),
   );
@@ -37,12 +34,8 @@ class App extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider<LoginBloc>(
-          create: (_) => LoginBloc(
-            loginUseCase: sl<LoginUseCase>(),
-            tokenStorage: sl<TokenStorage>(),
-          ),
+          create: (_) => sl<LoginBloc>(), // <-- берём из DI через sl
         ),
-        // сюда добавляй остальные блоки, когда появятся
       ],
       child: MaterialApp.router(
         title: 'Pulse',
