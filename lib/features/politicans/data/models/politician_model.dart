@@ -1,4 +1,8 @@
+
+import 'package:pulse/features/politicans/data/models/poll_model.dart';
+
 import '../../domain/entities/politician.dart';
+import 'current_position_model.dart';
 
 class PoliticianModel extends Politician {
   const PoliticianModel({
@@ -17,6 +21,9 @@ class PoliticianModel extends Politician {
     super.sponsoredBillCount,
     super.cosponsoredBillCount,
     super.currentPosition,
+    super.district,
+    super.currentMember,
+    super.polls,
   });
 
   factory PoliticianModel.fromJson(Map<String, dynamic> json) {
@@ -35,11 +42,18 @@ class PoliticianModel extends Politician {
       stateName: json['state_name'] as String?,
       sponsoredBillCount: json['sponsored_bill_count'] as int? ?? 0,
       cosponsoredBillCount: json['cosponsored_bill_count'] as int? ?? 0,
+      district: json['district']?.toString(),
+      currentMember: json['current_member'] as bool? ?? false,
       currentPosition: json['current_position'] != null
           ? CurrentPosition.fromJson(
         json['current_position'] as Map<String, dynamic>,
       )
           : null,
+      polls: json['polls'] != null
+          ? (json['polls'] as List)
+          .map((p) => Poll.fromJson(p as Map<String, dynamic>))
+          .toList()
+          : [],
     );
   }
 }

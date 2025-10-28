@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../app/di/di.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/filters/filters_bar.dart';
+import '../../../../core/widgets/legislation_vote_card/legislation_vote_card_widget.dart';
 import '../../domain/entities/bills_query.dart';
 import '../../domain/usecases/get_bills_usecase.dart';
 import '../bloc/bills_bloc.dart';
@@ -16,7 +18,6 @@ class BillsScreen extends StatefulWidget {
 
 class _BillsScreenState extends State<BillsScreen> {
   late final BillsBloc _bloc;
-  final _scrollController = ScrollController();
   String? _selectedLevel;
   String? _searchQuery;
 
@@ -24,11 +25,14 @@ class _BillsScreenState extends State<BillsScreen> {
   void initState() {
     super.initState();
     _bloc = BillsBloc(sl<GetBillsUseCase>());
-    _loadBills();
-    _scrollController.addListener(_onScroll);
+    _bloc.add(
+      BillsRequested(
+        query: BillsQuery(limit: 20, sortBy: 'last_updated', order: 'desc'),
+      ),
+    );
   }
 
-  void _loadBills() {
+  void _reload() {
     _bloc.add(
       BillsRequested(
         query: BillsQuery(
@@ -42,16 +46,8 @@ class _BillsScreenState extends State<BillsScreen> {
     );
   }
 
-  void _onScroll() {
-    if (_scrollController.position.pixels >=
-        _scrollController.position.maxScrollExtent - 200) {
-      _bloc.add(const BillsLoadMoreRequested());
-    }
-  }
-
   @override
   void dispose() {
-    _scrollController.dispose();
     _bloc.close();
     super.dispose();
   }
@@ -65,8 +61,8 @@ class _BillsScreenState extends State<BillsScreen> {
         appBar: AppBar(
           scrolledUnderElevation: 0,
           surfaceTintColor: Colors.transparent,
-          title: const Text('Bills'),
           backgroundColor: AppColors.background,
+          title: const Text('Bills'),
         ),
         body: Column(
           children: [
@@ -74,15 +70,15 @@ class _BillsScreenState extends State<BillsScreen> {
               selectedLevel: _selectedLevel,
               onLevelChanged: (level) {
                 setState(() => _selectedLevel = level);
-                _loadBills();
+                _reload();
               },
               onSearchChanged: (query) {
                 setState(() => _searchQuery = query);
-                _loadBills();
+                _reload();
               },
               onClearSearch: () {
                 setState(() => _searchQuery = null);
-                _loadBills();
+                _reload();
               },
             ),
             Expanded(
@@ -107,26 +103,50 @@ class _BillsScreenState extends State<BillsScreen> {
                   }
 
                   return ListView.separated(
-                    controller: _scrollController,
-                    padding: const EdgeInsets.all(20),
-                    itemCount: state.hasReachedEnd
-                        ? state.items.length
-                        : state.items.length + 1,
-                    separatorBuilder: (_, __) => const Divider(height: 1),
+                    padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    itemCount: state.items.length,
+                    separatorBuilder: (_, __) =>
+                    const SizedBox(height: 12),
                     itemBuilder: (ctx, i) {
-                      if (i >= state.items.length) {
-                        return const Padding(
-                          padding: EdgeInsets.all(16.0),
-                          child: Center(child: CircularProgressIndicator()),
-                        );
+                      final bill = state.items[i];
+
+                      final introduced =
+                          bill.introducedDate?.toLocal().toString().split(' ').first ?? '-';
+
+                      /// 🏷️ Определяем визуальный статус карточки по статусу законопроекта
+                      final LegislationStatus status;
+                      final rawStatus = (bill.status ?? '').toLowerCase();
+
+                      if (rawStatus.contains('committee')) {
+                        status = LegislationStatus.committeeReview;
+                      } else if (rawStatus.contains('senate')) {
+                        status = LegislationStatus.passedSenate;
+                      } else if (rawStatus.contains('vote') ||
+                          rawStatus.contains('pending')) {
+                        status = LegislationStatus.pendingVote;
+                      } else {
+                        status = LegislationStatus.inProgress;
                       }
 
-                      final bill = state.items[i];
-                      return ListTile(
-                        title: Text(bill.title),
-                        subtitle: Text(
-                            '${bill.level ?? ''} • ${bill.status} • ${bill.introducedDate.toString().split(' ').first}'),
-                        onTap: () {},
+                      return LegislationVoteCard(
+                        title: bill.title,
+                        subtitle:
+                        '${bill.level?.toUpperCase() ?? ''} • ${bill.status ?? 'Unknown'}',
+                        status: status,
+                        introducedText: 'Introduced: $introduced',
+                        featured: true,
+                        initialVotes: 0,
+                        onTap: () {
+                          context.push('/app/bills/${bill.id}');
+                        },
+                        onApprove: () {
+                          // TODO: обработка "Support"
+                        },
+                        onDisapprove: () {
+                          // TODO: обработка "Oppose"
+                        },
+
                       );
                     },
                   );

@@ -22,18 +22,12 @@ class PoliticianDetailScreen extends StatelessWidget {
       child: Scaffold(
         backgroundColor: AppColors.background,
         appBar: AppBar(
-          scrolledUnderElevation: 0, // ✅ отключает тень при скролле
-          surfaceTintColor: Colors.transparent, // ✅ убирает потемнение
-          title: const Text('Politician'),
+          scrolledUnderElevation: 0,
+          surfaceTintColor: Colors.transparent,
+          title: const Text('Politician Details'),
           backgroundColor: AppColors.background,
           elevation: 0,
           centerTitle: false,
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.bookmark_border_rounded),
-              onPressed: () {},
-            )
-          ],
         ),
         body: BlocBuilder<PoliticianDetailBloc, PoliticianDetailState>(
           builder: (context, state) {
@@ -54,162 +48,251 @@ class PoliticianDetailScreen extends StatelessWidget {
               return const Center(child: Text('No data'));
             }
 
-            // --- данные из API ---
-            final photoUrl = p.photoUrl ?? '';
-            final name = p.directOrderName?.isNotEmpty == true
-                ? p.directOrderName!
-                : '${p.firstName} ${p.lastName}';
-            final position = p.currentPosition?.position ?? '';
-            final period = p.currentPosition?.period ?? '';
             final poll = p.polls.isNotEmpty ? p.polls.first : null;
-
-            // вычисляем рейтинг (0–100)
             final rating = poll != null && poll.totalVotes > 0
-                ? (poll.votesFor / (poll.totalVotes) * 100)
-                : 72.0; // временно для примера
+                ? (poll.votesFor / poll.totalVotes * 100)
+                : 72.0;
 
             return SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(height: 8),
-
-                  // Фото + круговой рейтинг
-                  Center(
-                    child: ImageWithProgressBarWidget(
-                      imageUrl: photoUrl,
-                      rating: rating,
-                    ),
-                  ),
                   const SizedBox(height: 16),
 
-                  Text(name, style: AppTextStyles.titleT1),
-                  const SizedBox(height: 6),
-                  Text(
-                    position,
-                    style: AppTextStyles.paragraphP2High,
-                    textAlign: TextAlign.center,
+                  /// Фото и имя
+                  Center(
+                    child: Column(
+                      children: [
+                        ImageWithProgressBarWidget(
+                          imageUrl: p.photoUrl ?? '',
+                          rating: rating,
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          p.directOrderName ?? '${p.firstName} ${p.lastName}',
+                          style: AppTextStyles.titleT1,
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 6),
+                        Text(
+                          p.currentPosition?.position ?? '',
+                          style: AppTextStyles.paragraphP2High,
+                          textAlign: TextAlign.center,
+                        ),
+                        if (p.currentPosition?.period != null)
+                          Text(
+                            'In office: ${p.currentPosition!.period}',
+                            style: AppTextStyles.paragraphP2High
+                                .copyWith(color: AppColors.onSurfaceVariant),
+                            textAlign: TextAlign.center,
+                          ),
+                      ],
+                    ),
                   ),
-                  if (period.isNotEmpty) ...[
-                    const SizedBox(height: 2),
-                    Text(
-                      'In office: $period',
-                      style: AppTextStyles.paragraphP2High.copyWith(
-                        color: AppColors.onSurfaceVariant,
-                      ),
-                      textAlign: TextAlign.center,
+
+                  const SizedBox(height: 32),
+
+                  /// === BASIC INFO ===
+                  _Section(
+                    title: 'Basic Information',
+                    children: [
+                      _info('Party', p.party),
+                      _info('State', p.stateName ?? p.state),
+                      _info('District', p.district ?? '-'),
+                      _info('Chamber', p.chamber),
+                      _info('Level', p.level),
+                      _info('Birth Year', p.birthYear?.toString() ?? '-'),
+                      _info('Sex', p.sex ?? '-'),
+                      _info('Current Member', p.currentMember ? 'Yes' : 'No'),
+                      _info('Sponsored Bills',
+                          p.sponsoredBillCount.toString()),
+                      _info('Cosponsored Bills',
+                          p.cosponsoredBillCount.toString()),
+                      _info('Official Website', p.officialWebsiteUrl ?? '-'),
+                    ],
+                  ),
+
+                  /// === CURRENT POSITION ===
+                  if (p.currentPosition != null) ...[
+                    const SizedBox(height: 20),
+                    _Section(
+                      title: 'Current Position',
+                      children: [
+                        _info('Chamber', p.currentPosition!.chamber ?? '-'),
+                        _info('Position', p.currentPosition!.position ?? '-'),
+                        _info('State', p.currentPosition!.state ?? '-'),
+                        _info('District',
+                            p.currentPosition!.district?.toString() ?? '-'),
+                        _info('Period', p.currentPosition!.period ?? '-'),
+                        _info('Start Year',
+                            p.currentPosition!.startYear?.toString() ?? '-'),
+                        _info('End Year',
+                            p.currentPosition!.endYear?.toString() ?? '-'),
+                        _info('Duration',
+                            '${p.currentPosition!.durationYears ?? 0} years'),
+                        _info('Is Current',
+                            p.currentPosition!.isCurrent == true ? 'Yes' : 'No'),
+                      ],
                     ),
                   ],
 
-                  const SizedBox(height: 20),
-                  Text(
-                    'Overall Approval Rating',
-                    style: AppTextStyles.paragraphP2High,
-                  ),
-                  if (poll != null)
-                    Text(
-                      '${poll.totalVotes} votes',
-                      style: AppTextStyles.labelL3
-                          .copyWith(color: AppColors.onSurfaceVariant),
+                  /// === TERMS ===
+                  if (p.terms.isNotEmpty) ...[
+                    const SizedBox(height: 20),
+                    _Section(
+                      title: 'Terms',
+                      children: p.terms
+                          .map((t) => Text(
+                        '${t.chamber} (${t.startYear}-${t.endYear ?? ''}) • ${t.stateName} #${t.district}',
+                        style: AppTextStyles.paragraphP2High,
+                      ))
+                          .toList(),
                     ),
-                  const SizedBox(height: 20),
+                  ],
 
-                  // Кнопки Support / Oppose
-                  Row(
+                  /// === MEMBERSHIPS ===
+                  if (p.memberships.isNotEmpty) ...[
+                    const SizedBox(height: 20),
+                    _Section(
+                      title: 'Memberships',
+                      children: p.memberships
+                          .map((m) => Text(
+                        '${m.organization} (${m.role}) • ${m.startDate} → ${m.endDate ?? 'Present'}',
+                        style: AppTextStyles.paragraphP2High,
+                      ))
+                          .toList(),
+                    ),
+                  ],
+
+                  /// === ATTRIBUTES ===
+                  if (p.attrs != null) ...[
+                    const SizedBox(height: 20),
+                    _Section(
+                      title: 'Attributes',
+                      children: [
+                        _info('Leadership', p.attrs!.leadership ?? '-'),
+                        _info(
+                            'Committees',
+                            p.attrs!.committees.isNotEmpty
+                                ? p.attrs!.committees
+                                .map((e) => e.name)
+                                .join(', ')
+                                : '-'),
+                        _info(
+                            'Party History',
+                            p.attrs!.partyHistory
+                                .map((e) =>
+                            '${e.partyName} (${e.startYear}, ${e.partyAbbreviation})')
+                                .join(', ')),
+                        _info('Sponsored Count',
+                            p.attrs!.sponsoredCount.toString()),
+                        _info('Cosponsored Count',
+                            p.attrs!.cosponsoredCount.toString()),
+                        if (p.attrs!.sponsoredLegislation != null)
+                          _info('Sponsored Legislation',
+                              p.attrs!.sponsoredLegislation!.url),
+                      ],
+                    ),
+                  ],
+
+                  /// === POLLS ===
+                  if (p.polls.isNotEmpty) ...[
+                    const SizedBox(height: 20),
+                    _Section(
+                      title: 'Polls',
+                      children: p.polls
+                          .map((poll) => Text(
+                        '${poll.title}: 👍 ${poll.votesFor} / 👎 ${poll.votesAgainst} (Total ${poll.totalVotes})',
+                        style: AppTextStyles.paragraphP2High,
+                      ))
+                          .toList(),
+                    ),
+                  ],
+
+                  /// === CONTACT ===
+                  if (p.contact != null) ...[
+                    const SizedBox(height: 20),
+                    _Section(
+                      title: 'Contact Information',
+                      children: [
+                        _info('Address', p.contact!.fullAddress ?? '-'),
+                        _info('Phone', p.contact!.phone ?? '-'),
+                        _info('City', p.contact!.city ?? '-'),
+                        _info('State', p.contact!.state ?? '-'),
+                        _info('ZIP', p.contact!.zip ?? '-'),
+                      ],
+                    ),
+                  ],
+
+                  /// === EXTRA INFO ===
+                  const SizedBox(height: 20),
+                  _Section(
+                    title: 'Extra Info',
                     children: [
-                      Expanded(
-                        child: AppButtonWidget.leftIcon(
-                          label: 'Support',
-                          onPressed: () {},
-                          intent: AppButtonWidgetIntent.success,
-                          tone: AppButtonWidgetTone.subtle,
-                          size: AppButtonWidgetSize.medium,
-                          leftIcon: Icons.thumb_up_alt_rounded,
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: AppButtonWidget.leftIcon(
-                          label: 'Oppose',
-                          onPressed: () {},
-                          intent: AppButtonWidgetIntent.danger,
-                          tone: AppButtonWidgetTone.subtle,
-                          size: AppButtonWidgetSize.medium,
-                          leftIcon: Icons.thumb_down_alt_rounded,
-                        ),
-                      ),
+                      _info('Leadership', p.leadership ?? '-'),
+                      _info('Depiction Attribution', p.depictionAttribution ?? '-'),
+                      _info('Depiction', p.depiction ?? '-'),
+                      _info('Sponsored Count', p.sponsoredCount?.toString() ?? '-'),
+                      _info('Cosponsored Count', p.cosponsoredCount?.toString() ?? '-'),
+                      _info('State Name', p.stateName ?? '-'),
                     ],
                   ),
 
-                  const SizedBox(height: 32),
-                  Divider(color: AppColors.surfaceContainerLow),
-                  const SizedBox(height: 16),
-
-                  // --- Promises Tracker ---
-                  Row(
-                    children: [
-                      Text('Promises Tracker', style: AppTextStyles.titleT2),
-                      const Spacer(),
-                      Text(
-                        '12 total',
-                        style: AppTextStyles.paragraphP2High.copyWith(
-                          color: AppColors.onSurfaceVariant,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-
-                  // пока фейковые данные — позже можно подставить реальные из API
-                  const PromiseCard(
-                    title: 'Infrastructure Investment',
-                    dateText: 'Jan 2022',
-                    body:
-                    'Secured \$500M in federal funding for state highway repairs and public transit expansion.',
-                    status: PromiseStatus.kept,
-                  ),
-                  const SizedBox(height: 12),
-                  const PromiseCard(
-                    title: 'Healthcare Reform',
-                    dateText: 'Jan 2022',
-                    body:
-                    'Promised to expand Medicare coverage but voted against the Healthcare Expansion Act.',
-                    status: PromiseStatus.broken,
-                  ),
-                  const SizedBox(height: 12),
-                  const PromiseCard(
-                    title: 'Climate Action Plan',
-                    dateText: 'Jan 2022',
-                    body:
-                    'Proposed legislation for carbon neutrality by 2040 awaiting committee review.',
-                    status: PromiseStatus.pending,
-                  ),
-
-                  const SizedBox(height: 8),
-                  TextButton.icon(
-                    onPressed: () {},
-                    icon: const Icon(Icons.arrow_forward),
-                    label: const Text('View all 12 promises'),
-                    style: TextButton.styleFrom(
-                      foregroundColor: AppColors.primary,
-                      textStyle: AppTextStyles.paragraphP2High,
-                    ),
-                  ),
-
-                  const SizedBox(height: 32),
-                  Divider(color: AppColors.surfaceContainerLow),
-
-                  const SizedBox(height: 16),
-                  Text('Voting history', style: AppTextStyles.titleT3),
-                  const SizedBox(height: 8),
-                  Text('Coming soon', style: AppTextStyles.paragraphP2High),
                   const SizedBox(height: 50),
                 ],
               ),
             );
           },
         ),
+      ),
+    );
+  }
+
+  /// Вспомогательный виджет для строки информации
+  static Widget _info(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 6),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+              flex: 3,
+              child: Text('$label:',
+                  style: AppTextStyles.labelL3
+                      .copyWith(color: AppColors.onSurfaceVariant))),
+          Expanded(flex: 5, child: Text(value, style: AppTextStyles.paragraphP2High)),
+        ],
+      ),
+    );
+  }
+}
+
+/// Карточка-раздел
+class _Section extends StatelessWidget {
+  final String title;
+  final List<Widget> children;
+
+  const _Section({required this.title, required this.children});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppColors.surfaceContainerLow,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(title,
+              style:
+              AppTextStyles.titleT3.copyWith(color: AppColors.onSurface)),
+          const SizedBox(height: 10),
+          ...children,
+        ],
       ),
     );
   }

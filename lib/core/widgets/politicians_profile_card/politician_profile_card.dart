@@ -48,15 +48,15 @@ class PoliticianProfileCard extends StatelessWidget {
                               style: AppTextStyles.get("Body/p3-bold"),
                             ), // жирный, крупнее body
                           ),
-                          InkWell(
-                            onTap: () {},
-                            borderRadius: BorderRadius.circular(16),
-                            child: Padding(
-                              padding: const EdgeInsets.all(4),
-                              child:
-                                  AppIcons.icShare.svg(height: 20, width: 20),
-                            ),
-                          ),
+                          // InkWell(
+                          //   onTap: () {},
+                          //   borderRadius: BorderRadius.circular(16),
+                          //   child: Padding(
+                          //     padding: const EdgeInsets.all(4),
+                          //     child:
+                          //         AppIcons.icShare.svg(height: 20, width: 20),
+                          //   ),
+                          // ),
                         ],
                       ),
                       const SizedBox(height: 2),

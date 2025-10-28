@@ -8,6 +8,7 @@ class PoliticiansState extends Equatable {
   final String? error;
   final bool hasReachedEnd;
   final PoliticiansQuery? query;
+  final _VoteInfo? voteJustSent; // 🧩 информация о последнем голосовании
 
   const PoliticiansState({
     required this.status,
@@ -15,6 +16,7 @@ class PoliticiansState extends Equatable {
     this.error,
     this.hasReachedEnd = false,
     this.query,
+    this.voteJustSent,
   });
 
   const PoliticiansState.initial()
@@ -22,7 +24,8 @@ class PoliticiansState extends Equatable {
         items = const [],
         error = null,
         hasReachedEnd = false,
-        query = null;
+        query = null,
+        voteJustSent = null;
 
   PoliticiansState copyWith({
     PoliticiansStatus? status,
@@ -30,23 +33,34 @@ class PoliticiansState extends Equatable {
     String? error,
     bool? hasReachedEnd,
     PoliticiansQuery? query,
+    _VoteInfo? voteJustSent,
   }) {
     return PoliticiansState(
       status: status ?? this.status,
-      // ✅ Всегда создаём новую копию списка
-      items: items != null ? List<Politician>.from(items) : List<Politician>.from(this.items),
+      items: items != null
+          ? List<Politician>.from(items)
+          : List<Politician>.from(this.items),
       error: error,
       hasReachedEnd: hasReachedEnd ?? this.hasReachedEnd,
       query: query ?? this.query,
+      voteJustSent: voteJustSent,
     );
   }
 
   @override
-  List<Object?> get props => [
-    status,
-    items,
-    error,
-    hasReachedEnd,
-    query, // ✅ теперь query участвует в сравнении
-  ];
+  List<Object?> get props =>
+      [status, items, error, hasReachedEnd, query, voteJustSent];
+}
+
+/// внутренний объект — данные о голосовании (для SnackBar)
+class _VoteInfo extends Equatable {
+  final int pollId;
+  final bool choice;
+  const _VoteInfo({
+    required this.pollId,
+    required this.choice,
+  });
+
+  @override
+  List<Object?> get props => [pollId, choice];
 }

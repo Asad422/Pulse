@@ -3,7 +3,7 @@ class Bill {
   final int congress;
   final String billNumber;
   final String title;
-  final String summary;
+  final String? summary;
   final DateTime introducedDate;
   final String status;
   final String level;
@@ -18,6 +18,14 @@ class Bill {
   final String externalUrl;
   final int id;
   final DateTime lastUpdated;
+
+  /// 🔹 Новые поля:
+  final List<Map<String, dynamic>> amendments;
+  final List<Map<String, dynamic>> summaries;
+  final List<Map<String, dynamic>> actions;
+  final List<Map<String, dynamic>> texts;
+  final List<Map<String, dynamic>> crsReports;
+  final List<Map<String, dynamic>> laws;
 
   const Bill({
     required this.congressBillId,
@@ -39,5 +47,11 @@ class Bill {
     required this.externalUrl,
     required this.id,
     required this.lastUpdated,
+    this.amendments = const [],
+    this.summaries = const [],
+    this.actions = const [],
+    this.texts = const [],
+    this.crsReports = const [],
+    this.laws = const [],
   });
 }

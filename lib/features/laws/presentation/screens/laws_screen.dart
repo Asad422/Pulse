@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../app/di/di.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/filters/filters_bar.dart';
@@ -93,6 +94,11 @@ class _LawsScreenState extends State<LawsScreen> {
                     itemBuilder: (ctx, i) {
                       final law = state.items[i];
                       return LegislationVoteCard(
+                        onTap: () {
+                          context.push('/app/laws/${law.id}');
+                          // Или через имя:
+                          // context.pushNamed(AppRoutes.lawDetail, pathParameters: {'id': law.id});
+                        },
                         title: law.title,
                         subtitle: '${law.lawType} ${law.lawNumber}',
                         status: LegislationStatus.inProgress,

@@ -1,6 +1,4 @@
-
 import '../../domain/entities/politican_detail.dart';
-import '../../domain/entities/politician.dart';
 
 class PoliticianDetailModel extends PoliticianDetail {
   const PoliticianDetailModel({
@@ -18,7 +16,9 @@ class PoliticianDetailModel extends PoliticianDetail {
     super.district,
     required super.chamber,
     super.birthYear,
+    super.sex,
     super.photoUrl,
+    super.photoAttribution,
     super.officialWebsiteUrl,
     required super.currentMember,
     required super.sponsoredBillCount,
@@ -28,6 +28,7 @@ class PoliticianDetailModel extends PoliticianDetail {
     super.sourceId,
     super.countryCode,
     super.jurisdictionCode,
+    super.congressUrl,
     super.updateDate,
     required super.terms,
     super.attrs,
@@ -35,145 +36,271 @@ class PoliticianDetailModel extends PoliticianDetail {
     super.currentPosition,
     required super.memberships,
     super.office,
+    super.contact,
     required super.polls,
     super.stateName,
+    super.leadership,
+    super.partyHistory,
+    super.depictionAttribution,
+    super.sponsoredCount,
+    super.cosponsoredCount,
+    super.depiction,
   });
 
   factory PoliticianDetailModel.fromJson(Map<String, dynamic> json) {
+    // === helpers ===
+    int? _asInt(dynamic v) =>
+        v is int ? v : int.tryParse(v?.toString() ?? '');
+    bool? _asBool(dynamic v) {
+      if (v is bool) return v;
+      if (v == null) return null;
+      final s = v.toString().toLowerCase();
+      if (s == 'true') return true;
+      if (s == 'false') return false;
+      return null;
+    }
+
+    List<TermFormatted> _parseTermFormatted(List list) {
+      return list.map((e) {
+        final raw = e['raw_data'] as Map<String, dynamic>? ?? const {};
+        return TermFormatted(
+          chamber: (e['chamber'] ?? '') as String,
+          chamberCode: (e['chamber_code'] ?? '') as String,
+          position: (e['position'] ?? '') as String,
+          state: (e['state'] ?? '') as String,
+          stateCode: (e['state_code'] ?? '') as String,
+          district: _asInt(e['district']) ?? 0,
+          period: (e['period'] ?? '') as String,
+          startYear: _asInt(e['start_year']) ?? 0,
+          endYear: _asInt(e['end_year']),
+          durationYears: _asInt(e['duration_years']) ?? 0,
+          isCurrent: _asBool(e['is_current']) ?? false,
+          rawData: TermRawData(
+            chamber: (raw['chamber'] ?? '') as String,
+            congress: _asInt(raw['congress']) ?? 0,
+            district: _asInt(raw['district']) ?? 0,
+            startYear: _asInt(raw['startYear']) ?? 0,
+            stateCode: (raw['stateCode'] ?? '') as String,
+            stateName: (raw['stateName'] ?? '') as String,
+            memberType: (raw['memberType'] ?? '') as String,
+            endYear: _asInt(raw['endYear']),
+          ),
+        );
+      }).toList();
+    }
+
+    List<Committee> _parseCommittees(dynamic v) {
+      final list = (v as List?) ?? const [];
+      return list.map((item) {
+        if (item is String) return Committee(name: item);
+        if (item is Map<String, dynamic>) {
+          return Committee(name: item['name'] as String?);
+        }
+        return const Committee(name: null);
+      }).toList();
+    }
+
+    final attrsMap = json['attrs'] as Map<String, dynamic>?;
+    final termHistory =
+        (json['term_history'] as List?) ??
+            (json['terms_formatted'] as List?) ??
+            const [];
+
+    // === main factory ===
     return PoliticianDetailModel(
-      id: json['id'] as String,
-      bioguideId: json['bioguide_id'] as String,
-      firstName: json['first_name'] as String,
-      lastName: json['last_name'] as String,
+      id: (json['id'] ?? json['politician_id']) as String,
+      bioguideId: (json['bioguide_id'] ?? '') as String,
+      firstName: (json['first_name'] ?? '') as String,
+      lastName: (json['last_name'] ?? '') as String,
       middleName: json['middle_name'] as String?,
       suffix: json['suffix'] as String?,
       directOrderName: json['direct_order_name'] as String?,
       invertedOrderName: json['inverted_order_name'] as String?,
       honorificName: json['honorific_name'] as String?,
-      party: json['party'] as String,
-      state: json['state'] as String,
+      party: (json['party'] ?? '') as String,
+      state: (json['state'] ?? '') as String,
       district: json['district']?.toString(),
-      chamber: json['chamber'] as String,
-      birthYear: json['birth_year'] as int?,
+      chamber: (json['chamber'] ?? '') as String,
+      birthYear: _asInt(json['birth_year']),
+      sex: json['sex'] as String?,
       photoUrl: json['photo_url'] as String?,
+      photoAttribution: json['photo_attribution'] as String?,
       officialWebsiteUrl: json['official_website_url'] as String?,
-      currentMember: json['current_member'] as bool,
-      sponsoredBillCount: json['sponsored_bill_count'] as int? ?? 0,
-      cosponsoredBillCount: json['cosponsored_bill_count'] as int? ?? 0,
-      level: json['level'] as String,
+      currentMember: _asBool(json['current_member']) ?? false,
+      sponsoredBillCount: _asInt(json['sponsored_bill_count']) ?? 0,
+      cosponsoredBillCount: _asInt(json['cosponsored_bill_count']) ?? 0,
+      level: (json['level'] ?? '') as String,
       source: json['source'] as String?,
       sourceId: json['source_id'] as String?,
       countryCode: json['country_code'] as String?,
       jurisdictionCode: json['jurisdiction_code'] as String?,
-      updateDate: json['update_date'] != null ? DateTime.parse(json['update_date']) : null,
+      congressUrl: json['congress_url'] as String?,
+      updateDate: json['update_date'] != null
+          ? DateTime.tryParse(json['update_date'] as String)
+          : null,
+
+      // --- terms ---
       terms: (json['terms'] as List<dynamic>? ?? [])
           .map((e) => Term(
-        chamber: e['chamber'] ?? '',
-        endYear: e['endYear'] as int?,
-        congress: e['congress'] ?? 0,
-        district: e['district'] ?? 0,
-        startYear: e['startYear'] ?? 0,
-        stateCode: e['stateCode'] ?? '',
-        stateName: e['stateName'] ?? '',
-        memberType: e['memberType'] ?? '',
+        chamber: (e['chamber'] ?? '') as String,
+        endYear: _asInt(e['endYear']),
+        congress: _asInt(e['congress']) ?? 0,
+        district: _asInt(e['district']) ?? 0,
+        startYear: _asInt(e['startYear']) ?? 0,
+        stateCode: (e['stateCode'] ?? '') as String,
+        stateName: (e['stateName'] ?? '') as String,
+        memberType: (e['memberType'] ?? '') as String,
       ))
           .toList(),
-      attrs: json['attrs'] != null
+
+      // --- attrs ---
+      attrs: attrsMap != null
           ? Attributes(
-        committees: ((json['attrs']['committees'] ?? []) as List)
-            .map((c) => Committee(name: c['name']))
-            .toList(),
-        leadership: json['attrs']['leadership'] as String?,
-        updateDate: json['attrs']['update_date'] != null
-            ? DateTime.parse(json['attrs']['update_date'])
+        committees: _parseCommittees(attrsMap['committees']),
+        leadership: attrsMap['leadership'] as String?,
+        updateDate: attrsMap['update_date'] != null
+            ? DateTime.tryParse(attrsMap['update_date'] as String)
             : null,
-        partyHistory: ((json['attrs']['party_history'] ?? []) as List)
+        partyHistory: ((attrsMap['party_history'] as List?) ?? const [])
             .map((p) => PartyHistory(
-          partyName: p['partyName'],
-          startYear: p['startYear'],
-          partyAbbreviation: p['partyAbbreviation'],
+          partyName: (p['partyName'] ?? '') as String,
+          startYear: _asInt(p['startYear']) ?? 0,
+          partyAbbreviation:
+          (p['partyAbbreviation'] ?? '') as String,
         ))
             .toList(),
-        sponsoredCount: json['attrs']['sponsored_count'] ?? 0,
-        cosponsoredCount: json['attrs']['cosponsored_count'] ?? 0,
-        sponsoredLegislation: json['attrs']['sponsored_legislation'] != null
+        sponsoredCount: _asInt(attrsMap['sponsored_count']) ?? 0,
+        cosponsoredCount: _asInt(attrsMap['cosponsored_count']) ?? 0,
+        sponsoredLegislation: attrsMap['sponsored_legislation'] != null
             ? LegislationLink(
-          url: json['attrs']['sponsored_legislation']['url'],
-          count: json['attrs']['sponsored_legislation']['count'],
+          url: (attrsMap['sponsored_legislation']['url'] ?? '')
+          as String,
+          count: _asInt(
+              attrsMap['sponsored_legislation']['count']) ??
+              0,
         )
             : null,
-        cosponsoredLegislation: json['attrs']['cosponsored_legislation'] != null
+        cosponsoredLegislation: attrsMap['cosponsored_legislation'] !=
+            null
             ? LegislationLink(
-          url: json['attrs']['cosponsored_legislation']['url'],
-          count: json['attrs']['cosponsored_legislation']['count'],
+          url: (attrsMap['cosponsored_legislation']['url'] ?? '')
+          as String,
+          count: _asInt(
+              attrsMap['cosponsored_legislation']['count']) ??
+              0,
         )
             : null,
       )
           : null,
-      termsFormatted: (json['terms_formatted'] as List<dynamic>? ?? [])
-          .map((e) => TermFormatted(
-        chamber: e['chamber'],
-        chamberCode: e['chamber_code'],
-        position: e['position'],
-        state: e['state'],
-        stateCode: e['state_code'],
-        district: e['district'],
-        period: e['period'],
-        startYear: e['start_year'],
-        endYear: e['end_year'],
-        durationYears: e['duration_years'],
-        isCurrent: e['is_current'],
-        rawData: TermRawData(
-          chamber: e['raw_data']['chamber'],
-          congress: e['raw_data']['congress'],
-          district: e['raw_data']['district'],
-          startYear: e['raw_data']['startYear'],
-          stateCode: e['raw_data']['stateCode'],
-          stateName: e['raw_data']['stateName'],
-          memberType: e['raw_data']['memberType'],
-          endYear: e['raw_data']['endYear'],
-        ),
-      ))
-          .toList(),
-      currentPosition: json['current_position'] != null
-          ? CurrentPosition(
-        chamber: json['current_position']['chamber'],
-        position: json['current_position']['position'],
-        state: json['current_position']['state'],
-        period: json['current_position']['period'],
-      )
-          : null,
+
+      // --- termsFormatted (term_history) ---
+      termsFormatted: _parseTermFormatted(termHistory as List),
+
+      // --- current_position ---
+      currentPosition: _parseCurrentPosition(json['current_position'], _asInt, _asBool),
+
+      // --- memberships ---
       memberships: (json['memberships'] as List<dynamic>? ?? [])
           .map((e) => Membership(
-        organization: e['organization'],
-        role: e['role'],
-        postLabel: e['post_label'],
-        startDate: e['start_date'],
-        endDate: e['end_date'],
+        organization: (e['organization'] ?? '') as String,
+        role: (e['role'] ?? '') as String,
+        postLabel: (e['post_label'] ?? '') as String,
+        startDate: (e['start_date'] ?? '') as String,
+        endDate: e['end_date'] as String?,
       ))
           .toList(),
-      office: json['office'] != null
+
+      // --- office (legacy) ---
+      office: (json['office'] != null)
           ? Office(
-        address: json['office']['address'],
-        city: json['office']['city'],
-        state: json['office']['state'],
-        district: json['office']['district'],
-        zip: json['office']['zip'],
-        phone: json['office']['phone'],
-        fullAddress: json['office']['full_address'],
+        address: (json['office']['address'] ?? '') as String,
+        city: (json['office']['city'] ?? '') as String,
+        state: (json['office']['state'] ?? '') as String,
+        district: (json['office']['district'] ?? '') as String,
+        zip: (json['office']['zip'] ?? '') as String,
+        phone: (json['office']['phone'] ?? '') as String,
+        fullAddress: (json['office']['full_address'] ?? '') as String,
       )
           : null,
+
+      // --- contact ---
+      contact: (json['contact'] != null)
+          ? Contact(
+        address: json['contact']['address'] as String?,
+        city: json['contact']['city'] as String?,
+        state: json['contact']['state'] as String?,
+        district: json['contact']['district'] as String?,
+        zip: json['contact']['zip'] as String?,
+        phone: json['contact']['phone'] as String?,
+        fullAddress: json['contact']['full_address'] as String?,
+      )
+          : null,
+
+      // --- polls ---
       polls: (json['polls'] as List<dynamic>? ?? [])
           .map((e) => Poll(
-        pollId: e['poll_id'],
-        title: e['title'],
-        createdAt: DateTime.parse(e['created_at']),
-        votesFor: e['votes_for'],
-        votesAgainst: e['votes_against'],
-        totalVotes: e['total_votes'],
+        pollId: _asInt(e['poll_id']) ?? 0,
+        title: (e['title'] ?? '') as String,
+        createdAt: DateTime.tryParse(
+            (e['created_at'] ?? '') as String) ??
+            DateTime.fromMillisecondsSinceEpoch(0),
+        votesFor: _asInt(e['votes_for']) ?? 0,
+        votesAgainst: _asInt(e['votes_against']) ?? 0,
+        totalVotes: _asInt(e['total_votes']) ?? 0,
       ))
           .toList(),
+
+      // --- meta ---
       stateName: json['state_name'] as String?,
+      leadership: json['leadership'] as String?,
+      partyHistory: ((json['party_history'] as List?) ?? const [])
+          .map((p) => PartyHistory(
+        partyName: (p['partyName'] ?? '') as String,
+        startYear: _asInt(p['startYear']) ?? 0,
+        partyAbbreviation: (p['partyAbbreviation'] ?? '') as String,
+      ))
+          .toList(),
+      depictionAttribution: json['depiction_attribution'] as String?,
+      sponsoredCount: _asInt(json['sponsored_count']),
+      cosponsoredCount: _asInt(json['cosponsored_count']),
+      depiction: json['depiction']?.toString(),
+    );
+  }
+
+  /// --- Helper для безопасного парсинга current_position ---
+  static CurrentPosition? _parseCurrentPosition(
+      dynamic value,
+      int? Function(dynamic) _asInt,
+      bool? Function(dynamic) _asBool) {
+    if (value is! Map<String, dynamic>) return null;
+    final cp = value;
+    final raw =
+    cp['raw_data'] is Map<String, dynamic> ? cp['raw_data'] as Map<String, dynamic> : null;
+
+    return CurrentPosition(
+      chamber: cp['chamber'] as String?,
+      chamberCode: cp['chamber_code'] as String?,
+      position: cp['position'] as String?,
+      state: cp['state'] as String?,
+      stateCode: cp['state_code'] as String?,
+      district: _asInt(cp['district']),
+      period: cp['period'] as String?,
+      startYear: _asInt(cp['start_year']),
+      endYear: _asInt(cp['end_year']),
+      durationYears: _asInt(cp['duration_years']),
+      isCurrent: _asBool(cp['is_current']),
+      rawData: raw != null
+          ? RawPositionData(
+        chamber: raw['chamber'] as String?,
+        congress: _asInt(raw['congress']),
+        district: _asInt(raw['district']),
+        startYear: _asInt(raw['startYear']),
+        stateCode: raw['stateCode'] as String?,
+        stateName: raw['stateName'] as String?,
+        memberType: raw['memberType'] as String?,
+        endYear: _asInt(raw['endYear']),
+      )
+          : null,
     );
   }
 }

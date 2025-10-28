@@ -277,7 +277,7 @@ class _Header extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final profile = user.profile;
-    final name = profile?.name ?? user.login;
+    final name = profile?.name ?? '';
     final city = profile?.addressCity ?? 'Unknown city';
     final joinedDate = user.createdAt.toLocal();
     final formattedDate =

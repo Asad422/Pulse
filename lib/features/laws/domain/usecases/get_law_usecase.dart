@@ -7,5 +7,7 @@ class GetLawUseCase {
   final LawsRepository _repo;
   GetLawUseCase(this._repo);
 
-  Future<Law> call(int lawId) => _repo.getLaw(lawId);
+  Future<Law> call(int lawId) {
+    return _repo.getLaw(lawId);
+  }
 }

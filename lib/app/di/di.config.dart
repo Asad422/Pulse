@@ -15,6 +15,19 @@ import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
 
 import '../../core/network/auth_interceptor.dart' as _i388;
+import '../../core/network/data/datasources/polls_remote_datasource.dart'
+    as _i547;
+import '../../core/network/data/repositories/polls_repository_impl.dart'
+    as _i151;
+import '../../core/network/domain/repositories/polls_repository.dart' as _i19;
+import '../../core/network/domain/usecases/create_vote_usecase.dart' as _i258;
+import '../../core/network/domain/usecases/delete_all_votes_usecase.dart'
+    as _i145;
+import '../../core/network/domain/usecases/delete_vote_usecase.dart' as _i7;
+import '../../core/network/domain/usecases/get_my_votes_usecase.dart' as _i551;
+import '../../core/network/domain/usecases/get_poll_detail_usecase.dart'
+    as _i75;
+import '../../core/network/domain/usecases/get_polls_usecase.dart' as _i140;
 import '../../core/network/secure_token_storage.dart' as _i103;
 import '../../core/network/token_storage.dart' as _i356;
 import '../../features/auth/data/datasourses/auth_remote_ds.dart' as _i626;
@@ -112,6 +125,8 @@ _i174.GetIt $initGetIt(
       _i826.BillsRemoteDataSource(gh<_i361.Dio>(instanceName: 'authDio')));
   gh.lazySingleton<_i800.UserRemoteDataSource>(
       () => _i800.UserRemoteDataSource(gh<_i361.Dio>(instanceName: 'authDio')));
+  gh.lazySingleton<_i547.PollsRemoteDataSource>(() =>
+      _i547.PollsRemoteDataSource(gh<_i361.Dio>(instanceName: 'authDio')));
   gh.lazySingleton<_i114.LawsRepository>(
       () => _i80.LawsRepositoryImpl(gh<_i422.LawsRemoteDataSource>()));
   gh.lazySingleton<_i460.PoliticiansRepository>(() =>
@@ -120,6 +135,8 @@ _i174.GetIt $initGetIt(
       () => _i153.AuthRepositoryImpl(gh<_i626.AuthRemoteDataSource>()));
   gh.lazySingleton<_i468.BillsRepository>(
       () => _i480.BillsRepositoryImpl(gh<_i826.BillsRemoteDataSource>()));
+  gh.lazySingleton<_i19.PollsRepository>(
+      () => _i151.PollsRepositoryImpl(gh<_i547.PollsRemoteDataSource>()));
   gh.lazySingleton<_i696.GetPoliticianUseCase>(
       () => _i696.GetPoliticianUseCase(gh<_i460.PoliticiansRepository>()));
   gh.lazySingleton<_i953.GetPoliticiansUseCase>(
@@ -148,6 +165,18 @@ _i174.GetIt $initGetIt(
       () => _i29.RequestOtpUseCase(gh<_i787.AuthRepository>()));
   gh.lazySingleton<_i503.VerifyOtpUseCase>(
       () => _i503.VerifyOtpUseCase(gh<_i787.AuthRepository>()));
+  gh.lazySingleton<_i140.GetPollsUseCase>(
+      () => _i140.GetPollsUseCase(gh<_i19.PollsRepository>()));
+  gh.lazySingleton<_i75.GetPollDetailUseCase>(
+      () => _i75.GetPollDetailUseCase(gh<_i19.PollsRepository>()));
+  gh.lazySingleton<_i7.DeleteVoteUseCase>(
+      () => _i7.DeleteVoteUseCase(gh<_i19.PollsRepository>()));
+  gh.lazySingleton<_i145.DeleteAllVotesUseCase>(
+      () => _i145.DeleteAllVotesUseCase(gh<_i19.PollsRepository>()));
+  gh.lazySingleton<_i551.GetMyVotesUseCase>(
+      () => _i551.GetMyVotesUseCase(gh<_i19.PollsRepository>()));
+  gh.lazySingleton<_i258.CreateVoteUseCase>(
+      () => _i258.CreateVoteUseCase(gh<_i19.PollsRepository>()));
   gh.factory<_i450.LoginBloc>(() => _i450.LoginBloc(
         requestOtpUseCase: gh<_i29.RequestOtpUseCase>(),
         verifyOtpUseCase: gh<_i503.VerifyOtpUseCase>(),

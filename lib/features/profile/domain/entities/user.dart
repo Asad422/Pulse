@@ -25,6 +25,7 @@ class Profile {
   final String? ageCategory;
   final String? interestLevel;
   final String? addressCity;
+  final String? sex;
   final int? userId;
 
   const Profile({
@@ -32,6 +33,7 @@ class Profile {
     this.ageCategory,
     this.interestLevel,
     this.addressCity,
+    this.sex,
     this.userId,
   });
 }

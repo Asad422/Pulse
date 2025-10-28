@@ -29,7 +29,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
   final Set<String> _interests = {};
 
   final _ages = const ['18–25', '26–35', '36–50', '51+'];
-  final _genders = const ['Man', 'Woman', 'Prefer not to say'];
+  final _genders = const ['Man', 'Woman', 'Non-binary', 'Transgender','Prefer not to say'];
   final _interestOptions = const ['Education', 'Economy', 'Healthcare', 'Environment'];
 
   bool get _isValid =>
@@ -57,6 +57,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
       ageCategory: _ages[_ageIndex!],
       interestLevel: _interests.join(', '),
       addressCity: _locationCtrl.text.trim(),
+      sex: _genders[_genderIndex!],
       // name: _genders[_genderIndex!],
     );
 

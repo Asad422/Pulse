@@ -16,3 +16,14 @@ class PoliticiansLoadRequested extends PoliticiansEvent {
 class PoliticiansLoadMoreRequested extends PoliticiansEvent {
   const PoliticiansLoadMoreRequested();
 }
+class PoliticianVoteSubmitted extends PoliticiansEvent {
+  final int pollId;
+  final bool choice; // true = за, false = против
+  const PoliticianVoteSubmitted({
+    required this.pollId,
+    required this.choice,
+  });
+
+  @override
+  List<Object?> get props => [pollId, choice];
+}

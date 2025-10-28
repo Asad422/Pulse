@@ -3,6 +3,8 @@ import 'package:pulse/features/laws/presentation/screens/laws_screen.dart';
 import 'package:pulse/features/politicans/presentation/screens/politicans_screen.dart';
 import 'package:pulse/features/splash_screen/presenatation/splash_screen.dart';
 import '../../app/ui/shell/app_shell.dart';
+import '../../features/bills/presentation/screens/bill_detail_screen.dart';
+import '../../features/laws/presentation/screens/law_detail_screen.dart';
 import '../../features/profile/presentation/screens/location_select_screen.dart';
 import '../../features/auth/presentation/screens/login_screen.dart';
 import '../../features/auth/presentation/screens/register_screen.dart';
@@ -19,15 +21,16 @@ import 'routes.dart';
 class AppRouter {
   static GoRouter create() {
     return GoRouter(
-      initialLocation: AppPaths.splash, // 👈 теперь splash
+      initialLocation: AppPaths.splash,
 
       routes: [
-        // Standalone
+        // ==== Standalone ====
         GoRoute(
           path: AppPaths.onboarding,
           name: AppRoutes.onboarding,
           builder: (c, s) => const OnboardingScreen(),
-        ),   GoRoute(
+        ),
+        GoRoute(
           path: AppPaths.splash,
           name: AppRoutes.splash,
           builder: (c, s) => const SplashScreen(),
@@ -48,7 +51,7 @@ class AppRouter {
           path: AppPaths.profileSetup,
           name: AppRoutes.profileSetup,
           builder: (context, state) {
-            final login = state.extra as String? ?? ''; // ✅ получаем email
+            final login = state.extra as String? ?? '';
             return ProfileSetupScreen(login: login);
           },
         ),
@@ -65,8 +68,7 @@ class AppRouter {
           ),
         ),
 
-
-        // Legal
+        // ==== Legal ====
         GoRoute(
           path: AppPaths.policySafety,
           name: AppRoutes.policySafety,
@@ -78,17 +80,18 @@ class AppRouter {
           builder: (c, s) => const UserRightsScreen(),
         ),
 
-        // App shell with bottom navigation
+        // ==== Shell with Bottom Navigation ====
         ShellRoute(
           builder: (c, s, child) => AppShell(child: child),
           routes: [
             GoRoute(
               path: AppPaths.home,
               name: AppRoutes.home,
-              pageBuilder: (c, s) => const NoTransitionPage(child: LawsScreen()),
+              pageBuilder: (c, s) =>
+              const NoTransitionPage(child: LawsScreen()),
             ),
             GoRoute(
-              path: AppPaths.bills, // 👈 новый таб
+              path: AppPaths.bills,
               name: AppRoutes.bills,
               pageBuilder: (c, s) =>
               const NoTransitionPage(child: BillsScreen()),
@@ -96,22 +99,42 @@ class AppRouter {
             GoRoute(
               path: AppPaths.politicians,
               name: AppRoutes.politicians,
-              pageBuilder: (c, s) => const NoTransitionPage(child: PoliticansScreen()),
+              pageBuilder: (c, s) =>
+              const NoTransitionPage(child: PoliticansScreen()),
             ),
             GoRoute(
               path: AppPaths.profile,
               name: AppRoutes.profile,
-              pageBuilder: (c, s) => const NoTransitionPage(child: ProfileScreen()),
-            ),
-            GoRoute(
-              path: AppPaths.politician,
-              name: AppRoutes.politician,
-              builder: (c, s) {
-                final id = s.pathParameters['id']!;
-                return PoliticianDetailScreen(bioguideId: id);
-              },
+              pageBuilder: (c, s) =>
+              const NoTransitionPage(child: ProfileScreen()),
             ),
           ],
+        ),
+
+        // ==== Detail Screens (outside shell) ====
+        GoRoute(
+          path: AppPaths.politician,
+          name: AppRoutes.politician,
+          builder: (c, s) {
+            final id = s.pathParameters['id']!;
+            return PoliticianDetailScreen(bioguideId: id);
+          },
+        ),
+        GoRoute(
+          path: AppPaths.billDetail,
+          name: AppRoutes.billDetail,
+          builder: (c, s) {
+            final id = s.pathParameters['id']!;
+            return BillDetailScreen(billId: id);
+          },
+        ),
+        GoRoute(
+          path: AppPaths.lawDetail,
+          name: AppRoutes.lawDetail,
+          builder: (c, s) {
+            final id = s.pathParameters['id']!;
+            return LawDetailScreen(lawId: id);
+          },
         ),
       ],
     );

@@ -1,3 +1,4 @@
+// domain/entities/politican_detail.dart
 import 'package:pulse/features/politicans/domain/entities/politician.dart';
 
 class PoliticianDetail {
@@ -15,7 +16,9 @@ class PoliticianDetail {
   final String? district;
   final String chamber;
   final int? birthYear;
+  final String? sex; // NEW
   final String? photoUrl;
+  final String? photoAttribution; // NEW
   final String? officialWebsiteUrl;
   final bool currentMember;
   final int sponsoredBillCount;
@@ -25,15 +28,42 @@ class PoliticianDetail {
   final String? sourceId;
   final String? countryCode;
   final String? jurisdictionCode;
+  final String? congressUrl; // NEW
   final DateTime? updateDate;
+
+  /// Исторические "сырые" термины (конгресс, годы и т.п.)
   final List<Term> terms;
-  final Attributes? attrs;
+
+  /// Расширенные термины (форматированные периоды, is_current и т.п.)
+  /// Берём из `term_history` (предпочтительно) или `terms_formatted`
   final List<TermFormatted> termsFormatted;
+
+  /// Атрибуты-блок
+  final Attributes? attrs;
+
+  /// Текущая позиция (расширенная)
   final CurrentPosition? currentPosition;
+
+  /// Членства (комитеты/организации)
   final List<Membership> memberships;
+
+  /// Старое поле офисных данных (если бэкенд когда-то вернёт их)
   final Office? office;
+
+  /// Новый объект контакта
+  final Contact? contact; // NEW
+
+  /// Опросы
   final List<Poll> polls;
+
+  /// Дубли корневых полей, которые также могут дублироваться в attrs
   final String? stateName;
+  final String? leadership; // NEW (корневое)
+  final List<PartyHistory> partyHistory; // NEW (корневое)
+  final String? depictionAttribution; // NEW (корневое)
+  final int? sponsoredCount; // NEW (корневое)
+  final int? cosponsoredCount; // NEW (корневое)
+  final String? depiction; // NEW
 
   const PoliticianDetail({
     required this.id,
@@ -50,7 +80,9 @@ class PoliticianDetail {
     this.district,
     required this.chamber,
     this.birthYear,
+    this.sex,
     this.photoUrl,
+    this.photoAttribution,
     this.officialWebsiteUrl,
     required this.currentMember,
     required this.sponsoredBillCount,
@@ -60,17 +92,27 @@ class PoliticianDetail {
     this.sourceId,
     this.countryCode,
     this.jurisdictionCode,
+    this.congressUrl,
     this.updateDate,
     required this.terms,
-    this.attrs,
     required this.termsFormatted,
+    this.attrs,
     this.currentPosition,
     required this.memberships,
     this.office,
+    this.contact,
     required this.polls,
     this.stateName,
+    this.leadership,
+    this.partyHistory = const [],
+    this.depictionAttribution,
+    this.sponsoredCount,
+    this.cosponsoredCount,
+    this.depiction,
   });
 }
+
+// ===== Sub-entities (без изменений, где не нужно) =====
 
 class Term {
   final String chamber;
@@ -118,7 +160,6 @@ class Attributes {
 
 class Committee {
   final String? name;
-
   const Committee({this.name});
 }
 
@@ -137,11 +178,7 @@ class PartyHistory {
 class LegislationLink {
   final String url;
   final int count;
-
-  const LegislationLink({
-    required this.url,
-    required this.count,
-  });
+  const LegislationLink({required this.url, required this.count});
 }
 
 class TermFormatted {
@@ -232,6 +269,26 @@ class Office {
   });
 }
 
+class Contact {
+  final String? address;
+  final String? city;
+  final String? state;
+  final String? district;
+  final String? zip;
+  final String? phone;
+  final String? fullAddress;
+
+  const Contact({
+    this.address,
+    this.city,
+    this.state,
+    this.district,
+    this.zip,
+    this.phone,
+    this.fullAddress,
+  });
+}
+
 class Poll {
   final int pollId;
   final String title;
@@ -247,5 +304,57 @@ class Poll {
     required this.votesFor,
     required this.votesAgainst,
     required this.totalVotes,
+  });
+}
+
+class CurrentPosition {
+  final String? chamber;
+  final String? chamberCode;
+  final String? position;
+  final String? state;
+  final String? stateCode;
+  final int? district;
+  final String? period;
+  final int? startYear;
+  final int? endYear;
+  final int? durationYears;
+  final bool? isCurrent;
+  final RawPositionData? rawData;
+
+  const CurrentPosition({
+    this.chamber,
+    this.chamberCode,
+    this.position,
+    this.state,
+    this.stateCode,
+    this.district,
+    this.period,
+    this.startYear,
+    this.endYear,
+    this.durationYears,
+    this.isCurrent,
+    this.rawData,
+  });
+}
+
+class RawPositionData {
+  final String? chamber;
+  final int? congress;
+  final int? district;
+  final int? startYear;
+  final String? stateCode;
+  final String? stateName;
+  final String? memberType;
+  final int? endYear;
+
+  const RawPositionData({
+    this.chamber,
+    this.congress,
+    this.district,
+    this.startYear,
+    this.stateCode,
+    this.stateName,
+    this.memberType,
+    this.endYear,
   });
 }

@@ -15,6 +15,8 @@ class AppRoutes {
   static const politicians = 'politicians';
   static const profile = 'profile';
   static const bills = 'bills'; // 👈 NEW
+  static const billDetail = 'billDetail';
+  static const lawDetail = 'lawDetail';
 
 
   // Legal
@@ -39,6 +41,8 @@ class AppPaths {
   static const politicians = '/app/politicians';
   static const profile = '/app/profile';
   static const bills = '/app/bills'; // 👈 NEW
+  static const billDetail = '/app/bills/:id';
+  static const lawDetail = '/app/laws/:id';
 
 
   static const policySafety = '/legal/policy-safety';

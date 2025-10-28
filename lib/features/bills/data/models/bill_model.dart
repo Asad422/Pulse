@@ -21,15 +21,29 @@ class BillModel extends Bill {
     required super.externalUrl,
     required super.id,
     required super.lastUpdated,
+    super.amendments = const [],
+    super.summaries = const [],
+    super.actions = const [],
+    super.texts = const [],
+    super.crsReports = const [],
+    super.laws = const [],
   });
 
   factory BillModel.fromJson(Map<String, dynamic> json) {
+    List<Map<String, dynamic>> _toList(dynamic v) {
+      if (v == null) return [];
+      if (v is List) {
+        return v.map((e) => Map<String, dynamic>.from(e)).toList();
+      }
+      return [];
+    }
+
     return BillModel(
       congressBillId: json['congress_bill_id'] as String? ?? '',
       congress: json['congress'] as int? ?? 0,
       billNumber: json['bill_number'] as String? ?? '',
       title: json['title'] as String? ?? '',
-      summary: json['summary'] as String? ?? '',
+      summary: json['summary'] as String?,
       introducedDate: DateTime.tryParse(json['introduced_date'] ?? '') ?? DateTime(1970),
       status: json['status'] as String? ?? '',
       level: json['level'] as String? ?? '',
@@ -44,6 +58,12 @@ class BillModel extends Bill {
       externalUrl: json['external_url'] as String? ?? '',
       id: json['id'] as int? ?? 0,
       lastUpdated: DateTime.tryParse(json['last_updated'] ?? '') ?? DateTime(1970),
+      amendments: _toList(json['amendments']),
+      summaries: _toList(json['summaries']),
+      actions: _toList(json['actions']),
+      texts: _toList(json['texts']),
+      crsReports: _toList(json['crs_reports']),
+      laws: _toList(json['laws']),
     );
   }
 

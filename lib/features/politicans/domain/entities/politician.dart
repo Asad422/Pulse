@@ -1,3 +1,6 @@
+import '../../data/models/current_position_model.dart';
+import '../../data/models/poll_model.dart';
+
 class Politician {
   final String politicianId;
   final String bioguideId;
@@ -13,7 +16,10 @@ class Politician {
   final String? stateName;
   final int? sponsoredBillCount;
   final int? cosponsoredBillCount;
-  final CurrentPosition? currentPosition; // 👈 добавили
+  final CurrentPosition? currentPosition;
+  final String? district;
+  final bool? currentMember;
+  final List<Poll>? polls;
 
   const Politician({
     required this.politicianId,
@@ -31,29 +37,8 @@ class Politician {
     this.sponsoredBillCount,
     this.cosponsoredBillCount,
     this.currentPosition,
+    this.district,
+    this.currentMember,
+    this.polls,
   });
-}
-
-
-class CurrentPosition {
-  final String? chamber;
-  final String? position;
-  final String? state;
-  final String? period;
-
-  const CurrentPosition({
-    this.chamber,
-    this.position,
-    this.state,
-    this.period,
-  });
-
-  factory CurrentPosition.fromJson(Map<String, dynamic> json) {
-    return CurrentPosition(
-      chamber: json['chamber'] as String?,
-      position: json['position'] as String?,
-      state: json['state'] as String?,
-      period: json['period'] as String?,
-    );
-  }
 }
