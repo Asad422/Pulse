@@ -52,7 +52,7 @@ class _LawsScreenState extends State<LawsScreen> {
           scrolledUnderElevation: 0,
           surfaceTintColor: Colors.transparent,
           backgroundColor: AppColors.background,
-          title: const Text('Legislations'),
+          title: const Text('Laws'),
         ),
         body: Column(
           children: [

@@ -28,7 +28,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   void initState() {
     super.initState();
-    _bloc = UserBloc(sl(), sl(), sl());
+    _bloc = UserBloc(sl(), sl(), sl(), sl(), sl());
     Future.microtask(() => _bloc.add(UserRequested()));
   }
 

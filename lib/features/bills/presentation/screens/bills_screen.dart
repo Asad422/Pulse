@@ -102,13 +102,11 @@ class _BillsScreenState extends State<BillsScreen> {
                     return const Center(child: Text('No bills found'));
                   }
 
-                  return ListView.separated(
-                    padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  return ListView.builder(
                     itemCount: state.items.length,
-                    separatorBuilder: (_, __) =>
-                    const SizedBox(height: 12),
+                    // separatorBuilder: (_, __) => const SizedBox(height: 12),
                     itemBuilder: (ctx, i) {
+
                       final bill = state.items[i];
 
                       final introduced =

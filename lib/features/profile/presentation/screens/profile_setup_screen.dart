@@ -11,7 +11,7 @@ import '../../domain/entities/user.dart';
 import '../bloc/user_bloc.dart';
 
 class ProfileSetupScreen extends StatefulWidget {
-  final String login; // 👈 логин (email)
+  final String login;
 
   const ProfileSetupScreen({
     super.key,
@@ -23,22 +23,29 @@ class ProfileSetupScreen extends StatefulWidget {
 }
 
 class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
+  final _nameCtrl = TextEditingController();
   final _locationCtrl = TextEditingController();
+
   int? _ageIndex;
   int? _genderIndex;
   final Set<String> _interests = {};
 
   final _ages = const ['18–25', '26–35', '36–50', '51+'];
-  final _genders = const ['Man', 'Woman', 'Non-binary', 'Transgender','Prefer not to say'];
-  final _interestOptions = const ['Education', 'Economy', 'Healthcare', 'Environment'];
+  final _genders = const [
+    'Man',
+    'Woman',
+    'Non-binary',
+    'Transgender',
+    'Prefer not to say'
+  ];
 
-  bool get _isValid =>
-      _ageIndex != null &&
+  bool _isValid({required bool hasSubjects}) =>
+      _nameCtrl.text.trim().isNotEmpty &&
+          _ageIndex != null &&
           _genderIndex != null &&
           _locationCtrl.text.trim().isNotEmpty &&
-          _interests.isNotEmpty;
+          (hasSubjects ? _interests.isNotEmpty : true);
 
-  /// выбор локации
   Future<void> _openLocationPicker() async {
     final result = await context.push<String>(
       AppPaths.location,
@@ -49,21 +56,18 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
     }
   }
 
-  /// отправка данных
   void _submit(BuildContext context) {
-    if (!_isValid) return;
-
     final profile = Profile(
+      name: _nameCtrl.text.trim(),
       ageCategory: _ages[_ageIndex!],
       interestLevel: _interests.join(', '),
       addressCity: _locationCtrl.text.trim(),
       sex: _genders[_genderIndex!],
-      // name: _genders[_genderIndex!],
     );
 
     context.read<UserBloc>().add(
       UserUpdated(
-        login: widget.login, // 👈 email
+        login: widget.login,
         profile: profile,
       ),
     );
@@ -71,6 +75,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
 
   @override
   void dispose() {
+    _nameCtrl.dispose();
     _locationCtrl.dispose();
     super.dispose();
   }
@@ -78,25 +83,30 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => UserBloc(sl(), sl(), sl()),
+      create: (_) =>
+      UserBloc(sl(), sl(), sl(), sl(), sl())..add(UserSubjectsRequested()),
       child: BlocConsumer<UserBloc, UserState>(
         listener: (context, state) {
-          if (state.status == UserStatus.success) {
+          if (state.status == UserStatus.success && state.user != null) {
             context.go(AppPaths.profile, extra: widget.login);
           } else if (state.status == UserStatus.failure) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(state.error ?? 'Failed to update profile')),
+              SnackBar(
+                content: Text(state.error ?? 'Failed to update profile'),
+              ),
             );
           }
         },
         builder: (context, state) {
           final isLoading = state.status == UserStatus.loading;
+          final subjects = state.subjects.map((s) => s.name).toList();
+          final hasSubjects = subjects.isNotEmpty;
 
           return Scaffold(
             backgroundColor: AppColors.background,
             appBar: AppBar(
-              scrolledUnderElevation: 0, // ✅ отключает тень при скролле
-              surfaceTintColor: Colors.transparent, // ✅ убирает потемнение
+              scrolledUnderElevation: 0,
+              surfaceTintColor: Colors.transparent,
               elevation: 0,
               backgroundColor: AppColors.background,
               leading: IconButton(
@@ -110,7 +120,8 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
             ),
             body: SafeArea(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8.0),
+                padding:
+                const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -124,8 +135,31 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                     ),
                     const SizedBox(height: 24),
 
+                    // ===== Full Name =====
+                    const _SectionHeader(title: 'Full Name'),
+                    const SizedBox(height: 12),
+                    TextField(
+                      controller: _nameCtrl,
+                      textCapitalization: TextCapitalization.words,
+                      style: AppTextStyles.paragraphP2,
+                      decoration: InputDecoration(
+                        hintText: 'Enter your full name',
+                        hintStyle: AppTextStyles.paragraphP2High
+                            .copyWith(color: AppColors.textSecondary),
+                        contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 16.0, vertical: 16.0),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12.0),
+                          borderSide: const BorderSide(
+                              color: AppColors.surfaceContainerLow),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    const _DividerSection(),
+
                     // ===== Age Range =====
-                    _SectionHeader(title: 'Age Range'),
+                    const _SectionHeader(title: 'Age Range'),
                     const SizedBox(height: 12),
                     Wrap(
                       spacing: 12,
@@ -156,12 +190,12 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                     const _DividerSection(),
 
                     // ===== Location =====
-                    _SectionHeader(title: 'Location'),
+                    const _SectionHeader(title: 'Location'),
                     const SizedBox(height: 12),
                     TextField(
                       controller: _locationCtrl,
                       readOnly: true,
-                      onTap: _openLocationPicker, // ✅ выбор города
+                      onTap: _openLocationPicker,
                       style: AppTextStyles.paragraphP2,
                       decoration: InputDecoration(
                         hintText: 'Select your city',
@@ -188,7 +222,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                     const _DividerSection(),
 
                     // ===== Gender =====
-                    _SectionHeader(title: 'Gender'),
+                    const _SectionHeader(title: 'Gender'),
                     const SizedBox(height: 12),
                     Wrap(
                       spacing: 12,
@@ -218,8 +252,8 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                     const SizedBox(height: 24),
                     const _DividerSection(),
 
-                    // ===== Interests =====
-                    _SectionHeader(title: 'Key interests'),
+                    // ===== Subjects =====
+                    const _SectionHeader(title: 'Key interests'),
                     const SizedBox(height: 4),
                     Text(
                       'Select the issues that matter most to you',
@@ -227,44 +261,56 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                           .copyWith(color: AppColors.textSecondary),
                     ),
                     const SizedBox(height: 12),
-                    Wrap(
-                      spacing: 10,
-                      runSpacing: 10,
-                      children: _interestOptions.map((option) {
-                        final selected = _interests.contains(option);
-                        return FilterChip(
-                          showCheckmark: false,
-                          label: Text(option),
-                          selected: selected,
-                          onSelected: (v) {
-                            setState(() {
-                              if (v) {
-                                _interests.add(option);
-                              } else {
-                                _interests.remove(option);
-                              }
-                            });
-                          },
-                          labelStyle: AppTextStyles.paragraphP2.copyWith(
-                            color:
-                            selected ? Colors.white : AppColors.textPrimary,
-                            fontWeight: FontWeight.w600,
-                          ),
-                          selectedColor: AppColors.primary,
-                          backgroundColor: AppColors.surfaceContainerLow,
-                          shape: const StadiumBorder(),
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 14.0, vertical: 10.0),
-                        );
-                      }).toList(),
-                    ),
+
+                    if (isLoading && state.subjects.isEmpty)
+                      const Center(child: CircularProgressIndicator())
+                    else if (subjects.isEmpty)
+                      Text(
+                        'No available subjects.',
+                        style: AppTextStyles.paragraphP2High
+                            .copyWith(color: AppColors.textSecondary),
+                      )
+                    else
+                      Wrap(
+                        spacing: 10,
+                        runSpacing: 10,
+                        children: subjects.map((option) {
+                          final selected = _interests.contains(option);
+                          return FilterChip(
+                            showCheckmark: false,
+                            label: Text(option),
+                            selected: selected,
+                            onSelected: (v) {
+                              setState(() {
+                                if (v) {
+                                  _interests.add(option);
+                                } else {
+                                  _interests.remove(option);
+                                }
+                              });
+                            },
+                            labelStyle: AppTextStyles.paragraphP2.copyWith(
+                              color: selected
+                                  ? Colors.white
+                                  : AppColors.textPrimary,
+                              fontWeight: FontWeight.w600,
+                            ),
+                            selectedColor: AppColors.primary,
+                            backgroundColor: AppColors.surfaceContainerLow,
+                            shape: const StadiumBorder(),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 14.0, vertical: 10.0),
+                          );
+                        }).toList(),
+                      ),
 
                     const SizedBox(height: 40.0),
                     SizedBox(
                       width: double.infinity,
                       child: AppButtonWidget(
                         label: isLoading ? 'Saving...' : "Let's get started",
-                        onPressed: _isValid && !isLoading
+                        onPressed: !isLoading &&
+                            _isValid(hasSubjects: hasSubjects)
                             ? () => _submit(context)
                             : null,
                         size: AppButtonWidgetSize.large,

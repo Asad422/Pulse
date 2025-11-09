@@ -45,6 +45,16 @@ import '../../features/bills/data/repositories/bills_repository_impl.dart'
     as _i480;
 import '../../features/bills/domain/repositories/bills_repository.dart'
     as _i468;
+import '../../features/bills/domain/usecases/download_bill_text_usecase.dart'
+    as _i70;
+import '../../features/bills/domain/usecases/get_bill_amendments_usecase.dart'
+    as _i863;
+import '../../features/bills/domain/usecases/get_bill_crs_reports_usecase.dart'
+    as _i374;
+import '../../features/bills/domain/usecases/get_bill_sponsors_usecase.dart'
+    as _i240;
+import '../../features/bills/domain/usecases/get_bill_text_usecase.dart'
+    as _i512;
 import '../../features/bills/domain/usecases/get_bill_usecase.dart' as _i535;
 import '../../features/bills/domain/usecases/get_bills_usecase.dart' as _i264;
 import '../../features/laws/data/datasources/laws_remote_ds.dart' as _i422;
@@ -65,6 +75,8 @@ import '../../features/politicans/domain/usecases/get_politician_usecase.dart'
     as _i696;
 import '../../features/politicans/domain/usecases/get_politicians_usecase.dart'
     as _i953;
+import '../../features/politicans/presentation/bloc/politicians_bloc/politicians_bloc.dart'
+    as _i143;
 import '../../features/profile/data/datasources/user_remote_ds.dart' as _i800;
 import '../../features/profile/data/repositories/user_repository_impl.dart'
     as _i938;
@@ -72,6 +84,10 @@ import '../../features/profile/domain/repositories/user_repository.dart'
     as _i146;
 import '../../features/profile/domain/usecases/delete_user_me_usecase.dart'
     as _i955;
+import '../../features/profile/domain/usecases/get_subjects_usecase.dart'
+    as _i270;
+import '../../features/profile/domain/usecases/get_user_interests_usecase.dart'
+    as _i623;
 import '../../features/profile/domain/usecases/get_user_me_usecase.dart'
     as _i1003;
 import '../../features/profile/domain/usecases/update_user_me_usecase.dart'
@@ -149,16 +165,30 @@ _i174.GetIt $initGetIt(
       () => _i461.GetLawsUseCase(gh<_i114.LawsRepository>()));
   gh.lazySingleton<_i1051.GetLawByIdentityUseCase>(
       () => _i1051.GetLawByIdentityUseCase(gh<_i114.LawsRepository>()));
+  gh.lazySingleton<_i70.DownloadBillTextUseCase>(
+      () => _i70.DownloadBillTextUseCase(gh<_i468.BillsRepository>()));
+  gh.lazySingleton<_i863.GetBillAmendmentsUseCase>(
+      () => _i863.GetBillAmendmentsUseCase(gh<_i468.BillsRepository>()));
+  gh.lazySingleton<_i374.GetBillCrsReportsUseCase>(
+      () => _i374.GetBillCrsReportsUseCase(gh<_i468.BillsRepository>()));
+  gh.lazySingleton<_i240.GetBillSponsorsUseCase>(
+      () => _i240.GetBillSponsorsUseCase(gh<_i468.BillsRepository>()));
+  gh.lazySingleton<_i512.GetBillTextUseCase>(
+      () => _i512.GetBillTextUseCase(gh<_i468.BillsRepository>()));
   gh.lazySingleton<_i535.GetBillUseCase>(
       () => _i535.GetBillUseCase(gh<_i468.BillsRepository>()));
   gh.lazySingleton<_i264.GetBillsUseCase>(
       () => _i264.GetBillsUseCase(gh<_i468.BillsRepository>()));
   gh.lazySingleton<_i955.DeleteUserMeUseCase>(
       () => _i955.DeleteUserMeUseCase(gh<_i146.UserRepository>()));
+  gh.lazySingleton<_i623.GetUserInterestsUseCase>(
+      () => _i623.GetUserInterestsUseCase(gh<_i146.UserRepository>()));
   gh.lazySingleton<_i1003.GetUserMeUseCase>(
       () => _i1003.GetUserMeUseCase(gh<_i146.UserRepository>()));
   gh.lazySingleton<_i220.UpdateUserMeUseCase>(
       () => _i220.UpdateUserMeUseCase(gh<_i146.UserRepository>()));
+  gh.lazySingleton<_i270.GetSubjectsUseCase>(
+      () => _i270.GetSubjectsUseCase(gh<_i146.UserRepository>()));
   gh.lazySingleton<_i157.RefreshTokenUseCase>(
       () => _i157.RefreshTokenUseCase(gh<_i787.AuthRepository>()));
   gh.lazySingleton<_i29.RequestOtpUseCase>(
@@ -181,6 +211,10 @@ _i174.GetIt $initGetIt(
         requestOtpUseCase: gh<_i29.RequestOtpUseCase>(),
         verifyOtpUseCase: gh<_i503.VerifyOtpUseCase>(),
         tokenStorage: gh<_i356.TokenStorage>(),
+      ));
+  gh.factory<_i143.PoliticiansBloc>(() => _i143.PoliticiansBloc(
+        gh<_i953.GetPoliticiansUseCase>(),
+        gh<_i258.CreateVoteUseCase>(),
       ));
   return getIt;
 }

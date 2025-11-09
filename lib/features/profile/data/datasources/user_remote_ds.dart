@@ -1,6 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 
+import '../models/subject_model.dart';
+import '../models/user_interest_model.dart';
 import '../models/user_model.dart';
 
 @lazySingleton
@@ -21,5 +23,27 @@ class UserRemoteDataSource {
 
   Future<void> deleteUserMe() async {
     await _dio.delete('/users/me');
+  }
+
+  Future<List<UserInterestModel>> getUserInterests() async {
+    final resp = await _dio.get('/subjects/user-interests/me');
+    final data = resp.data as List<dynamic>;
+    return data
+        .map((e) => UserInterestModel.fromJson(e as Map<String, dynamic>))
+        .toList();
+  }
+
+  Future<List<SubjectModel>> getSubjects({
+    int skip = 0,
+    int limit = 100,
+  }) async {
+    final resp = await _dio.get(
+      '/subjects/',
+      queryParameters: {'skip': skip, 'limit': limit},
+    );
+    final data = resp.data as List<dynamic>;
+    return data
+        .map((e) => SubjectModel.fromJson(e as Map<String, dynamic>))
+        .toList();
   }
 }

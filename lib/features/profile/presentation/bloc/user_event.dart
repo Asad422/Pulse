@@ -18,3 +18,7 @@ class UserUpdated extends UserEvent {
 
 class UserDeleted extends UserEvent {}
 
+class UserInterestsRequested extends UserEvent {}
+
+class UserSubjectsRequested extends UserEvent {}
+

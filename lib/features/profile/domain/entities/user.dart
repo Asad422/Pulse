@@ -37,3 +37,4 @@ class Profile {
     this.userId,
   });
 }
+
