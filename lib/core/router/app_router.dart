@@ -1,10 +1,13 @@
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pulse/features/laws/presentation/screens/laws_screen.dart';
 import 'package:pulse/features/politicans/presentation/screens/politicans_screen.dart';
 import 'package:pulse/features/splash_screen/presenatation/splash_screen.dart';
+import '../../app/di/di.dart';
 import '../../app/ui/shell/app_shell.dart';
 import '../../features/bills/presentation/screens/bill_detail_screen.dart';
 import '../../features/laws/presentation/screens/law_detail_screen.dart';
+import '../../features/profile/presentation/bloc/user_bloc.dart';
 import '../../features/profile/presentation/screens/location_select_screen.dart';
 import '../../features/auth/presentation/screens/login_screen.dart';
 import '../../features/auth/presentation/screens/register_screen.dart';
@@ -52,7 +55,13 @@ class AppRouter {
           name: AppRoutes.profileSetup,
           builder: (context, state) {
             final login = state.extra as String? ?? '';
-            return ProfileSetupScreen(login: login);
+
+            // 👇 создаём BlocProvider прямо в роуте
+            return BlocProvider(
+              create: (_) => UserBloc(sl(), sl(), sl(), sl(), sl())
+                ..add(UserInterestsRequested()), // 👈 сразу подгружаем интересы
+              child: ProfileSetupScreen(login: login),
+            );
           },
         ),
         GoRoute(

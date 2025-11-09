@@ -1,4 +1,6 @@
+import '../entities/subject.dart';
 import '../entities/user.dart';
+import '../entities/user_interest.dart';
 
 abstract class UserRepository {
   Future<User> getUserMe();
@@ -7,4 +9,7 @@ abstract class UserRepository {
     required Profile profile,
   });
   Future<void> deleteUserMe();
+  Future<List<UserInterest>> getUserInterests();
+  Future<List<Subject>> getSubjects();
+
 }

@@ -17,8 +17,8 @@ class PoliticianDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) =>
-      PoliticianDetailBloc(sl())..add(PoliticianDetailRequested(bioguideId)),
+      create: (_) => PoliticianDetailBloc(sl())
+        ..add(PoliticianDetailRequested(bioguideId)),
       child: Scaffold(
         backgroundColor: AppColors.background,
         appBar: AppBar(
@@ -48,10 +48,12 @@ class PoliticianDetailScreen extends StatelessWidget {
               return const Center(child: Text('No data'));
             }
 
+            // ✅ вычисляем рейтинг на основе голосов
             final poll = p.polls.isNotEmpty ? p.polls.first : null;
-            final rating = poll != null && poll.totalVotes > 0
-                ? (poll.votesFor / poll.totalVotes * 100)
-                : 72.0;
+            final totalVotes = poll?.totalVotes ?? 0;
+            final votesFor = poll?.votesFor ?? 0;
+            final rating =
+            totalVotes > 0 ? (votesFor / totalVotes * 100).roundToDouble() : 0.0;
 
             return SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
@@ -66,7 +68,7 @@ class PoliticianDetailScreen extends StatelessWidget {
                       children: [
                         ImageWithProgressBarWidget(
                           imageUrl: p.photoUrl ?? '',
-                          rating: rating,
+                          rating: rating, // ✅ отображаем реальный рейтинг
                         ),
                         const SizedBox(height: 16),
                         Text(
@@ -110,6 +112,8 @@ class PoliticianDetailScreen extends StatelessWidget {
                       _info('Cosponsored Bills',
                           p.cosponsoredBillCount.toString()),
                       _info('Official Website', p.officialWebsiteUrl ?? '-'),
+                      _info('Rating',
+                          '${rating.toStringAsFixed(0)}% support'), // ✅ добавим рейтинг
                     ],
                   ),
 
@@ -173,18 +177,20 @@ class PoliticianDetailScreen extends StatelessWidget {
                       children: [
                         _info('Leadership', p.attrs!.leadership ?? '-'),
                         _info(
-                            'Committees',
-                            p.attrs!.committees.isNotEmpty
-                                ? p.attrs!.committees
-                                .map((e) => e.name)
-                                .join(', ')
-                                : '-'),
+                          'Committees',
+                          p.attrs!.committees.isNotEmpty
+                              ? p.attrs!.committees
+                              .map((e) => e.name)
+                              .join(', ')
+                              : '-',
+                        ),
                         _info(
-                            'Party History',
-                            p.attrs!.partyHistory
-                                .map((e) =>
-                            '${e.partyName} (${e.startYear}, ${e.partyAbbreviation})')
-                                .join(', ')),
+                          'Party History',
+                          p.attrs!.partyHistory
+                              .map((e) =>
+                          '${e.partyName} (${e.startYear}, ${e.partyAbbreviation})')
+                              .join(', '),
+                        ),
                         _info('Sponsored Count',
                             p.attrs!.sponsoredCount.toString()),
                         _info('Cosponsored Count',
@@ -231,10 +237,13 @@ class PoliticianDetailScreen extends StatelessWidget {
                     title: 'Extra Info',
                     children: [
                       _info('Leadership', p.leadership ?? '-'),
-                      _info('Depiction Attribution', p.depictionAttribution ?? '-'),
+                      _info('Depiction Attribution',
+                          p.depictionAttribution ?? '-'),
                       _info('Depiction', p.depiction ?? '-'),
-                      _info('Sponsored Count', p.sponsoredCount?.toString() ?? '-'),
-                      _info('Cosponsored Count', p.cosponsoredCount?.toString() ?? '-'),
+                      _info('Sponsored Count',
+                          p.sponsoredCount?.toString() ?? '-'),
+                      _info('Cosponsored Count',
+                          p.cosponsoredCount?.toString() ?? '-'),
                       _info('State Name', p.stateName ?? '-'),
                     ],
                   ),
@@ -249,7 +258,6 @@ class PoliticianDetailScreen extends StatelessWidget {
     );
   }
 
-  /// Вспомогательный виджет для строки информации
   static Widget _info(String label, String value) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 6),
@@ -257,18 +265,23 @@ class PoliticianDetailScreen extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Expanded(
-              flex: 3,
-              child: Text('$label:',
-                  style: AppTextStyles.labelL3
-                      .copyWith(color: AppColors.onSurfaceVariant))),
-          Expanded(flex: 5, child: Text(value, style: AppTextStyles.paragraphP2High)),
+            flex: 3,
+            child: Text(
+              '$label:',
+              style: AppTextStyles.labelL3
+                  .copyWith(color: AppColors.onSurfaceVariant),
+            ),
+          ),
+          Expanded(
+            flex: 5,
+            child: Text(value, style: AppTextStyles.paragraphP2High),
+          ),
         ],
       ),
     );
   }
 }
 
-/// Карточка-раздел
 class _Section extends StatelessWidget {
   final String title;
   final List<Widget> children;
@@ -287,9 +300,10 @@ class _Section extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title,
-              style:
-              AppTextStyles.titleT3.copyWith(color: AppColors.onSurface)),
+          Text(
+            title,
+            style: AppTextStyles.titleT3.copyWith(color: AppColors.onSurface),
+          ),
           const SizedBox(height: 10),
           ...children,
         ],

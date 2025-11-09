@@ -181,6 +181,10 @@ class _PoliticansScreenState extends State<PoliticansScreen> {
                         }
 
                         final p = state.items[i];
+                        final poll = (p.polls?.isNotEmpty ?? false) ? p.polls!.first : null;
+                        final totalVotes = poll?.totalVotes ?? 0;
+                        final votesFor = poll?.votesFor ?? 0;
+                        final rating = totalVotes > 0 ? (votesFor / totalVotes * 100).round() : 0;
                         final fullName = p.directOrderName?.isNotEmpty == true
                             ? p.directOrderName!
                             : '${p.firstName} ${p.lastName}';
@@ -207,7 +211,7 @@ class _PoliticansScreenState extends State<PoliticansScreen> {
                               country: p.level == 'federal'
                                   ? 'USA'
                                   : (p.level ?? ''),
-                              rating: 100,
+                              rating: rating.toDouble(),
                               imageUrl: photo,
                               inOfficeSinceText: position.isNotEmpty
                                   ? position
