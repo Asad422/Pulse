@@ -17,6 +17,14 @@
 
 ---
 
+## Screenshots
+
+| Politicians | Bills | Laws | Profile |
+|-------------|-------|------|---------|
+| ![Politicians](assets/screenshots/politicians.png) | ![Bills](assets/screenshots/bills.png) | ![Laws](assets/screenshots/laws.png) | ![Profile](assets/screenshots/profile.png) |
+
+---
+
 ## Tech Stack
 
 | Category | Stack |
@@ -24,8 +32,8 @@
 | **UI** | Flutter, Material Design |
 | **Navigation** | Go Router |
 | **State** | BLoC, Hydrated Bloc |
-| **DI** | GetIt, Injectable |
-| **Network** | Dio, Retrofit |
+| **DI** | GetIt |
+| **Network** | Dio |
 | **Security** | Flutter Secure Storage |
 | **Config** | flutter_dotenv (.env) |
 
@@ -109,4 +117,4 @@ Uses `flutter_intl` (intl_utils). Strings are in `lib/core/localization/l10n/`.
 
 ## License
 
-Private / None
+Private
