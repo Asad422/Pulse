@@ -4,12 +4,14 @@ import '../../theme/text_styles.dart';
 import '../../resources/app_icons.dart';
 
 /// Универсальный фильтр-панель с уровнями (All / Federal / State / Local)
-/// и поиском — можно использовать на любом экране.
+/// или chamber (Representative / Senator) и поиском — можно использовать на любом экране.
 class FiltersBar extends StatefulWidget {
   const FiltersBar({
     super.key,
     this.selectedLevel,
     this.onLevelChanged,
+    this.selectedChamber,
+    this.onChamberChanged,
     this.onSearchChanged,
     this.onClearSearch,
     this.showBookmark = false,
@@ -17,6 +19,8 @@ class FiltersBar extends StatefulWidget {
 
   final String? selectedLevel; // 'federal', 'state', 'local', null для All
   final ValueChanged<String?>? onLevelChanged;
+  final String? selectedChamber; // 'house', 'senate', null для All
+  final ValueChanged<String?>? onChamberChanged;
   final ValueChanged<String>? onSearchChanged;
   final VoidCallback? onClearSearch;
   final bool showBookmark;
@@ -35,6 +39,12 @@ class _FiltersBarState extends State<FiltersBar> {
     {'label': 'Local', 'value': 'local'},
   ];
 
+  final _chambers = const [
+    {'label': 'All', 'value': null},
+    {'label': 'Representative', 'value': 'house'},
+    {'label': 'Senator', 'value': 'senate'},
+  ];
+
   @override
   void dispose() {
     _searchCtrl.dispose();
@@ -47,63 +57,97 @@ class _FiltersBarState extends State<FiltersBar> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // ===== Filter chips =====
-        SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          child: Row(
-            children: [
-              ..._levels.map((lvl) {
-                final label = lvl['label'] as String;
-                final value = lvl['value'] as String?;
-                final isSelected = widget.selectedLevel == value ||
-                    (widget.selectedLevel == null && value == null);
+        if (widget.onLevelChanged != null || widget.onChamberChanged != null)
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Row(
+              children: [
+                // Level filters (All / Federal / State / Local)
+                if (widget.onLevelChanged != null)
+                  ..._levels.map((lvl) {
+                    final label = lvl['label'] as String;
+                    final value = lvl['value'] as String?;
+                    final isSelected = widget.selectedLevel == value ||
+                        (widget.selectedLevel == null && value == null);
 
-                return Padding(
-                  padding: const EdgeInsets.only(right: 8),
-                  child: ChoiceChip(
-                    showCheckmark: false,
-                    label: Text(label),
-                    selected: isSelected,
-                    onSelected: (_) => widget.onLevelChanged?.call(value),
-                    selectedColor: AppColors.primary,
-                    backgroundColor: AppColors.surfaceContainerLow,
-                    labelStyle: AppTextStyles.paragraphP2.copyWith(
-                      color: isSelected ? Colors.white : AppColors.textPrimary,
-                      fontWeight:
-                      isSelected ? FontWeight.w600 : FontWeight.normal,
-                    ),
-                    shape: const StadiumBorder(),
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 14, vertical: 8),
-                  ),
-                );
-              }),
+                    return Padding(
+                      padding: const EdgeInsets.only(right: 8),
+                      child: ChoiceChip(
+                        showCheckmark: false,
+                        label: Text(label),
+                        selected: isSelected,
+                        onSelected: (_) => widget.onLevelChanged?.call(value),
+                        selectedColor: AppColors.primary,
+                        backgroundColor: AppColors.surfaceContainerLow,
+                        labelStyle: AppTextStyles.paragraphP2.copyWith(
+                          color: isSelected ? Colors.white : AppColors.textPrimary,
+                          fontWeight:
+                          isSelected ? FontWeight.w600 : FontWeight.normal,
+                        ),
+                        shape: const StadiumBorder(),
+                        side: BorderSide.none,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 14, vertical: 8),
+                      ),
+                    );
+                  }),
 
-              // bookmark icon (опционально)
-              if (widget.showBookmark)
-                Padding(
-                  padding: const EdgeInsets.only(right: 8),
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(999),
-                    onTap: () {},
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 8),
-                      decoration: BoxDecoration(
-                        color: AppColors.surfaceContainerLow,
-                        borderRadius: BorderRadius.circular(999),
+                // Chamber filters (All / Representative / Senator)
+                if (widget.onChamberChanged != null)
+                  ..._chambers.map((chamber) {
+                    final label = chamber['label'] as String;
+                    final value = chamber['value'] as String?;
+                    final isSelected = widget.selectedChamber == value ||
+                        (widget.selectedChamber == null && value == null);
+
+                    return Padding(
+                      padding: const EdgeInsets.only(right: 8),
+                      child: ChoiceChip(
+                        showCheckmark: false,
+                        label: Text(label),
+                        selected: isSelected,
+                        onSelected: (_) => widget.onChamberChanged?.call(value),
+                        selectedColor: AppColors.primary,
+                        backgroundColor: AppColors.surfaceContainerLow,
+                        labelStyle: AppTextStyles.paragraphP2.copyWith(
+                          color: isSelected ? Colors.white : AppColors.textPrimary,
+                          fontWeight:
+                          isSelected ? FontWeight.w600 : FontWeight.normal,
+                        ),
+                        shape: const StadiumBorder(),
+                        side: BorderSide.none,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 14, vertical: 8),
                       ),
-                      child: AppIcons.icBookMark.svg(
-                        width: 18,
-                        height: 18,
-                        color: AppColors.textSecondary,
+                    );
+                  }),
+
+                // bookmark icon (опционально)
+                if (widget.showBookmark)
+                  Padding(
+                    padding: const EdgeInsets.only(right: 8),
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(999),
+                      onTap: () {},
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: AppColors.surfaceContainerLow,
+                          borderRadius: BorderRadius.circular(999),
+                        ),
+                        child: AppIcons.icBookMark.svg(
+                          width: 18,
+                          height: 18,
+                          color: AppColors.textSecondary,
+                        ),
                       ),
                     ),
                   ),
-                ),
-            ],
+              ],
+            ),
           ),
-        ),
 
         // ===== Search =====
         Padding(

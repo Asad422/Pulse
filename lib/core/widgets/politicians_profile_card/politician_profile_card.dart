@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:pulse/core/resources/app_icons.dart';
 import 'package:pulse/core/theme/text_styles.dart';
 import 'package:pulse/core/widgets/app_button_widget.dart';
-import 'package:pulse/core/widgets/politicians_profile_card/politician_dto.dart';
+import 'package:pulse/core/widgets/network_avatar.dart';
+import 'package:pulse/core/widgets/politicians_profile_card/politician.dart';
 import 'package:pulse/core/widgets/trending_politicians_carousel/image_with_progress_bar_widget.dart';
 
 /// Карточка профиля политика
@@ -12,10 +12,22 @@ class PoliticianProfileCard extends StatelessWidget {
     required this.politician,
     this.onApprove,
     this.onDisapprove,
+    this.isSupportActive = false,
+    this.isOpposeActive = false,
+    this.isSupportLoading = false,
+    this.isOpposeLoading = false,
+    this.showRating = true,
+    this.isVotingDisabled = false,
   });
   final Politician politician;
   final VoidCallback? onApprove;
   final VoidCallback? onDisapprove;
+  final bool isSupportActive;
+  final bool isOpposeActive;
+  final bool isSupportLoading;
+  final bool isOpposeLoading;
+  final bool showRating;
+  final bool isVotingDisabled;
 
   @override
   Widget build(BuildContext context) {
@@ -29,8 +41,14 @@ class PoliticianProfileCard extends StatelessWidget {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                ImageWithProgressBarWidget(
-                    imageUrl: politician.imageUrl, rating: politician.rating),
+                showRating
+                    ? ImageWithProgressBarWidget(
+                        imageUrl: politician.imageUrl,
+                        rating: politician.rating)
+                    : NetworkAvatar(
+                        url: politician.imageUrl,
+                        size: 88,
+                      ),
                 const SizedBox(width: 10),
                 Expanded(
                   child: Column(
@@ -79,8 +97,6 @@ class PoliticianProfileCard extends StatelessWidget {
               ],
             ),
 
-            const SizedBox(height: 12),
-
             // ======= Список инициатив =======
             Column(
               children: [
@@ -117,29 +133,103 @@ class PoliticianProfileCard extends StatelessWidget {
               ],
             ),
 
-            const SizedBox(height: 14),
+            SizedBox(height: 10),
 
-            // ======= Кнопки Approve / Disapprove =======
+            // ======= Статистика голосов =======
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              decoration: BoxDecoration(
+                color: Colors.grey.shade100,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Column(
+                    children: [
+                      Text(
+                        'Total Participants',
+                        style: AppTextStyles.get("Body/p3")?.copyWith(color: Colors.grey.shade600) ?? 
+                               AppTextStyles.paragraphP3.copyWith(color: Colors.grey.shade600),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        '${politician.totalVotes}',
+                        style: AppTextStyles.get("Body/p3-bold") ?? AppTextStyles.paragraphP3Bold,
+                      ),
+                    ],
+                  ),
+                  Container(
+                    width: 1,
+                    height: 40,
+                    color: Colors.grey.shade300,
+                  ),
+                  Column(
+                    children: [
+                      Text(
+                        'For',
+                        style: AppTextStyles.get("Body/p3")?.copyWith(color: Colors.grey.shade600) ?? 
+                               AppTextStyles.paragraphP3.copyWith(color: Colors.grey.shade600),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        '${politician.votesFor}',
+                        style: AppTextStyles.get("Body/p3-bold")?.copyWith(color: Colors.green) ?? 
+                               AppTextStyles.paragraphP3Bold.copyWith(color: Colors.green),
+                      ),
+                    ],
+                  ),
+                  Container(
+                    width: 1,
+                    height: 40,
+                    color: Colors.grey.shade300,
+                  ),
+                  Column(
+                    children: [
+                      Text(
+                        'Against',
+                        style: AppTextStyles.get("Body/p3")?.copyWith(color: Colors.grey.shade600) ?? 
+                               AppTextStyles.paragraphP3.copyWith(color: Colors.grey.shade600),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        '${politician.votesAgainst}',
+                        style: AppTextStyles.get("Body/p3-bold")?.copyWith(color: Colors.red) ?? 
+                               AppTextStyles.paragraphP3Bold.copyWith(color: Colors.red),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 10),
             Row(
               children: [
                 Expanded(
                   child: AppButtonWidget.leftIcon(
-                    label: 'Approve',
+                    label: isSupportActive ? 'Approved' : 'Approve',
                     onPressed: onApprove ?? () {},
+                    isLoading: isSupportLoading,
+                    enabled: !isVotingDisabled,
                     intent: AppButtonWidgetIntent.success,
-                    tone: AppButtonWidgetTone.subtle,
+                    tone: isSupportActive
+                        ? AppButtonWidgetTone.solid
+                        : AppButtonWidgetTone.subtle,
                     size: AppButtonWidgetSize.medium,
-                    // Класс кнопки принимает IconData, поэтому используем Material-иконки
                     leftIcon: Icons.thumb_up_alt_rounded,
                   ),
                 ),
                 const SizedBox(width: 10),
                 Expanded(
                   child: AppButtonWidget.leftIcon(
-                    label: 'Disapprove',
+                    label: isOpposeActive ? 'Disapproved' : 'Disapprove',
                     onPressed: onDisapprove ?? () {},
+                    isLoading: isOpposeLoading,
+                    enabled: !isVotingDisabled,
                     intent: AppButtonWidgetIntent.danger,
-                    tone: AppButtonWidgetTone.subtle,
+                    tone: isOpposeActive
+                        ? AppButtonWidgetTone.solid
+                        : AppButtonWidgetTone.subtle,
                     size: AppButtonWidgetSize.medium,
                     leftIcon: Icons.thumb_down_alt_rounded,
                   ),

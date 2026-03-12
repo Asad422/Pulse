@@ -13,37 +13,23 @@ class BillDetailRequested extends BillDetailEvent {
   @override
   List<Object?> get props => [billId];
 }
-
-/// Загрузка поправок
-class BillAmendmentsRequested extends BillDetailEvent {
-  final int billId;
-  const BillAmendmentsRequested(this.billId);
+/// Обновление данных билла без показа прогресс-индикатора (для обновления после голосования)
+class BillDetailRefreshRequested extends BillDetailEvent {
+  final String billId;
+  const BillDetailRefreshRequested(this.billId);
   @override
   List<Object?> get props => [billId];
 }
 
-/// Загрузка спонсоров
-class BillSponsorsRequested extends BillDetailEvent {
+/// Загрузка поправок к законопроекту
+class BillDetailAmendmentsRequested extends BillDetailEvent {
   final int billId;
-  const BillSponsorsRequested(this.billId);
+  const BillDetailAmendmentsRequested(this.billId);
   @override
   List<Object?> get props => [billId];
 }
 
-/// Загрузка текста законопроекта
-class BillTextRequested extends BillDetailEvent {
-  final int textId;
-  const BillTextRequested(this.textId);
-  @override
-  List<Object?> get props => [textId];
-}
-
-/// Загрузка CRS-отчётов
-class BillCrsReportsRequested extends BillDetailEvent {
-  final int billId;
-
-  const BillCrsReportsRequested(this.billId);
-
-  @override
-  List<Object?> get props => [billId];
+class PollBreakDownRequested extends BillDetailEvent {
+  final int pollId;
+  const PollBreakDownRequested(this.pollId);
 }

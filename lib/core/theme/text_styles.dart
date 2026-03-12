@@ -39,8 +39,8 @@ class AppTextStyles {
 
   static const TextStyle buttonMedium = TextStyle(
     fontFamily: 'Inter',
-    fontSize: 14,
-    height: 20 / 14,
+    fontSize: 16,
+    height: 20 / 16,
     fontWeight: FontWeight.w600,
     color: Colors.white,
   );
@@ -101,6 +101,13 @@ class AppTextStyles {
     height: 28 / 20,
     fontWeight: FontWeight.w600,
     color: AppColors.textPrimary,
+  );
+  static const TextStyle headlineH4 = TextStyle(
+    fontFamily: 'Inter',
+    fontSize: 22,
+    height: 28 / 22,
+    fontWeight: FontWeight.w600,
+    color: AppColors.onSurface,
   );
 
   // ===== Title =====

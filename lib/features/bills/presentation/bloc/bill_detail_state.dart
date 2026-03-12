@@ -1,56 +1,57 @@
 part of 'bill_detail_bloc.dart';
 
 enum BillDetailStatus { initial, loading, success, failure }
+enum AmendmentsStatus { initial, loading, success, failure }
+enum PollBreakdownStatus { initial, loading, success, failure }
 
-class BillDetailState extends Equatable {
+class BillDetailState extends AppState {
   final BillDetailStatus status;
   final Bill? bill;
+  final AmendmentsStatus amendmentsStatus;
   final List<BillAmendment> amendments;
-  final List<BillSponsor> sponsors;
-  final BillText? billText;
-  final List<BillCrsReport> crsReports;
-  final String? error;
+  final PollBreakdownStatus pollBreakdownStatus;
+  final PollBreakdown? pollBreakdown;
 
   const BillDetailState({
     required this.status,
     this.bill,
+    super.failure,
+    this.amendmentsStatus = AmendmentsStatus.initial,
     this.amendments = const [],
-    this.sponsors = const [],
-    this.billText,
-    this.crsReports = const [],
-    this.error,
+    this.pollBreakdownStatus = PollBreakdownStatus.initial,
+    this.pollBreakdown,
   });
 
   const BillDetailState.initial()
       : status = BillDetailStatus.initial,
         bill = null,
+        amendmentsStatus = AmendmentsStatus.initial,
         amendments = const [],
-        sponsors = const [],
-        billText = null,
-        crsReports = const [],
-        error = null;
+        pollBreakdownStatus = PollBreakdownStatus.initial,
+        pollBreakdown = null,
+        super(failure: null);
 
   BillDetailState copyWith({
     BillDetailStatus? status,
     Bill? bill,
+    Failure? failure,
+    bool clearFailure = false,
+    AmendmentsStatus? amendmentsStatus,
     List<BillAmendment>? amendments,
-    List<BillSponsor>? sponsors,
-    BillText? billText,
-    List<BillCrsReport>? crsReports,
-    String? error,
+    PollBreakdownStatus? pollBreakdownStatus,
+    PollBreakdown? pollBreakdown,
   }) {
     return BillDetailState(
       status: status ?? this.status,
       bill: bill ?? this.bill,
+      failure: clearFailure ? null : (failure ?? this.failure),
+      amendmentsStatus: amendmentsStatus ?? this.amendmentsStatus,
       amendments: amendments ?? this.amendments,
-      sponsors: sponsors ?? this.sponsors,
-      billText: billText ?? this.billText,
-      crsReports: crsReports ?? this.crsReports,
-      error: error,
+      pollBreakdownStatus: pollBreakdownStatus ?? this.pollBreakdownStatus,
+      pollBreakdown: pollBreakdown ?? this.pollBreakdown,
     );
   }
 
   @override
-  List<Object?> get props =>
-      [status, bill, amendments, sponsors, billText, crsReports, error];
+  List<Object?> get props => [...super.props, status, bill, amendmentsStatus, amendments, pollBreakdownStatus, pollBreakdown];
 }

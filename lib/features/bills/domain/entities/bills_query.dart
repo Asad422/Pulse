@@ -4,14 +4,14 @@ class BillsQuery {
   final String? status;
   final String? level;
   final bool? isFeatured;
-  final String? q; // search query
-  final String? introducedFrom; // YYYY-MM-DD
-  final String? introducedTo; // YYYY-MM-DD
+  final String? q;
+  final String? introducedFrom;
+  final String? introducedTo;
   final String? subject;
   final String? committee;
   final String? sponsor;
-  final String? sortBy; // last_updated | introduced_date | title
-  final String? order; // asc | desc
+  final String? sortBy;
+  final String? order;
 
   const BillsQuery({
     this.skip = 0,
@@ -28,4 +28,36 @@ class BillsQuery {
     this.sortBy,
     this.order,
   });
+
+  BillsQuery copyWith({
+    int? skip,
+    int? limit,
+    String? status,
+    String? level,
+    bool? isFeatured,
+    String? q,
+    String? introducedFrom,
+    String? introducedTo,
+    String? subject,
+    String? committee,
+    String? sponsor,
+    String? sortBy,
+    String? order,
+  }) {
+    return BillsQuery(
+      skip: skip ?? this.skip,
+      limit: limit ?? this.limit,
+      status: status ?? this.status,
+      level: level ?? this.level,
+      isFeatured: isFeatured ?? this.isFeatured,
+      q: q ?? this.q,
+      introducedFrom: introducedFrom ?? this.introducedFrom,
+      introducedTo: introducedTo ?? this.introducedTo,
+      subject: subject ?? this.subject,
+      committee: committee ?? this.committee,
+      sponsor: sponsor ?? this.sponsor,
+      sortBy: sortBy ?? this.sortBy,
+      order: order ?? this.order,
+    );
+  }
 }

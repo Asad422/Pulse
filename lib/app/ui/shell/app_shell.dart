@@ -1,10 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../app/di/di.dart';
 import '../../../core/router/routes.dart';
 import '../../../core/resources/app_icons.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/text_styles.dart';
+import '../../../features/bills/domain/usecases/get_bills_usecase.dart';
+import '../../../features/bills/domain/usecases/vote_for_bill_usecase.dart';
+import '../../../features/bills/domain/usecases/cancel_vote_for_bill_usecase.dart';
+import '../../../features/bills/presentation/bloc/bills_bloc.dart';
+import '../../../features/laws/domain/usecases/get_laws_usecase.dart';
+import '../../../features/laws/domain/usecases/vote_for_law_usecase.dart';
+import '../../../features/laws/domain/usecases/cancel_vote_for_law_usecase.dart';
+import '../../../features/laws/presentation/bloc/laws_bloc.dart';
+import '../../../features/politicians/presentation/bloc/politicians_bloc/politicians_bloc.dart';
+import '../../../features/profile/presentation/bloc/user_bloc.dart';
 
 class AppShell extends StatelessWidget {
   const AppShell({super.key, required this.child});
@@ -12,9 +24,9 @@ class AppShell extends StatelessWidget {
   final Widget child;
 
   static final _tabs = [
-    (label: 'Bills', icon: AppIcons.icLegislations, path: AppPaths.bills), // 👈 NEW
+    (label: 'Politicians', icon: AppIcons.icPoliticians, path: AppPaths.politicians),
+    (label: 'Bills', icon: AppIcons.icLegislations, path: AppPaths.bills),
     (label: 'Laws', icon: AppIcons.icLaws, path: AppPaths.home),
-    (label: 'Politicians', icon: AppIcons.icPoliticans, path: AppPaths.politicians),
     (label: 'Profile', icon: AppIcons.icProfile, path: AppPaths.profile),
   ];
 
@@ -25,8 +37,32 @@ class AppShell extends StatelessWidget {
     final loc = GoRouterState.of(context).uri.toString();
     final currentIndex = _indexFromLocation(loc);
 
-    return Scaffold(
-      body: child,
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (_) => UserBloc(sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl())
+            ..add(UserVoteHistoryRequested()),
+        ),
+        BlocProvider(
+          create: (_) => BillsBloc(
+            sl<GetBillsUseCase>(),
+            sl<VoteForBillUseCase>(),
+            sl<CancelVoteForBillUseCase>(),
+          ),
+        ),
+        BlocProvider(
+          create: (_) => LawsBloc(
+            sl<GetLawsUseCase>(),
+            sl<VoteForLawUseCase>(),
+            sl<CancelVoteForLawUseCase>(),
+          ),
+        ),
+        BlocProvider(
+          create: (_) => sl<PoliticiansBloc>(),
+        ),
+      ],
+      child: Scaffold(
+        body: child,
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           color: Colors.white,
@@ -63,6 +99,7 @@ class AppShell extends StatelessWidget {
             ],
           ),
         ),
+      ),
       ),
     );
   }

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:toasty_box/toast_enums.dart';
+import 'package:toasty_box/toasty_box.dart';
 import 'package:pulse/core/theme/app_colors.dart';
 import 'package:pulse/core/theme/text_styles.dart';
-import 'package:pulse/core/widgets/politicians_profile_card/politician_dto.dart';
+import 'package:pulse/core/widgets/politicians_profile_card/politician.dart';
 import 'package:pulse/core/widgets/trending_politicians_carousel/politician_carousel_card_widget.dart';
 
 class TrendingPoliticiansCarousel extends StatelessWidget {
@@ -110,8 +112,10 @@ class TrendingPoliticiansCarousel extends StatelessWidget {
                 imageUrl: p.imageUrl,
                 onRate: () {
                   // TODO: обработчик
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Rated ${p.name}')),
+                  ToastService.showSuccessToast(
+                    context,
+                    message: 'Rated ${p.name}',
+                    length: ToastLength.medium,
                   );
                 },
               );

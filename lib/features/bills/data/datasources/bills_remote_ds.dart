@@ -1,11 +1,13 @@
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
+import 'package:pulse/features/bills/domain/entities/bill_poll_query.dart';
 
 import '../models/bill_model.dart';
 import '../models/bill_amendment_model.dart';
 import '../models/bill_sponsor_model.dart';
 import '../models/bill_text_model.dart';
 import '../models/bill_crs_report_model.dart';
+import '../models/poll_breakdown_model.dart';
 import '../../domain/entities/bills_query.dart';
 
 @lazySingleton
@@ -22,7 +24,6 @@ class BillsRemoteDataSource {
         'skip': q.skip,
         'limit': 100,
         if (q.status != null) 'status': q.status,
-        if (q.level != null) 'level': q.level,
         if (q.isFeatured != null) 'is_featured': q.isFeatured,
         if (q.q != null && q.q!.isNotEmpty) 'q': q.q,
         if (q.introducedFrom != null) 'introduced_from': q.introducedFrom,
@@ -80,5 +81,22 @@ class BillsRemoteDataSource {
     return data
         .map((e) => BillCrsReportModel.fromJson(e as Map<String, dynamic>))
         .toList();
+  }
+
+  /// Голосование за законопроект
+  Future<void> voteForBill(BillPollQuery query) async {
+    await _dio.post('/polls/${query.pollId}/votes', data: {
+      'choice': query.choice,
+    });
+  }
+
+  /// Отмена голосования за законопроект
+  Future<void> cancelVoteForBill(int voteId) async {
+    await _dio.delete('/polls/votes/$voteId');
+  }
+
+  Future<PollBreakdownModel> getPollBreakDown(int pollId) async {
+    final resp = await _dio.get('/polls/$pollId/demographics');
+    return PollBreakdownModel.fromJson(resp.data as Map<String, dynamic>);
   }
 }

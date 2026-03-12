@@ -41,6 +41,7 @@ class ProfileModel extends Profile {
     super.interestLevel,
     super.addressCity,
     super.userId,
+    super.sex,
   });
 
   factory ProfileModel.fromJson(Map<String, dynamic> json) {
@@ -50,6 +51,7 @@ class ProfileModel extends Profile {
       interestLevel: json['interest_level'] as String?,
       addressCity: json['address_city'] as String?,
       userId: json['user_id'] as int?,
+      sex: json['sex'] as String?,
     );
   }
 
@@ -58,5 +60,6 @@ class ProfileModel extends Profile {
     'age_category': ageCategory,
     'interest_level': interestLevel,
     'address_city': addressCity,
+    'sex': sex,
   };
 }

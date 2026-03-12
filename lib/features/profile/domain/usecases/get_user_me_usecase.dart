@@ -1,4 +1,6 @@
+import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
+import 'package:pulse/core/failure/failure.dart';
 import '../entities/user.dart';
 import '../repositories/user_repository.dart';
 
@@ -7,5 +9,5 @@ class GetUserMeUseCase {
   final UserRepository _repo;
   GetUserMeUseCase(this._repo);
 
-  Future<User> call() => _repo.getUserMe();
+  Future<Either<Failure, User>> call() => _repo.getUserMe();
 }

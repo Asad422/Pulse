@@ -1,7 +1,10 @@
+import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
+import 'package:pulse/core/failure/failure.dart';
+import 'package:pulse/core/network/data/mapper.dart';
 import '../../domain/entities/auth_tokens.dart';
 import '../../domain/repositories/auth_repository.dart';
-import '../datasourses/auth_remote_ds.dart';
+import '../datasources/auth_remote_ds.dart';
 
 @LazySingleton(as: AuthRepository)
 class AuthRepositoryImpl implements AuthRepository {
@@ -10,17 +13,20 @@ class AuthRepositoryImpl implements AuthRepository {
   final AuthRemoteDataSource _ds;
 
   @override
-  Future<void> requestOtp({required String email, required String login}) {
-    return _ds.requestOtp(email: email, login: login);
-  }
+  Future<Either<Failure, void>> requestOtp({
+    required String email,
+    required String login,
+  }) =>
+      safeCall(() => _ds.requestOtp(email: email, login: login));
 
   @override
-  Future<AuthTokens> verifyOtp({required String email, required String code}) {
-    return _ds.verifyOtp(email: email, code: code);
-  }
+  Future<Either<Failure, AuthTokens>> verifyOtp({
+    required String email,
+    required String code,
+  }) =>
+      safeCall(() => _ds.verifyOtp(email: email, code: code));
 
   @override
-  Future<AuthTokens> refresh(String refreshToken) {
-    return _ds.refresh(refreshToken);
-  }
+  Future<Either<Failure, AuthTokens>> refresh(String refreshToken) =>
+      safeCall(() => _ds.refresh(refreshToken));
 }

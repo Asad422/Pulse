@@ -1,3 +1,5 @@
+import '../../../../core/network/domain/entities/poll.dart';
+
 class Law {
   final int id;
   final int congress;
@@ -6,6 +8,11 @@ class Law {
   final String title;
   final String url;
   final DateTime enactedDate;
+  final Poll? pollStats;
+  /// true = user voted "support", false = user voted "oppose", null = no vote
+  final bool? userVote;
+  /// IDs связанных bills
+  final List<int> billIds;
 
   const Law({
     required this.id,
@@ -15,5 +22,8 @@ class Law {
     required this.title,
     required this.url,
     required this.enactedDate,
+    this.pollStats,
+    this.userVote,
+    this.billIds = const [],
   });
 }

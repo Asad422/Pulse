@@ -1,14 +1,15 @@
+import 'package:dartz/dartz.dart';
+import 'package:injectable/injectable.dart';
+import 'package:pulse/core/failure/failure.dart';
 import '../entities/poll.dart';
 import '../repositories/polls_repository.dart';
-import 'package:injectable/injectable.dart';
 
 @lazySingleton
 class GetPollsUseCase {
   final PollsRepository repository;
-
   const GetPollsUseCase(this.repository);
 
-  Future<List<Poll>> call({
+  Future<Either<Failure, List<Poll>>> call({
     int skip = 0,
     int limit = 100,
     String? politicianId,

@@ -7,6 +7,7 @@ class AuthTokensModel extends AuthTokens {
     required super.tokenType,
     required super.expiresIn,
     super.userId,
+    required super.isExistingUser,
   });
 
   factory AuthTokensModel.fromJson(Map<String, dynamic> json) {
@@ -15,7 +16,8 @@ class AuthTokensModel extends AuthTokens {
       refreshToken: json['refresh_token'] as String,
       tokenType: json['token_type'] as String,
       expiresIn: json['expires_in'] as int,
-      userId: json['user_id']?.toString(), // <-- привели к строке
+      userId: json['user_id']?.toString(),
+      isExistingUser: json['is_existing_user'] as bool? ?? true,
     );
   }
 
@@ -26,5 +28,6 @@ class AuthTokensModel extends AuthTokens {
     'token_type': tokenType,
     'expires_in': expiresIn,
     'user_id': userId,
+    'is_existing_user': isExistingUser,
   };
 }

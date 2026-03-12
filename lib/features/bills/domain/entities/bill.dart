@@ -1,3 +1,9 @@
+import 'package:pulse/features/bills/domain/entities/related_bill.dart';
+
+import '../../../../core/network/domain/entities/poll.dart';
+import 'action.dart';
+import 'cosponsor.dart';
+
 class Bill {
   final String congressBillId;
   final int congress;
@@ -18,14 +24,19 @@ class Bill {
   final String externalUrl;
   final int id;
   final DateTime lastUpdated;
+  final List<RelatedBill> relatedBills;
 
   /// 🔹 Новые поля:
   final List<Map<String, dynamic>> amendments;
   final List<Map<String, dynamic>> summaries;
-  final List<Map<String, dynamic>> actions;
+  final List<Action> actions;
   final List<Map<String, dynamic>> texts;
   final List<Map<String, dynamic>> crsReports;
   final List<Map<String, dynamic>> laws;
+  final Set<Cosponsor> cosponsors;
+  final Poll? pollStats;
+  /// true = user voted \"support\", false = user voted \"oppose\", null = no vote
+  final bool? userVote;
 
   const Bill({
     required this.congressBillId,
@@ -53,5 +64,9 @@ class Bill {
     this.texts = const [],
     this.crsReports = const [],
     this.laws = const [],
+    this.relatedBills = const [],
+    this.cosponsors = const {},
+    this.pollStats,
+    this.userVote,
   });
 }

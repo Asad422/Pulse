@@ -2,20 +2,21 @@ import 'dart:async';
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 
+import '../auth/auth_notifier.dart';
 import 'token_storage.dart';
 import '../../features/auth/data/models/auth_tokens_model.dart';
-
-typedef LogoutCallback = Future<void> Function();
 
 @lazySingleton
 class AuthInterceptor extends Interceptor {
   AuthInterceptor(
-      @Named('plainMainDio') this._plainDio,
-      this._tokenStorage,
-      );
+    @Named('plainMainDio') this._plainDio,
+    this._tokenStorage,
+    this._authNotifier,
+  );
 
   final Dio _plainDio;
   final TokenStorage _tokenStorage;
+  final AuthNotifier _authNotifier;
 
   Completer<void>? _refreshCompleter;
 
@@ -64,6 +65,7 @@ class AuthInterceptor extends Interceptor {
       return handler.resolve(response);
     } catch (_) {
       await _tokenStorage.clear();
+      _authNotifier.setLoggedOut();
       return handler.reject(err);
     }
   }

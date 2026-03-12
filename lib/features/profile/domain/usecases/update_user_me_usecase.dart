@@ -1,4 +1,6 @@
+import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
+import 'package:pulse/core/failure/failure.dart';
 import '../entities/user.dart';
 import '../repositories/user_repository.dart';
 
@@ -7,7 +9,7 @@ class UpdateUserMeUseCase {
   final UserRepository _repo;
   UpdateUserMeUseCase(this._repo);
 
-  Future<User> call({
+  Future<Either<Failure, User>> call({
     required String login,
     required Profile profile,
   }) =>

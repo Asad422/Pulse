@@ -71,7 +71,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   void _submit() {
     setState(_recomputeErrors);
     if (!_isFormValid) return;
-    context.go(AppPaths.home);
+    context.go(AppPaths.bills);
   }
 
   void _openLocationPicker() async {
@@ -313,7 +313,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
               Center(
                 child: TextButton(
-                  onPressed: () => context.go(AppPaths.home),
+                  onPressed: () => context.go(AppPaths.bills),
                   child: Text(
                     'Continue as guest',
                     style: AppTextStyles

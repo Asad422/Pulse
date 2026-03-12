@@ -17,12 +17,12 @@ class BillAmendmentModel {
 
   factory BillAmendmentModel.fromJson(Map<String, dynamic> json) {
     return BillAmendmentModel(
-      id: json['id'] as int,
-      billId: json['bill_id'] as int,
-      congressAmendmentId: json['congress_amendment_id'] ?? '',
-      title: json['title'] ?? '',
-      description: json['description'] ?? '',
-      introducedDate: DateTime.parse(json['introduced_date']),
+      id: json['id'] as int? ?? 0,
+      billId: json['bill_id'] as int? ?? 0,
+      congressAmendmentId: json['congress_amendment_id'] as String? ?? '',
+      title: json['title'] as String? ?? '',
+      description: json['description'] as String? ?? '',
+      introducedDate: DateTime.tryParse(json['introduced_date'] ?? '') ?? DateTime(1970),
     );
   }
 }

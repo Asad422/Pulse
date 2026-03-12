@@ -2,6 +2,8 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:toasty_box/toast_enums.dart';
+import 'package:toasty_box/toasty_box.dart';
 
 import '../../../../core/resources/app_icons.dart';
 import '../../../../core/router/routes.dart';
@@ -72,11 +74,13 @@ class _LoginScreenState extends State<LoginScreen> {
               context.go(AppPaths.verifyCode, extra: {'email': _emailCtrl.text.trim()});
 
             } else if (state is LoginFailure) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(state.message)),
+              ToastService.showErrorToast(
+                context,
+                message: state.message,
+                length: ToastLength.medium,
               );
             } else if (state is LoginSuccess) {
-              context.push(AppPaths.home);
+              context.push(AppPaths.bills);
             }
           },
           builder: (context, state) {
@@ -129,6 +133,9 @@ class _LoginScreenState extends State<LoginScreen> {
                         width: 24,
                         height: 24,
                         child: Checkbox(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(4),
+                          ),
                           value: _agree,
                           onChanged: (v) => setState(() => _agree = v ?? false),
                         ),

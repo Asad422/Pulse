@@ -1,4 +1,8 @@
 import '../../domain/entities/bill.dart';
+import '../../../../core/network/data/models/poll_model.dart';
+import 'action_model.dart';
+import 'cosponsor_model.dart';
+import 'related_bill_model.dart';
 
 class BillModel extends Bill {
   const BillModel({
@@ -27,6 +31,10 @@ class BillModel extends Bill {
     super.texts = const [],
     super.crsReports = const [],
     super.laws = const [],
+    super.relatedBills = const [],
+    super.cosponsors = const {},
+    super.pollStats,
+    super.userVote,
   });
 
   factory BillModel.fromJson(Map<String, dynamic> json) {
@@ -60,10 +68,25 @@ class BillModel extends Bill {
       lastUpdated: DateTime.tryParse(json['last_updated'] ?? '') ?? DateTime(1970),
       amendments: _toList(json['amendments']),
       summaries: _toList(json['summaries']),
-      actions: _toList(json['actions']),
+      actions: (json['actions'] as List<dynamic>?)
+              ?.map((e) => ActionModel.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          const [],
       texts: _toList(json['texts']),
       crsReports: _toList(json['crs_reports']),
       laws: _toList(json['laws']),
+      relatedBills: (json['related_bills'] as List<dynamic>?)
+              ?.map((e) => RelatedBillModel.fromJson(e as Map<String, dynamic>).toEntity())
+              .toList() ??
+          const [],
+      cosponsors: (json['cosponsors'] as List<dynamic>?)
+              ?.map((e) => CosponsorModel.fromJson(e as Map<String, dynamic>).toEntity())
+              .toSet() ??
+          const {},
+      pollStats: json['poll_stats'] != null
+          ? PollModel.fromJson(json['poll_stats'] as Map<String, dynamic>)
+          : null,
+      userVote: json['user_vote'] as bool?,
     );
   }
 

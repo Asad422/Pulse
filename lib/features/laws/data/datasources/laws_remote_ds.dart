@@ -1,5 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
+import 'package:pulse/features/bills/data/models/bill_model.dart';
+import 'package:pulse/features/bills/data/models/poll_breakdown_model.dart';
 import '../models/law_model.dart';
 import '../../domain/entities/laws_query.dart';
 
@@ -18,8 +20,7 @@ class LawsRemoteDataSource {
         if (q.lawType != null) 'law_type': q.lawType,
         if (q.lawNumber != null) 'law_number': q.lawNumber,
         if (q.billId != null) 'bill_id': q.billId,
-        if (q.level != null) 'level': q.level,
-        if (q.q != null && q.q!.isNotEmpty) 'q': q.q,
+        if (q.q != null && q.q!.isNotEmpty) 'search': q.q,
         if (q.introducedFrom != null) 'introduced_from': q.introducedFrom,
         if (q.introducedTo != null) 'introduced_to': q.introducedTo,
         if (q.sortBy != null) 'sort_by': q.sortBy,
@@ -49,5 +50,37 @@ class LawsRemoteDataSource {
       },
     );
     return LawModel.fromJson(resp.data as Map<String, dynamic>);
+  }
+
+  Future<void> voteForLaw({
+    required int pollId,
+    required bool choice,
+  }) async {
+    await _dio.post('/polls/$pollId/votes', data: {
+      'choice': choice,
+    });
+  }
+
+  Future<void> cancelVoteForLaw(int voteId) async {
+    await _dio.delete('/polls/votes/$voteId');
+  }
+
+  Future<PollBreakdownModel> getPollBreakDown(int pollId) async {
+    final resp = await _dio.get('/polls/$pollId/demographics');
+    return PollBreakdownModel.fromJson(resp.data as Map<String, dynamic>);
+  }
+
+  Future<List<BillModel>> getBillsByIds(List<int> billIds) async {
+    if (billIds.isEmpty) return [];
+    final results = <BillModel>[];
+    for (final id in billIds) {
+      try {
+        final resp = await _dio.get('/bills/$id/detail');
+        results.add(BillModel.fromJson(resp.data as Map<String, dynamic>));
+      } catch (_) {
+        // Skip if bill not found
+      }
+    }
+    return results;
   }
 }

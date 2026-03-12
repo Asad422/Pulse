@@ -11,6 +11,7 @@ class AppButtonWidget extends StatefulWidget {
     this.tone = AppButtonWidgetTone.solid,
     this.variant = AppButtonWidgetVariant.standard,
     this.enabled = true,
+    this.isLoading = false,
     this.borderRadius,
     this.padding,
     this.iconSize,
@@ -28,6 +29,7 @@ class AppButtonWidget extends StatefulWidget {
     AppButtonWidgetIntent intent = AppButtonWidgetIntent.primary,
     AppButtonWidgetTone tone = AppButtonWidgetTone.solid,
     bool enabled = true,
+    bool isLoading = false,
     IconData? rightIcon,
   }) =>
       AppButtonWidget(
@@ -38,6 +40,7 @@ class AppButtonWidget extends StatefulWidget {
         intent: intent,
         tone: tone,
         enabled: enabled,
+        isLoading: isLoading,
         rightIcon: rightIcon,
         variant: AppButtonWidgetVariant.rightIcon,
       );
@@ -50,6 +53,7 @@ class AppButtonWidget extends StatefulWidget {
     AppButtonWidgetIntent intent = AppButtonWidgetIntent.primary,
     AppButtonWidgetTone tone = AppButtonWidgetTone.solid,
     bool enabled = true,
+    bool isLoading = false,
     IconData? leftIcon,
   }) =>
       AppButtonWidget(
@@ -60,6 +64,7 @@ class AppButtonWidget extends StatefulWidget {
         intent: intent,
         tone: tone,
         enabled: enabled,
+        isLoading: isLoading,
         leftIcon: leftIcon,
         variant: AppButtonWidgetVariant.leftIcon,
       );
@@ -72,6 +77,7 @@ class AppButtonWidget extends StatefulWidget {
     AppButtonWidgetIntent intent = AppButtonWidgetIntent.primary,
     AppButtonWidgetTone tone = AppButtonWidgetTone.solid,
     bool enabled = true,
+    bool isLoading = false,
     IconData? leftIcon,
     IconData? rightIcon,
   }) =>
@@ -83,6 +89,7 @@ class AppButtonWidget extends StatefulWidget {
         intent: intent,
         tone: tone,
         enabled: enabled,
+        isLoading: isLoading,
         leftIcon: leftIcon,
         rightIcon: rightIcon,
         variant: AppButtonWidgetVariant.doubleIcons,
@@ -96,6 +103,7 @@ class AppButtonWidget extends StatefulWidget {
     AppButtonWidgetIntent intent = AppButtonWidgetIntent.primary,
     AppButtonWidgetTone tone = AppButtonWidgetTone.solid,
     bool enabled = true,
+    bool isLoading = false,
     IconData? rightIcon,
   }) =>
       AppButtonWidget(
@@ -106,6 +114,7 @@ class AppButtonWidget extends StatefulWidget {
         intent: intent,
         tone: tone,
         enabled: enabled,
+        isLoading: isLoading,
         rightIcon: rightIcon,
         variant: AppButtonWidgetVariant.trailingSeparated,
       );
@@ -117,6 +126,7 @@ class AppButtonWidget extends StatefulWidget {
     AppButtonWidgetIntent intent = AppButtonWidgetIntent.primary,
     AppButtonWidgetTone tone = AppButtonWidgetTone.solid,
     bool enabled = true,
+    bool isLoading = false,
     IconData icon = Icons.arrow_forward_rounded,
   }) =>
       AppButtonWidget(
@@ -127,6 +137,7 @@ class AppButtonWidget extends StatefulWidget {
         intent: intent,
         tone: tone,
         enabled: enabled,
+        isLoading: isLoading,
         variant: AppButtonWidgetVariant.iconOnly,
         customIcon: icon,
       );
@@ -139,6 +150,7 @@ class AppButtonWidget extends StatefulWidget {
     AppButtonWidgetIntent intent = AppButtonWidgetIntent.primary,
     AppButtonWidgetTone tone = AppButtonWidgetTone.solid,
     bool enabled = true,
+    bool isLoading = false,
     IconData? leftIcon,
     IconData? rightIcon,
   }) =>
@@ -150,6 +162,7 @@ class AppButtonWidget extends StatefulWidget {
         intent: intent,
         tone: tone,
         enabled: enabled,
+        isLoading: isLoading,
         leftIcon: leftIcon,
         rightIcon: rightIcon,
         variant: AppButtonWidgetVariant.doubleIconsSeparated,
@@ -164,6 +177,7 @@ class AppButtonWidget extends StatefulWidget {
   final AppButtonWidgetVariant variant;
 
   final bool enabled;
+  final bool isLoading;
 
   final double? borderRadius;
   final EdgeInsetsGeometry? padding;
@@ -187,11 +201,14 @@ class _AppButtonWidgetState extends State<AppButtonWidget> {
     final _Metrics m = _metricsFor(widget.size);
     final palette = _Palette.of(widget.intent);
 
+    final bool interactive =
+        widget.enabled && widget.onPressed != null && !widget.isLoading;
+
     final style = _ToneStyle.resolve(
       tone: widget.tone,
       palette: palette,
       pressed: _pressed,
-      enabled: widget.enabled && widget.onPressed != null,
+      enabled: widget.enabled,
     );
 
     final double radius = widget.borderRadius ?? 12;
@@ -210,9 +227,36 @@ class _AppButtonWidgetState extends State<AppButtonWidget> {
       height: 1.0,
     );
 
+    // Если идет загрузка — показываем только индикатор по центру,
+    // размеры и фон кнопки остаются как у обычной
+    if (widget.isLoading) {
+      final double radius = widget.borderRadius ?? 12;
+      final EdgeInsetsGeometry contentPadding =
+          widget.padding ?? EdgeInsets.symmetric(horizontal: m.hPadding, vertical: m.vPadding);
+      return _buildBase(
+        m: m,
+        radius: radius,
+        style: style,
+        padding: contentPadding,
+        enabled: false,
+        child: const Center(
+          child: SizedBox(
+            height: 20,
+            width: 20,
+            child: CircularProgressIndicator(strokeWidth: 5)),
+        ),
+      );
+    }
+
     if (widget.variant == AppButtonWidgetVariant.iconOnly) {
       final icon = Icon(widget.customIcon ?? Icons.arrow_forward_rounded, size: iSize, color: style.fg);
-      return _buildBase(m: m, radius: radius, style: style, child: Center(child: icon));
+      return _buildBase(
+        m: m,
+        radius: radius,
+        style: style,
+        enabled: interactive,
+        child: Center(child: icon),
+      );
     }
 
     if (widget.variant == AppButtonWidgetVariant.doubleIconsSeparated) {
@@ -220,6 +264,7 @@ class _AppButtonWidgetState extends State<AppButtonWidget> {
         m: m,
         radius: radius,
         style: style,
+        enabled: interactive,
         padding: contentPadding,
         child: Row(
           mainAxisSize: MainAxisSize.min,
@@ -280,6 +325,7 @@ class _AppButtonWidgetState extends State<AppButtonWidget> {
       m: m,
       radius: radius,
       style: style,
+      enabled: interactive,
       padding: contentPadding,
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -311,10 +357,10 @@ class _AppButtonWidgetState extends State<AppButtonWidget> {
     required _Metrics m,
     required double radius,
     required _ToneStyle style,
+    required bool enabled,
     EdgeInsetsGeometry? padding,
     required Widget child,
   }) {
-    final bool enabled = widget.enabled && widget.onPressed != null;
     return ConstrainedBox(
       constraints: BoxConstraints(minHeight: m.minHeight, minWidth: m.minWidth),
       child: Material(

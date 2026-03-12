@@ -4,6 +4,7 @@ class AuthTokens {
   final String tokenType;
   final int expiresIn;
   final String? userId;
+  final bool isExistingUser;
 
   const AuthTokens({
     required this.accessToken,
@@ -11,5 +12,6 @@ class AuthTokens {
     required this.tokenType,
     required this.expiresIn,
     this.userId,
+    required this.isExistingUser,
   });
 }

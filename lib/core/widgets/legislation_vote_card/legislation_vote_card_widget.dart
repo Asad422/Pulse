@@ -11,48 +11,99 @@ enum LegislationStatus {
   passedSenate
 }
 
+enum LegislationVoteCardType{
+  medium,
+  large
+}
+
 class LegislationVoteCard extends StatefulWidget {
   const LegislationVoteCard({
+
     super.key,
     this.title = 'Clean Energy Act. H.R. 3456',
     this.subtitle,
+    this.description,
     this.status = LegislationStatus.pendingVote,
+    this.showStatus = true,
     this.featured = true,
+    this.type = LegislationVoteCardType.medium,
     this.introducedText = 'Introduced: May 12, 2023',
     this.initialVotes = 0,
+    this.initialSupport = 0,
+    this.initialOppose = 0,
+    this.isSupportLoading = false,
+    this.isOpposeLoading = false,
+    this.isSupportActive = false,
+    this.isOpposeActive = false,
     this.onApprove,
     this.onDisapprove,
-    this.onTap, // ✅ добавили
+    this.onTap,
+    this.showOnlySelectedButton = false,
+    this.isVotingDisabled = false,
   });
 
   final String title;
   final String? subtitle;
+  final String? description;
   final LegislationStatus status;
+  final bool showStatus;
   final bool featured;
   final String introducedText;
   final int initialVotes;
+  final int initialSupport;
+  final int initialOppose;
+  final bool isSupportLoading;
+  final bool isOpposeLoading;
+  final bool isSupportActive;
+  final bool isOpposeActive;
 
   final VoidCallback? onApprove;
   final VoidCallback? onDisapprove;
 
-  /// ✅ Новый колбэк при нажатии на карточку
+  final LegislationVoteCardType type;
+
+  /// Колбэк при нажатии на карточку
   final VoidCallback? onTap;
+  
+  /// Показывать только выбранную кнопку (для истории голосов)
+  final bool showOnlySelectedButton;
+  
+  /// Отключить кнопки голосования (во время пагинации)
+  final bool isVotingDisabled;
 
   @override
   State<LegislationVoteCard> createState() => _LegislationVoteCardState();
 }
 
 class _LegislationVoteCardState extends State<LegislationVoteCard> {
-  int _support = 0;
-  int _oppose = 0;
+  late int _support;
+  late int _oppose;
+
+  @override
+  void initState() {
+    super.initState();
+    _support = widget.initialSupport;
+    _oppose = widget.initialOppose;
+  }
+
+  @override
+  void didUpdateWidget(covariant LegislationVoteCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Если пришли новые данные голосов с сервера — синхронизируем локальное состояние
+    if (oldWidget.initialSupport != widget.initialSupport ||
+        oldWidget.initialOppose != widget.initialOppose) {
+      _support = widget.initialSupport;
+      _oppose = widget.initialOppose;
+    }
+  }
 
   void _handleApprove() {
-    setState(() => _support++);
+    // Локально счетчик не меняем, только дергаем внешний колбэк
     widget.onApprove?.call();
   }
 
   void _handleDisapprove() {
-    setState(() => _oppose++);
+    // Локально счетчик не меняем, только дергаем внешний колбэк
     widget.onDisapprove?.call();
   }
 
@@ -62,7 +113,7 @@ class _LegislationVoteCardState extends State<LegislationVoteCard> {
     return _support / total;
   }
 
-  int get _totalVotes => widget.initialVotes + _support + _oppose;
+  int get _totalVotes => _support + _oppose;
 
   @override
   Widget build(BuildContext context) {
@@ -104,37 +155,54 @@ class _LegislationVoteCardState extends State<LegislationVoteCard> {
               ],
             ),
 
-            if (widget.subtitle != null) ...[
-              const SizedBox(height: 6),
+            if (widget.description != null && widget.description!.isNotEmpty) ...[
+              const SizedBox(height: 8),
               Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  widget.subtitle!,
+                  widget.description!,
                   style: AppTextStyles.get('Body/p2'),
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
             ],
 
+            // if (widget.subtitle != null) ...[
+            //   const SizedBox(height: 6),
+            //   Align(
+            //     alignment: Alignment.centerLeft,
+            //     child: Text(
+            //       widget.subtitle!,
+            //       style: AppTextStyles.get('Body/p2'),
+            //     ),
+            //   ),
+            // ],
+
             const SizedBox(height: 8),
 
             // ===== Статус + дата =====
-            Row(
-              children: [
-                _statusBadge(widget.status),
-                const SizedBox(width: 8),
-                Text(
-                  widget.introducedText,
-                  style: AppTextStyles.get('Label/l2'),
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 16),
+            if (widget.showStatus || widget.introducedText.isNotEmpty) ...[
+              Row(
+                children: [
+                  if (widget.showStatus) ...[
+                    _statusBadge(widget.status),
+                    const SizedBox(width: 8),
+                  ],
+                  if (widget.introducedText.isNotEmpty)
+                    Text(
+                      widget.introducedText,
+                      style: AppTextStyles.get('Label/l2'),
+                    ),
+                ],
+              ),
+              const SizedBox(height: 16),
+            ],
 
             // ===== Индикатор голосов =====
             DualProgressBar(
               fraction: _supportFraction,
-              height: 8,
+              height: widget.type == LegislationVoteCardType.large ? 12 : 8,
               leftColor: AppColors.green,
               rightColor: AppColors.error,
               background: Colors.transparent,
@@ -182,31 +250,76 @@ class _LegislationVoteCardState extends State<LegislationVoteCard> {
             const SizedBox(height: 24),
 
             // ===== Кнопки =====
-            Row(
-              children: [
-                Expanded(
-                  child: AppButtonWidget.leftIcon(
-                    label: 'Support',
-                    onPressed: widget.onApprove ?? _handleApprove,
-                    intent: AppButtonWidgetIntent.success,
-                    tone: AppButtonWidgetTone.subtle,
-                    size: AppButtonWidgetSize.medium,
-                    leftIcon: Icons.thumb_up_alt_rounded,
+            if (widget.showOnlySelectedButton)
+              // Показываем только выбранную кнопку (для истории голосов)
+              widget.isSupportActive
+                  ? Row(
+                    children: [
+                      Expanded(
+                        child: AppButtonWidget.leftIcon(
+                            label: 'Supported',
+                            onPressed: null, // Неактивная кнопка
+                            isLoading: false,
+                            intent: AppButtonWidgetIntent.success,
+                            tone: AppButtonWidgetTone.subtle,
+                            size: AppButtonWidgetSize.large,
+                            leftIcon: Icons.thumb_up_alt_rounded,
+                          ),
+                      ),
+                    ],
+                  )
+                  : widget.isOpposeActive
+                      ? Row(
+                        children: [
+                          Expanded(
+                            child: AppButtonWidget.leftIcon(
+                                label: 'Opposed',
+                                onPressed: null, // Неактивная кнопка
+                                isLoading: false,
+                                intent: AppButtonWidgetIntent.danger,
+                                tone: AppButtonWidgetTone.subtle,
+                                size: AppButtonWidgetSize.large,
+                                leftIcon: Icons.thumb_down_alt_rounded,
+                              ),
+                          ),
+                        ],
+                      )
+                      : const SizedBox.shrink()
+            else
+              // Показываем обе кнопки (для обычных карточек)
+              Row(
+                children: [
+                  Expanded(
+                    child: AppButtonWidget.leftIcon(
+                      label: widget.isSupportActive ? 'Supported' : 'Support',
+                      onPressed: _handleApprove,
+                      isLoading: widget.isSupportLoading,
+                      enabled: !widget.isVotingDisabled && !widget.isOpposeLoading,
+                      intent: AppButtonWidgetIntent.success,
+                      tone: widget.isSupportActive
+                          ? AppButtonWidgetTone.solid
+                          : AppButtonWidgetTone.subtle,
+                      size: AppButtonWidgetSize.medium,
+                      leftIcon: Icons.thumb_up_alt_rounded,
+                    ),
                   ),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: AppButtonWidget.leftIcon(
-                    label: 'Oppose',
-                    onPressed: widget.onDisapprove ?? _handleDisapprove,
-                    intent: AppButtonWidgetIntent.danger,
-                    tone: AppButtonWidgetTone.subtle,
-                    size: AppButtonWidgetSize.medium,
-                    leftIcon: Icons.thumb_down_alt_rounded,
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: AppButtonWidget.leftIcon(
+                      label: widget.isOpposeActive ? 'Opposed' : 'Oppose',
+                      onPressed: _handleDisapprove,
+                      isLoading: widget.isOpposeLoading,
+                      enabled: !widget.isVotingDisabled && !widget.isSupportLoading,
+                      intent: AppButtonWidgetIntent.danger,
+                      tone: widget.isOpposeActive
+                          ? AppButtonWidgetTone.solid
+                          : AppButtonWidgetTone.subtle,
+                      size: AppButtonWidgetSize.medium,
+                      leftIcon: Icons.thumb_down_alt_rounded,
+                    ),
                   ),
-                ),
-              ],
-            ),
+                ],
+              ),
           ],
         ),
       ),

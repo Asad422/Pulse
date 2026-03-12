@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 import '../../../../app/di/di.dart';
-import '../../../../core/network/secure_token_storage.dart';
+import '../../../../core/auth/auth_notifier.dart';
+import '../../../../core/failure/failure.dart';
+import '../../../../core/widgets/error_empty_state.dart';
 import '../../../../core/network/token_storage.dart';
 import '../../../../core/resources/app_icons.dart';
 import '../../../../core/router/routes.dart';
@@ -11,121 +16,156 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/text_styles.dart';
 import '../../../../core/widgets/alerts/app_alert.dart';
 import '../../../../core/widgets/promise_card.dart';
+import '../../../../core/widgets/skeletons/profile_skeleton.dart';
 import '../../../profile/presentation/widgets/custom_tile.dart';
-import '../../../profile/presentation/widgets/profile_app_bar.dart';
+import '../../domain/entities/vote.dart';
 import '../bloc/user_bloc.dart';
 
-class ProfileScreen extends StatefulWidget {
+class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
 
   @override
-  State<ProfileScreen> createState() => _ProfileScreenState();
-}
-
-class _ProfileScreenState extends State<ProfileScreen> {
-  late final UserBloc _bloc;
-
-  @override
-  void initState() {
-    super.initState();
-    _bloc = UserBloc(sl(), sl(), sl(), sl(), sl());
-    Future.microtask(() => _bloc.add(UserRequested()));
-  }
-
-  @override
-  void dispose() {
-    _bloc.close();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return BlocProvider.value(
-      value: _bloc,
-      child: BlocBuilder<UserBloc, UserState>(
-        builder: (context, state) {
-          final user = state.user;
-          final city = user?.profile?.addressCity ?? 'Select location';
+    // Получаем UserBloc из контекста (из AppShell)
+    final userBloc = context.read<UserBloc>();
+    final state = userBloc.state;
+    
+    // Загружаем данные при первом открытии, если они еще не загружены
+    if (state.user == null && state.status != UserStatus.loading) {
+      userBloc.add(UserRequested());
+    }
+    if (state.voteHistory.isEmpty && 
+        state.status != UserStatus.loading && 
+        state.status != UserStatus.initial) {
+      userBloc.add(UserVoteHistoryRequested());
+    }
 
+    return BlocProvider.value(
+      value: userBloc,
+      child: BlocBuilder<UserBloc, UserState>(
+        buildWhen: (p, c) =>
+            p.status != c.status ||
+            p.user != c.user ||
+            p.failure != c.failure ||
+            p.voteHistory != c.voteHistory ||
+            p.isLoadingVoteHistory != c.isLoadingVoteHistory,
+        builder: (context, state) {
           return Scaffold(
             backgroundColor: AppColors.background,
-            appBar: ProfileAppBar(
-              country: city, // ✅ передаём локацию из стейта
-              notifications: 0,
-              onCountryTap: () {
-                // переход к экрану выбора локации
-                final current = user?.profile?.addressCity ?? '';
-                context.push(AppPaths.location, extra: current);
-              },
-              onBellTap: () {
-                // обработчик для уведомлений
-                debugPrint('Bell tapped');
-              },
-            ),
-            body: _buildBody(context, state),
-          );
-        },
-      ),
-    );
-  }
-
-  Widget _buildBody(BuildContext context, UserState state) {
-    if (state.status == UserStatus.loading) {
-      return const Center(child: CircularProgressIndicator());
-    }
-
-    if (state.status == UserStatus.failure) {
-      return Center(
-        child: Text(
-          'Error: ${state.error}',
-          style: const TextStyle(color: Colors.red),
+            appBar: AppBar(
+        scrolledUnderElevation: 0,
+        surfaceTintColor: Colors.transparent,
+        backgroundColor: AppColors.background,
+        leading: Padding(
+          padding: const EdgeInsets.only(left: 16),
+          child: SvgPicture.asset(AppIcons.icLogo.path, height: 40, width: 80),
         ),
-      );
-    }
-
-    final user = state.user;
-    if (user == null) {
-      return const Center(child: Text('No user data'));
-    }
-
-    return CustomScrollView(
+        leadingWidth: 96,
+      ),
+            
+            body: state.status == UserStatus.loading
+                ? const ProfileSkeleton()
+                : state.status == UserStatus.failure
+                    ? state.failure?.displayType == FailureDisplayType.fullScreen
+                        ? ErrorEmptyState(
+                            onRetry: () => context.read<UserBloc>().add(UserRequested()),
+                          )
+                        : state.failure?.displayType == FailureDisplayType.empty
+                            ? ErrorEmptyState(
+                                title: 'Not found',
+                                subtitle: state.failure?.message ?? 'The requested data was not found.',
+                              )
+                            : Center(
+                                child: Text(
+                                  state.failure?.message ?? 'Something went wrong',
+                                  style: const TextStyle(color: Colors.red),
+                                ),
+                              )
+                    : state.user == null
+                        ? const Center(child: Text('No user data'))
+                        : CustomScrollView(
       slivers: [
-        SliverToBoxAdapter(child: _Header(user: user)),
+        SliverToBoxAdapter(child: _Header(user: state.user!)),
 
         const SliverToBoxAdapter(child: Divider(height: 1)),
         const SliverToBoxAdapter(
           child: Padding(
             padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
-            child: Text('Voting History', style: AppTextStyles.titleT2),
+            child: Text('My Pulse', style: AppTextStyles.titleT2),
           ),
         ),
 
         SliverPadding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
-          sliver: SliverList.list(
-            children: const [
-              PromiseCard(
-                title: 'Clean Energy Act H.R. 3456',
-                dateText: 'June 28, 2023',
-                status: PromiseStatus.kept,
-                statusText: 'Supported',
-              ),
-              SizedBox(height: 12),
-              PromiseCard(
-                title: 'Minimum Wage Increase Act H.R. 603',
-                dateText: 'June 25, 2023',
-                status: PromiseStatus.broken,
-                statusText: 'Opposed',
-              ),
-              SizedBox(height: 12),
-              PromiseCard(
-                title: 'Sen. Lisa Chen',
-                dateText: 'June 28, 2023',
-                status: PromiseStatus.kept,
-                statusText: 'Approved',
-              ),
-            ],
-          ),
+          sliver: state.voteHistory.isEmpty && state.isLoadingVoteHistory
+              ? SliverList.separated(
+                  itemCount: 3,
+                  separatorBuilder: (context, index) => const SizedBox(height: 12),
+                  itemBuilder: (context, index) => const Skeletonizer(
+                    enabled: true,
+                    child: PromiseCard(
+                      title: 'Loading title placeholder text',
+                      dateText: 'Loading date',
+                      status: PromiseStatus.pending,
+                      statusText: 'Loading',
+                    ),
+                  ),
+                )
+              : state.voteHistory.isEmpty
+              ? const SliverToBoxAdapter(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(vertical: 24),
+                    child: Center(
+                      child: Text(
+                        'No votes yet',
+                        style: AppTextStyles.paragraphP2,
+                      ),
+                    ),
+                  ),
+                )
+              : Builder(
+                  builder: (context) {
+                    final sorted = List.from(state.voteHistory)
+                      ..sort((a, b) => b.votedAt.compareTo(a.votedAt));
+                    final displayCount = sorted.length > 3 ? 3 : sorted.length;
+                    
+                    return SliverList.separated(
+                      itemCount: displayCount,
+                      separatorBuilder: (context, index) => const SizedBox(height: 12),
+                      itemBuilder: (context, index) {
+                        final vote = sorted[index];
+                    final dateText = DateFormat('MMMM d, yyyy').format(vote.votedAt);
+                    final status = vote.choice ? PromiseStatus.kept : PromiseStatus.broken;
+
+                    final (title, statusText) = switch (vote) {
+                      BillVote(:final bill, :final choice) => (
+                        bill.title,
+                        choice ? 'Supported' : 'Opposed',
+                      ),
+                      LawVote(:final law, :final choice) => (
+                        law.title,
+                        choice ? 'Supported' : 'Opposed',
+                      ),
+                      PollVote(:final poll, :final choice) => (
+                        poll.title,
+                        choice ? 'Approved' : 'Rejected',
+                      ),
+                      _ => (
+                        'Vote #${vote.id}',
+                        vote.choice ? 'Supported' : 'Opposed',
+                      ),
+                    };
+
+                    return PromiseCard(
+                      title: title,
+                      dateText: dateText,
+                      status: status,
+                      statusText: statusText,
+                    );
+                      },
+                    );
+                  },
+                ),
         ),
 
         SliverToBoxAdapter(
@@ -135,7 +175,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
               width: double.infinity,
               height: 56,
               child: TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  context.pushNamed(AppRoutes.activity);
+                  debugPrint('View All Activity tapped');
+                },
                 style: TextButton.styleFrom(
                   backgroundColor: Colors.transparent,
                   shape: RoundedRectangleBorder(
@@ -188,21 +231,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     Icons.chevron_right,
                     color: AppColors.textSecondary,
                   ),
-                  onTap: () {},
-                ),
-                const SizedBox(height: 20),
-                CustomTile(
-                  title: 'Notification Settings',
-                  leading: AppIcons.icNotifications.svg(
-                    width: 22,
-                    height: 22,
-                    color: AppColors.textSecondary,
-                  ),
-                  trailing: const Icon(
-                    Icons.chevron_right,
-                    color: AppColors.textSecondary,
-                  ),
-                  onTap: () {},
+                  onTap: () => context.push(AppPaths.language),
                 ),
               ],
             ),
@@ -235,7 +264,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     if (ok && context.mounted) {
                       context.read<UserBloc>().add(UserDeleted());
                       await sl<TokenStorage>().clear();
-                      GoRouter.of(context).go(AppPaths.onboarding);
+                      sl<AuthNotifier>().setLoggedOut();
                     }
                   },
                 ),
@@ -257,7 +286,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     );
                     if (ok && context.mounted) {
                       await sl<TokenStorage>().clear();
-                      GoRouter.of(context).go(AppPaths.login);
+                      sl<AuthNotifier>().setLoggedOut();
                     }
                   },
                 ),
@@ -266,6 +295,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
         ),
       ],
+    ),
+          );
+        },
+      ),
     );
   }
 }
@@ -307,7 +340,7 @@ class _Header extends StatelessWidget {
             child: TextButton.icon(
               onPressed: () {
                 final login = user.login;
-                context.push(AppPaths.profileSetup, extra: login);
+                context.push(AppPaths.profileEdit, extra: login);
               },
               icon: AppIcons.icPen.svg(width: 16, height: 16),
               label: Text(

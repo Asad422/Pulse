@@ -22,3 +22,12 @@ class UserInterestsRequested extends UserEvent {}
 
 class UserSubjectsRequested extends UserEvent {}
 
+class UserVoteHistoryRequested extends UserEvent {}
+
+class UserAddInterestRequested extends UserEvent {
+  final int subjectId;
+  const UserAddInterestRequested({required this.subjectId});
+}
+
+class UserProfileEnumsRequested extends UserEvent {}
+

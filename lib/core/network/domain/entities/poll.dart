@@ -4,6 +4,7 @@ class Poll {
   final String? politicianId;
   final String? politicianBioguideId;
   final int? billId;
+  final int? lawId;
   final DateTime createdAt;
   final int votesFor;
   final int votesAgainst;
@@ -15,6 +16,7 @@ class Poll {
     this.politicianId,
     this.politicianBioguideId,
     this.billId,
+    this.lawId,
     required this.createdAt,
     required this.votesFor,
     required this.votesAgainst,

@@ -1,5 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
+import 'package:pulse/features/profile/data/models/profile_enums_model.dart';
+import 'package:pulse/features/profile/data/models/vote_history_model.dart';
 
 import '../models/subject_model.dart';
 import '../models/user_interest_model.dart';
@@ -45,5 +47,22 @@ class UserRemoteDataSource {
     return data
         .map((e) => SubjectModel.fromJson(e as Map<String, dynamic>))
         .toList();
+  }
+
+  Future<List<VoteHistoryModel>> getVoteHistory() async {
+    final resp = await _dio.get('/polls/votes');
+    final data = resp.data as List<dynamic>;
+    return data
+        .map((e) => VoteHistoryModel.fromJson(e as Map<String, dynamic>))
+        .toList();
+  }
+
+  Future<void> addUserInterest(int subjectId) async {
+    await _dio.post('/subjects/$subjectId/user-interests');
+  }
+
+  Future<ProfileEnumsModel> getProfileEnums() async {
+    final resp = await _dio.get('/users/profile/enums');
+    return ProfileEnumsModel.fromJson(resp.data as Map<String, dynamic>);
   }
 }

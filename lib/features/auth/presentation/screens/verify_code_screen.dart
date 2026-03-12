@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:toasty_box/toast_enums.dart';
+import 'package:toasty_box/toasty_box.dart';
 
 import '../../../../core/router/routes.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -67,10 +69,16 @@ class _VerifyCodeScreenState extends State<VerifyCodeScreen> {
         child: BlocConsumer<LoginBloc, LoginState>(
           listener: (context, state) {
             if (state is LoginSuccess) {
-              context.push(AppPaths.profileSetup, extra: widget.email);
+              if (state.tokens.isExistingUser) {
+                context.go(AppPaths.bills);
+              } else {
+                context.push(AppPaths.profileSetup, extra: widget.email);
+              }
             } else if (state is LoginFailure) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(state.message)),
+              ToastService.showErrorToast(
+                context,
+                message: state.message,
+                length: ToastLength.medium,
               );
             }
           },
@@ -91,7 +99,13 @@ class _VerifyCodeScreenState extends State<VerifyCodeScreen> {
                       icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
                       color: AppColors.textPrimary,
                       padding: EdgeInsets.zero,
-                      onPressed: () => context.pop(),
+                      onPressed: () {
+                        if (context.canPop()) {
+                          context.pop();
+                        } else {
+                          context.go(AppPaths.login);
+                        }
+                      },
                     ),
                   ),
                   const SizedBox(height: 8),

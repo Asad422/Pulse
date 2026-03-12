@@ -41,7 +41,7 @@ class AppColors {
   static const Color surfaceContainerLow = Color(0xFFE5E6EB);
   static const Color surfaceContainerHigh = Color(0xFFE2E4E9);
 
-  static const Color outline = Color(0x26222A3F);
+  static const Color outline = Color(0xFF222A3F);
   static const Color inputBackground = Color(0xFFFFFFFF);
   static const Color scrim = Color(0x33242C42);
 

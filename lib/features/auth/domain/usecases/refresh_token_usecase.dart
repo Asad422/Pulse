@@ -1,4 +1,6 @@
+import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
+import 'package:pulse/core/failure/failure.dart';
 import '../entities/auth_tokens.dart';
 import '../repositories/auth_repository.dart';
 
@@ -7,7 +9,7 @@ class RefreshTokenUseCase {
   final AuthRepository _repo;
   RefreshTokenUseCase(this._repo);
 
-  Future<AuthTokens> call(String refreshToken) {
+  Future<Either<Failure, AuthTokens>> call(String refreshToken) {
     return _repo.refresh(refreshToken);
   }
 }
